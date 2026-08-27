@@ -46,7 +46,9 @@ stories:
     status: done
     started_at: null
     completed_at: "2026-08-27T11:50:37.787394Z"
-  e07s01: todo
+  e07s01:
+    status: in_progress
+    started_at: "2026-08-27T11:52:43.659455Z"
   e07s02: todo
   e07s03: todo
   e08s01: todo

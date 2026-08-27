@@ -1,6 +1,6 @@
 active_flow: build_epic
 active_epic_id: e02
-active_story_id: null
+active_story_id: e02s01
 active_bug_id: null
 workflow_mode: solo-git
 release:
@@ -8,11 +8,13 @@ release:
   last_tag: null
   last_publish: null
 epic_cycle:
-  current_step: 1
-  next_skill: survey-context
+  current_step: 2
+  next_skill: plan-work
   completed_steps:
     - 0
+    - 1
   fast_mode: false
+  story_bcps: 4
 bug_cycle:
   current_step: null
   completed_steps: []

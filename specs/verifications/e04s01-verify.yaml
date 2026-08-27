@@ -1,0 +1,30 @@
+story_id: e04s01
+verified_at: "2026-08-27T13:10:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "Home tests (6): hero tagline/CTAs, catalog-driven cards, C6 copy, no avatar"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T13:09:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  manual:
+    steps:
+      - step: "GET / on production server (cold boot)"
+        expected: "200 with SSR tagline + How-it-Works + floating cards"
+        actual: "200; 'Your Bali Office', 'How it Works' in raw HTML (server component #25)"
+        passed: true
+  security:
+    passed: true
+    note: "H1 inherited (allowlisted hosts + N7 fallback); no sinks/secrets; server component = minimal surface"
+  gaps:
+    closed: true

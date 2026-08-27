@@ -1,29 +1,37 @@
 story_id: e04s01
 title: Home page
-status: failing
+status: passing
 bcps: 3
 tasks:
   - id: 1
-    description: "Hero section: 'Your Bali Office, Delivered.' + Tropical Tech badge + Build/View Accessories CTAs + floating product cards from catalog (no avatar, C5)"
-    verify: "pnpm build"
+    description: "Hero section: 'Your Bali Office, Delivered.' + Tropical Tech badge
+      + Build/View Accessories CTAs + floating product cards from catalog (no avatar,
+      C5)"
+    verify: pnpm build
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["ui", "build"]
+      categories:
+        - ui
+        - build
   - id: 2
-    description: "How-it-Works section: 3 steps with rewritten step-2 copy ('month-to-month, no long-term commitment', C6) + anchor nav"
-    verify: "pnpm build"
+    description: "How-it-Works section: 3 steps with rewritten step-2 copy ('month-to-month,
+      no long-term commitment', C6) + anchor nav"
+    verify: pnpm build
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["ui", "build"]
+      categories:
+        - ui
+        - build
   - id: 3
     description: "Per-page metadata + OG tags (D2): title, description, og:image"
-    verify: "pnpm build"
+    verify: pnpm build
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["seo"]
+      categories:
+        - seo

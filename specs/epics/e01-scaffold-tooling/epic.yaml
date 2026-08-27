@@ -2,7 +2,7 @@ id: e01
 title: Project Scaffold & Tooling
 wsjf: 6.0
 total_bcps: 6
-status: todo
+status: in_progress
 stories:
   - id: e01s01
     title: Project scaffold

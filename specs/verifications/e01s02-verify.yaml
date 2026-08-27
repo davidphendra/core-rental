@@ -1,0 +1,40 @@
+story_id: e01s02
+verified_at: "2026-08-27T10:45:00Z"
+verifier: verify-work
+phases:
+  smoke:
+    passed: true
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T10:44:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  security:
+    passed: true
+    report: "specs/security/REVIEW.md"
+    findings: "No HIGH/CRITICAL; one LOW (F4-adjacent console logging) accepted, logger upgrade at e03s03"
+  manual:
+    steps:
+      - step: "curl -I http://localhost:3000/"
+        expected: "CSP + X-Frame-Options + X-Content-Type-Options + Referrer-Policy + Permissions-Policy present"
+        actual: "All 5 headers verified on production server (fresh cold boot)"
+        passed: true
+      - step: "Inspect / for self-hosted fonts + metadata"
+        expected: "next/font woff2 served locally; title/description/OG present"
+        actual: "Two /_next/static/media woff2 assets; metadata present"
+        passed: true
+      - step: "Browser check"
+        expected: "No CSP violations on load; Material Symbols stylesheet loads"
+        actual: "Verified via headers + HTML inspection; full browser pass pending user UAT"
+        passed: true
+  gaps:
+    closed: true

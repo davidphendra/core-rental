@@ -1,37 +1,49 @@
 story_id: e01s01
 title: Project scaffold
-status: failing
+status: passing
 bcps: 3
 tasks:
   - id: 1
-    description: "Initialize Next.js 16 (App Router, Turbopack) with pnpm: package.json, engines Node 20, tsconfig strict + noUncheckedIndexedAccess, next.config.ts, src/app skeleton"
-    verify: "pnpm typecheck"
+    description: "Initialize Next.js 16 (App Router, Turbopack) with pnpm: package.json,
+      engines Node 20, tsconfig strict + noUncheckedIndexedAccess, next.config.ts, src/app
+      skeleton"
+    verify: pnpm typecheck
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["infra", "unit"]
+      categories:
+        - infra
+        - unit
   - id: 2
-    description: "Tailwind v4 + PostCSS + tropical-tech tokens from docs/design/tropical_tech/DESIGN.md (light mode only), globals.css"
-    verify: "pnpm build"
+    description:
+      Tailwind v4 + PostCSS + tropical-tech tokens from docs/design/tropical_tech/DESIGN.md
+      (light mode only), globals.css
+    verify: pnpm build
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["styling", "build"]
+      categories:
+        - styling
+        - build
   - id: 3
-    description: "ESLint (eslint-config-next flat config) + Prettier + prettier-plugin-tailwindcss + husky/lint-staged + feature-boundary lint rules"
-    verify: "pnpm lint"
+    description: ESLint (eslint-config-next flat config) + Prettier + prettier-plugin-tailwindcss
+      + husky/lint-staged + feature-boundary lint rules
+    verify: pnpm lint
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["tooling", "lint"]
+      categories:
+        - tooling
+        - lint
   - id: 4
-    description: ".nvmrc (Node 20), .gitignore, .env.example (empty template)"
-    verify: "pnpm install --frozen-lockfile"
+    description: .nvmrc (Node 20), .gitignore, .env.example (empty template)
+    verify: pnpm install --frozen-lockfile
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["tooling"]
+      categories:
+        - tooling

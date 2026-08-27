@@ -1,8 +1,11 @@
 stories:
   e01s01:
-    status: in_progress
-    started_at: '2026-08-27T10:26:41.981791Z'
-  e01s02: todo
+    status: done
+    started_at: "2026-08-27T10:26:41.981791Z"
+    completed_at: "2026-08-27T10:33:37.561547Z"
+  e01s02:
+    status: done
+    completed_at: "2026-08-27T10:35:39.589513Z"
   e02s01: todo
   e02s02: todo
   e03s01: todo

@@ -1,0 +1,10 @@
+.next/
+node_modules/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+public/placeholders/
+src/shared/data/products.json

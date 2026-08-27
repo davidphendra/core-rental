@@ -1,0 +1,5 @@
+locks:
+  - story_id: e01s01
+    locked_by: "agent: build-epic"
+    locked_at: "2026-08-27T10:30:00Z"
+    files_touched: []

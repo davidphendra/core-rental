@@ -1,0 +1,35 @@
+story_id: e01s01
+verified_at: "2026-08-27T10:45:00Z"
+verifier: verify-work
+phases:
+  smoke:
+    passed: true
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "passWithNoTests (no domain tests until e03); vitest configured with D3 coverage gate"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T10:44:00Z"
+    note: "Single contiguous run: test + lint + typecheck + build all exit 0"
+  manual:
+    steps:
+      - step: "pnpm dev and open http://localhost:3000"
+        expected: "Bare app shell renders"
+        actual: "HTTP 200, 'Core Rental' rendered on /"
+        passed: true
+      - step: "Production cold boot (build from scratch + next start)"
+        expected: "App serves; next/font self-hosts fonts"
+        actual: "Fresh build OK; two /_next/static/media/*.woff2 served (Plus Jakarta Sans + Manrope)"
+        passed: true
+  gaps:
+    closed: true
+    notes:
+      - "Gap found: vitest.config.ts missing (preflight would false-fail) -> closed with chore(scaffold) commit."

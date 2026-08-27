@@ -1,46 +1,46 @@
-# Session State — Core Rental
-
-# HARD GATE: state.yaml must synchronize with git state. Repo is NOT yet
-# initialized (scaffold deferred per user instruction) — do not assume branch/hash.
-
-active_flow: build_epic       # planning | build_epic | fix_bug
+active_flow: build_epic
 active_epic_id: e01
-active_story_id: e01s01
+active_story_id: null
 active_bug_id: null
-workflow_mode: solo-git        # canonical integrate-mode signal (seed-conventions)
-
+workflow_mode: solo-git
 release:
   target_version: null
   last_tag: null
   last_publish: null
-
 epic_cycle:
-  current_step: 3
-  next_skill: kickoff-branch
-  completed_steps: [0, 1, 2]
+  current_step: 7
+  next_skill: commit-message
+  completed_steps:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
   story_bcps: 3
   fast_mode: false
-
+  audit_result: pass
 bug_cycle:
   current_step: null
   completed_steps: []
-
 git:
-  branch: null                  # repo not yet initialized — scaffolding held by user
-  hash: null
-  note: "No git repo yet. Scaffold (git init + folders + configs) explicitly deferred by user; do not create without a go signal."
-
+  branch: feat/e01-scaffold
+  hash: 44adeaf
+  note: Repo initialized (baseline on main), feature branch feat/e01-scaffold created;
+    e01s01 story lock acquired.
 handoff:
-  last_step_completed: >
-    plan-work done: 18 countable-story specs (20 sections, Gherkin ACs) + 18 refined
-    tasks.yaml (risk P0-P3, allure, status failing) across 8 epic capsules.
-    Consistency pass: YAML valid, specs/tasks refs resolve, BCP sums match, all
-    tasks failing with verify+risk+allure. Planning spine complete.
-    Implementation still held by user (no go signal).
+  last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
+    ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic
+    capsules. Consistency pass: YAML valid, specs/tasks refs resolve, BCP sums match,
+    all tasks failing with verify+risk+allure. Planning spine complete. Implementation
+    still held by user (no go signal).
+
+    "
   open_decisions: []
   required_reading:
     - specs/DECISION_RECORD.md
     - specs/release-plan.yaml
     - specs/epics (per active capsule)
     - specs/tech-architecture/TEST_PLAN_LATEST.md
-  next_skill: kickoff-branch     # plan-work gate; REQUIRES user go signal first
+  next_skill: kickoff-branch

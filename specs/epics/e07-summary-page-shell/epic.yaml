@@ -1,0 +1,24 @@
+id: e07
+title: Summary Feature & Page Shell
+wsjf: 3.0
+total_bcps: 10
+status: todo
+stories:
+  - id: e07s01
+    title: Summary view
+    bcps: 4
+    status: todo
+    spec: e07s01-summary-view.md
+    tasks: e07s01-tasks.yaml
+  - id: e07s02
+    title: Rent flow & mock confirmation
+    bcps: 3
+    status: todo
+    spec: e07s02-rent-confirmation.md
+    tasks: e07s02-tasks.yaml
+  - id: e07s03
+    title: Page shell
+    bcps: 3
+    status: todo
+    spec: e07s03-page-shell.md
+    tasks: e07s03-tasks.yaml

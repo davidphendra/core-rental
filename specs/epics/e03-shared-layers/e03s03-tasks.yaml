@@ -1,0 +1,38 @@
+story_id: e03s03
+title: Shared UI primitives & observability
+status: failing
+bcps: 3
+tasks:
+  - id: 1
+    description: "shared/ui: ProductCard, PriceTag (single IDR home), Button (a11y baseline: focus-visible, aria)"
+    verify: "pnpm test -- ProductCard.test.tsx && pnpm test -- PriceTag.test.tsx"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["unit", "ui"]
+  - id: 2
+    description: "shared/ui: LoadingSkeleton + ErrorState (friendly copy + retry wired to query.refetch) (D4)"
+    verify: "pnpm test -- ErrorState.test.tsx"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["unit", "ui"]
+  - id: 3
+    description: "shared/observability/logger.ts: JSON lines, levels, curated taxonomy (O2), PII-free API (no address field, O3) + tests"
+    verify: "pnpm test -- logger.test.ts"
+    risk: P0
+    status: failing
+    security: medium
+    allure:
+      severity: critical
+      categories: ["unit", "observability", "Security Review"]
+  - id: 4
+    description: "Mount Analytics + SpeedInsights in layout; wire logger into error.tsx boundary + global listeners (structured error.boundary events)"
+    verify: "pnpm build"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["observability", "build"]

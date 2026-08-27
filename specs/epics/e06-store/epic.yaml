@@ -1,0 +1,18 @@
+id: e06
+title: Store Feature
+wsjf: 3.5
+total_bcps: 6
+status: todo
+stories:
+  - id: e06s01
+    title: Store grid & category filter
+    bcps: 3
+    status: todo
+    spec: e06s01-store-grid.md
+    tasks: e06s01-tasks.yaml
+  - id: e06s02
+    title: Partner request modal
+    bcps: 3
+    status: todo
+    spec: e06s02-partner-modal.md
+    tasks: e06s02-tasks.yaml

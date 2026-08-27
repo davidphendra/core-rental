@@ -1,0 +1,37 @@
+story_id: e03s01
+title: Domain services
+status: failing
+bcps: 4
+tasks:
+  - id: 1
+    description: "shared/domain/pricing.ts: IDR formatting (Intl.NumberFormat id-ID) + monthly total = sum of line items (flat monthly, #7)"
+    verify: "pnpm test -- pricing.test.ts"
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories: ["unit", "domain"]
+  - id: 2
+    description: "shared/domain/setupRules.ts: caps config table (monitors<=3, plants<=4, lamps<=2, coffee=1, beanbag<=2, surfboard=1), single chair/desk exclusivity, partner exclusion"
+    verify: "pnpm test -- setupRules.test.ts"
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories: ["unit", "domain"]
+  - id: 3
+    description: "shared/domain/validateSetupState.ts: hydration validation (shape + business rules) with D1-default fallback (G1)"
+    verify: "pnpm test -- validateSetupState.test.ts"
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories: ["unit", "domain", "Security Review"]
+  - id: 4
+    description: "Vitest coverage gate: 80% branch on shared/domain, CI-enforced (D3)"
+    verify: "pnpm test -- --coverage"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["unit", "coverage"]

@@ -1,0 +1,18 @@
+id: e08
+title: E2E Suite & CI
+wsjf: 3.33
+total_bcps: 9
+status: todo
+stories:
+  - id: e08s01
+    title: E2E positive suite
+    bcps: 4
+    status: todo
+    spec: e08s01-e2e-positive.md
+    tasks: e08s01-tasks.yaml
+  - id: e08s02
+    title: E2E negative suite & CI completion
+    bcps: 5
+    status: todo
+    spec: e08s02-e2e-negative-ci.md
+    tasks: e08s02-tasks.yaml

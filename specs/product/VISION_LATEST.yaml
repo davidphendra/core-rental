@@ -1,0 +1,18 @@
+# Vision — Core Rental
+
+name: Core Rental
+tagline: "Your Bali Office, Delivered."
+one_liner: >
+  Rent fully-equipped office setups — desks, chairs, monitors, plants,
+  coffee machines and tropical extras — to digital nomads and startups in Bali,
+  month-to-month, with a fun visual builder instead of a product catalog.
+north_star: >
+  A digital nomad lands in Bali, opens Core Rental, designs their dream
+  workspace on a visual canvas in under three minutes, and rents it with one
+  click — no spreadsheet, no showroom, no commitment.
+why: >
+  Nomads need workspace by next week and don't want to buy furniture they'll
+  leave behind. The builder turns a rental catalog into an emotional,
+  visual experience that makes people excited to rent.
+market: Bali digital nomads (English-speaking expats) and local startups.
+status: confirmed_by_grill   # 65 decisions, implementation held per user

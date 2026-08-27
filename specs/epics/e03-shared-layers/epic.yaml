@@ -1,0 +1,24 @@
+id: e03
+title: Shared Layers
+wsjf: 4.33
+total_bcps: 11
+status: todo
+stories:
+  - id: e03s01
+    title: Domain services
+    bcps: 4
+    status: todo
+    spec: e03s01-domain-services.md
+    tasks: e03s01-tasks.yaml
+  - id: e03s02
+    title: Cart state & persistence
+    bcps: 4
+    status: todo
+    spec: e03s02-cart-state.md
+    tasks: e03s02-tasks.yaml
+  - id: e03s03
+    title: Shared UI primitives & observability
+    bcps: 3
+    status: todo
+    spec: e03s03-shared-ui-observability.md
+    tasks: e03s03-tasks.yaml

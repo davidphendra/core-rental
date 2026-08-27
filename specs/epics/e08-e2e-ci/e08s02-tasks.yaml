@@ -1,0 +1,30 @@
+story_id: e08s02
+title: E2E negative suite & CI completion
+status: failing
+bcps: 5
+tasks:
+  - id: 1
+    description: "Negative specs N1-N11 per TEST_PLAN_LATEST: empty cart (N1), 404 (N2), cap (N3), removal (N4), exclusivity (N5), partner exclusion (N6), image fallback (N7), API failure (N8), security headers (N9), corrupt storage (N10), delivery validation (N11)"
+    verify: "pnpm test:e2e"
+    risk: P0
+    status: failing
+    security: medium
+    allure:
+      severity: critical
+      categories: ["e2e", "Security Review"]
+  - id: 2
+    description: "CI workflow (.github/workflows/ci.yml): install -> lint -> typecheck -> unit + coverage gate -> next build -> Playwright vs production build -> belt-and-braces marker grep on .next/static"
+    verify: "pnpm preflight"
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories: ["ci", "Security Review"]
+  - id: 3
+    description: "README: Deploy section (git push -> Vercel auto-deploy, optional vercel CLI) + test commands"
+    verify: "pnpm lint"
+    risk: P3
+    status: failing
+    allure:
+      severity: minor
+      categories: ["docs"]

@@ -1,0 +1,30 @@
+story_id: e02s02
+title: Catalog API & query layer
+status: failing
+bcps: 3
+tasks:
+  - id: 1
+    description: "src/app/api/products/route.ts: static import of products.json + contract guard (non-empty typed payload) -> 500 generic on violation (E2)"
+    verify: "pnpm test -- products-route.test.ts"
+    risk: P0
+    status: failing
+    security: low
+    allure:
+      severity: critical
+      categories: ["Security Review", "unit"]
+  - id: 2
+    description: "shared/data/products.ts: typed access module (sole reader of the JSON) + shared/data/useProducts.ts (TanStack Query hook)"
+    verify: "pnpm test -- useProducts.test.ts"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["unit", "data"]
+  - id: 3
+    description: "Query key + staleTime config; shared/types/product.ts (Product, Category incl. 'partner')"
+    verify: "pnpm typecheck"
+    risk: P2
+    status: failing
+    allure:
+      severity: normal
+      categories: ["types"]

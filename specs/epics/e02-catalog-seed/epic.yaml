@@ -1,0 +1,18 @@
+id: e02
+title: Catalog & Seed Generation
+wsjf: 4.33
+total_bcps: 7
+status: todo
+stories:
+  - id: e02s01
+    title: Catalog generator & hero overlay
+    bcps: 4
+    status: todo
+    spec: e02s01-catalog-generator.md
+    tasks: e02s01-tasks.yaml
+  - id: e02s02
+    title: Catalog API & query layer
+    bcps: 3
+    status: todo
+    spec: e02s02-catalog-api.md
+    tasks: e02s02-tasks.yaml

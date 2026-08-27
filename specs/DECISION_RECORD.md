@@ -1,0 +1,112 @@
+# Core Rental — Consolidated Decision Record
+
+> Status: **CONFIRMED** (grill-with-docs, 65 decisions) — implementation NOT started (user holds the go signal).
+> Source: `docs/design/*.html` mockups + `docs/design/tropical_tech/DESIGN.md` + grilled decisions.
+> Companion artifacts: `specs/product/SCOPE_LATEST.yaml`, `specs/tech-architecture/tech-stack.md`, `specs/adr/`.
+
+---
+
+## Product & UX
+
+| # | Decision | Resolution |
+|---|---|---|
+| 1 | Framework | **Next.js only (React, App Router)** — Angular dropped (ADRs 0001) |
+| 2 | Languages | **English only for MVP** — i18n deferred; flat routes kept retrofit-friendly for a `[locale]` group later |
+| 3 | Currency | **IDR only** — `Intl.NumberFormat('id-ID')` display |
+| 4 | Data source | **Static JSON catalog**, no backend, no server-side persistence |
+| 5 | Rent flow | **Mock confirmation screen** — no payment, no inquiry hand-off |
+| 6 | Categories | **Mockup set:** Chair, Desk, Accessories (monitor/lamp/plant/coffee machine/bean bag), Extras (surfboard), Partner (motorcycle). "Garage space" dropped |
+| 7 | Pricing | **Flat monthly per item** — summary total = sum of selected items (C1: no delivery fee, no grand total) |
+| 8 | Dark mode | **Light mode only** — `dark:` variants not ported |
+| 9 | Images (original) | Google mockup URLs + `onError` fallback — *superseded by #31* |
+| 10 | Quantities | **Accessories stack via steppers; chair/desk single selection** |
+| 11 | Persistence | **`localStorage` cart** — survives refresh/return visits |
+| 18 | Brand | **"Core Rental"** — "Moni's Workspace" retired (mockups conflicted) |
+| 19 | Catalog model | **Unified `products.json`**, filtered per view; new products (desks/monitors/lamps) created as data |
+| 20 | Extras semantics | **Surfboard → cart** (standard line item) · **Motorcycle → partner request**: same `products.json` (`category: 'partner'`), **client-side modal** confirmation, no new route, structurally excluded from cart/summary |
+| 21 | IDR prices | **Fresh round market-rate price points**, mockup relative ordering preserved (espresso > chair > plant) |
+| 22 | Quantity caps | **Per-category caps:** monitors ≤ 3, plants ≤ 4, lamps ≤ 2, coffee = 1, bean bag ≤ 2, surfboard = 1 |
+| 23 | Empty cart | **Friendly empty state + "Start building" CTA** on `/summary` |
+| 24 | Accessibility | **Baseline:** semantics, labels, focus-visible, keyboard-operable canvas |
+| 27 | 404 treatment | **Playful brand copy** ("this page has surfed away") + Back to Home / Start Building CTAs |
+| 30 | Catalog volume | **~55–60 products:** 10 chairs · 10 desks · 8 monitors · 6 lamps · 8 plants · 5 coffee · 5 bean bags · 4 surfboards (+ 1 partner motorcycle) |
+| 31 | Images (final) | **Hybrid:** 7 hero products keep Google URLs · ~48 new get deterministic on-brand SVG placeholders · `onError` fallback retained |
+| 33 | Browsing | **Store: working category filter tabs** (as designed) · **Builder panel: scroll** · no pagination |
+
+## Architecture & Engineering
+
+| # | Decision | Resolution |
+|---|---|---|
+| 12 | TypeScript | **`strict: true` + `noUncheckedIndexedAccess` + zero `any`** — project-wide, every file inherits |
+| 13 | Security | **Baseline hygiene + standard headers** (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) · `remotePatterns` allowlist (`lh3.googleusercontent.com`) · CSP font hosts (`fonts.googleapis.com`, `fonts.gstatic.com`) + analytics host (`va.vercel-scripts.com`) · no secrets in client · no `dangerouslySetInnerHTML` · compiled Tailwind (never CDN script) |
+| 14 | Code style | **ESLint (`eslint-config-next`)** + Prettier + `prettier-plugin-tailwindcss` + husky/lint-staged + feature-boundary lint rules · `next build` as backstop |
+| 15 | Architecture | **Feature-based vertical slices** (`features/home|builder|store|summary`, barrel exports) + **shared layers** (`data/domain/state/hooks/ui/types/config/observability`) · **one component/hook/module per file** (ADR 0002) |
+| 16 | Testing (unit/integration) | **Vitest + React Testing Library** — unit on `shared/domain`, integration on module combos, colocated `*.test.ts(x)` |
+| 17 | Tooling | **pnpm** · **Node 20 LTS** (`.nvmrc` + `engines`) |
+| 25 | Data delivery | **Route handler `/api/products` + TanStack Query client fetch** · home = server component · builder/store/summary = client components |
+| 26 | Error scope | **Trio at app root:** `not-found.tsx` + `error.tsx` + `global-error.tsx` |
+| 28 | Error page | **Generic copy + Try again (`reset`) + Back to Home + structured `logger.error`** — raw error never rendered |
+| 29 | Loading | **Root `loading.tsx`** brand-styled skeleton for lazy-loaded route chunks |
+| 32 | Seed generation | **Generator script + curated hero overlay** (`scripts/generate-catalog.ts`) → committed `products.json`, unit-testable (ADR 0003) |
+| 41 | Next.js version | **Next.js 16 (Turbopack bundler)** — no third-party bundler; SWC compiles, Tailwind v4 Oxide compiles CSS |
+
+## Testing — E2E
+
+| # | Decision | Resolution |
+|---|---|---|
+| 34 | E2E framework | **Playwright (`@playwright/test`)**, Chromium-only, `webServer` auto-start (ADR 0005) |
+| 35 | E2E scope | **Full UI regression:** positive flows mimic real user interaction; **verification = displayed text** (items on confirmation + IDR total matches spec-computed sum); **11 negative flows** (N1 empty cart · N2 404 · N3 cap · N4 removal · N5 exclusivity · N6 partner exclusion · N7 image fallback · N8 API failure · N9 security headers · N10 corrupt storage recovery · N11 delivery input validation) |
+| 36 | E2E run target | **Local production build** (`next build && next start`); CI runs after unit/integration, gates merges |
+| 37 | E2E expectations | **Import `products.json` + spec-local arithmetic** — never import app's `pricing.ts`/`setupRules.ts` |
+| 38 | E2E location | **`e2e/` at repo root** + `playwright.config.ts` at root — structurally distinct from colocated Vitest |
+
+## Validation — trust boundary (ADR 0004)
+
+| # | Decision | Resolution |
+|---|---|---|
+| G1 | localStorage hydration | **Validate-and-fallback** — pure `validateSetupState` in `shared/domain` checks shape + business rules (quantities ≤ caps, IDs ∈ catalog, single chair/desk, no partner items); any failure → reset to defaults (D1 pre-selection) |
+| G2 | Reducer enforcement | **Reducer validates every action via `setupRules`** — invalid actions (over-cap, partner add) rejected as quiet no-ops |
+| G3 | Delivery Location rules | **Trim + non-empty + max 120 chars**; inline error (`aria-invalid`/`aria-describedby`); **Rent disabled until valid** |
+| G4 | E2E coverage | **N10** (corrupt storage → defaults, no crash) · **N11** (empty/over-length → error + Rent disabled; valid → enabled) |
+
+## Exceptions (E1–E4)
+
+| # | Decision | Resolution |
+|---|---|---|
+| E1 | try/catch policy | **Targeted at I/O boundaries only** (route handler, `localStorage` writes, async handlers); TanStack Query captures fetch errors natively; pure domain functions stay throw-only; error boundaries render outcomes |
+| E2 | Route handler | **Static import** (bundled → no runtime I/O failure) **+ contract guard** → generic 500 `{"error":"Products unavailable"}` |
+| E3 | `localStorage` writes | **try/catch on `setItem`** → `console.warn` → degrade to in-memory (cart works for session); reads guarded by G1 |
+| E4 | Last-mile capture | **Global `unhandledrejection` + `error` listeners → structured log** |
+
+## Observability (O1–O4)
+
+| # | Decision | Resolution |
+|---|---|---|
+| O1 | Architecture | **Vercel-native:** structured JSON logs (`logger.ts`) + `@vercel/speed-insights` (Web Vitals) + `@vercel/analytics` (traffic); zero backend, zero vendors (ADR 0006) |
+| O2 | Event taxonomy | **Curated:** `info` — `rent.clicked` · `partner.requested` · `delivery.submitted` · `catalog.loaded` (`durationMs`) · `catalog.failed` · `warn` — `storage.degraded` · `validation.rejected` · `error` — `error.boundary` · unhandled rejections · `debug` — `cart.updated` |
+| O3 | PII & CSP | **PII-free by construction** — logger API has no address field (`delivery.submitted` logs `hasAddress`/`addressLength` only) · CSP adds `va.vercel-scripts.com` to `script-src`/`connect-src` |
+| O4 | Traces | **Lightweight:** timed structured-log events (`durationMs`, correlated `ts`) — no OTel, no vendor |
+
+## Mockup conflicts ruled (C1–C6)
+
+| # | Conflict | Ruling |
+|---|---|---|
+| C1 | Summary's delivery fee / grand total | Follow #7: line items + **Monthly Total** only |
+| C2 | "Secure checkout via Stripe" | **Demo-honest confirmation copy**; zero payment language |
+| C3 | Summary zone overview (Garage/Outdoor) | **Two tiles only** — Coffee Station + Relax Zone, cart-driven fill states |
+| C4 | Delivery Location input | **Kept** — client-side, persisted, echoed into mock confirmation |
+| C5 | Home profile avatar | **Dropped** — no accounts |
+| C6 | "Select your rental duration" copy | **Rewritten** — "month-to-month, no long-term commitment" |
+
+## Interpretations & platform notes
+
+- **"One class per file"** → one *unit* per file (component/hook/module — React is functional)
+- **"Each file uses strict"** → tsconfig-level strictness, inherited by all files (no per-file toggle exists)
+- **Vercel** → deployment *platform*, not a dependency: zero-config Next.js deploy, no `vercel.json`, no `vercel` package; headers run via `next.config.ts` on Vercel's runtime
+- **Bundling** → no third-party bundler: **Turbopack** bundles, **SWC** compiles/minifies, Tailwind v4 Oxide compiles CSS; Vitest's Vite is test-time only
+- **Routing** → App Router file-based (`src/app/` = route table); `<Link>` for nav + `router.push()` for programmatic; code-split lazy loading with `loading.tsx`; cart context in root layout survives navigation; TanStack Query cache survives navigation
+- **Test files in production** → bundler reachability guarantees colocated `*.test.ts(x)` never ship; type-checked at build, emitted never
+
+## Repository structure (proposed — not yet scaffolded)
+
+See `specs/tech-architecture/tech-stack.md` § Repository Structure for the full tree.

@@ -1,0 +1,30 @@
+story_id: e01s02
+title: Config & security shell
+status: failing
+bcps: 3
+tasks:
+  - id: 1
+    description: "next.config.ts: headers() with CSP + X-Frame-Options + X-Content-Type-Options + Referrer-Policy + Permissions-Policy; images.remotePatterns allowlist (lh3.googleusercontent.com); CSP font hosts + va.vercel-scripts.com"
+    verify: "pnpm build && pnpm start & curl -sI http://localhost:3000 | grep -i content-security-policy"
+    risk: P0
+    status: failing
+    security: high
+    allure:
+      severity: critical
+      categories: ["Security Review", "build"]
+  - id: 2
+    description: "Root layout: next/font (Plus Jakarta Sans, Manrope) + Material Symbols <link> (D6), metadata + OG (D2), providers (QueryClient, BuilderStore, Analytics, SpeedInsights)"
+    verify: "pnpm build"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["infra", "build"]
+  - id: 3
+    description: "Root loading.tsx brand skeleton (#29) + global unhandledrejection/error listeners -> logger (E4)"
+    verify: "pnpm build"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["infra", "build"]

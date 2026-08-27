@@ -1,0 +1,18 @@
+id: e01
+title: Project Scaffold & Tooling
+wsjf: 6.0
+total_bcps: 6
+status: todo
+stories:
+  - id: e01s01
+    title: Project scaffold
+    bcps: 3
+    status: todo
+    spec: e01s01-scaffold.md
+    tasks: e01s01-tasks.yaml
+  - id: e01s02
+    title: Config & security shell
+    bcps: 3
+    status: todo
+    spec: e01s02-config-security-shell.md
+    tasks: e01s02-tasks.yaml

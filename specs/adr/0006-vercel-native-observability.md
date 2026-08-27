@@ -1,0 +1,6 @@
+# ADR 0006 — Vercel-native observability
+
+- **Status:** Accepted (decisions O1–O4)
+- **Context:** The team required traces, metrics, and structured logs for full visibility into performance and health. The app is a serverless Next.js frontend on Vercel with one read-only route handler — no distributed backend to trace. An earlier note ("@vercel packages add nothing to this demo") was made without an observability requirement and is formally amended.
+- **Decision:** Vercel-native stack: structured JSON logs via a PII-free `logger.ts` (curated taxonomy: milestones @ info, churn @ debug, degradations @ warn, failures @ error) collected by Vercel's built-in logging; `@vercel/speed-insights` for Web Vitals (LCP/CLS/INP/TTFB); `@vercel/analytics` for traffic. Lightweight "traces" = timed structured events (`durationMs`, correlated `ts`). No OpenTelemetry, no external vendors. CSP adds `va.vercel-scripts.com` (script-src/connect-src). The logger API structurally cannot accept the delivery address (PII-free by construction).
+- **Consequences:** Zero infrastructure, dashboards appear automatically on Vercel. Log volume is bounded by the curated taxonomy. Full OTel is deferred unless a real multi-service backend arrives. CSP gains one allowlisted host.

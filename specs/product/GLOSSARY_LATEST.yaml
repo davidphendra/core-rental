@@ -1,0 +1,42 @@
+# Glossary — Core Rental
+
+terms:
+  Core Rental:
+    definition: The product brand. Canonical name for all UI, metadata, and copy.
+  Setup:
+    definition: >
+      The user's selected workspace configuration: one chair, one desk,
+      and accessory quantities. Persisted in localStorage.
+  Builder:
+    definition: >
+      The visual workspace design experience (/builder). Canvas with slots
+      (desk, chair, monitor, lamp, plant) plus secondary zones
+      (Coffee Station, Relax Zone).
+  Canvas slot:
+    definition: >
+      A positioned area on the builder canvas that fills with the selected
+      item's image (monitor, lamp, plant) or shows an empty dashed state.
+  Monthly Total:
+    definition: >
+      Sum of selected items' monthly prices in IDR. Flat monthly pricing,
+      no fees, no minimum term. Shown in the sticky builder bar and summary.
+  Accessory:
+    definition: Category of stackable products (monitor, lamp, plant,
+      coffee machine, bean bag) with per-category quantity caps.
+  Extra:
+    definition: The surfboard rack. A standard cart line item, not a canvas zone.
+  Partner request:
+    definition: >
+      The motorcycle. Lives in the unified catalog under category 'partner'.
+      Has its own modal request flow; structurally excluded from cart and summary.
+  Cart:
+    definition: The persisted SetupState (chair/desk IDs + accessory quantities),
+      kept in localStorage, hydrated with validate-and-fallback.
+  Category filter:
+    definition: Store-page sidebar tabs (Chairs / Desks / Accessories / Extras)
+      that filter the unified catalog client-side.
+  Hero products:
+    definition: >
+      The 7 products with Google-hosted mockup images (2 chairs, plant,
+      espresso, bean bag, surfboard, motorcycle). All other products use
+      generated SVG placeholders.

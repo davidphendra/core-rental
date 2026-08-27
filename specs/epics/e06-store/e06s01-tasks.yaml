@@ -1,0 +1,29 @@
+story_id: e06s01
+title: Store grid & category filter
+status: failing
+bcps: 3
+tasks:
+  - id: 1
+    description: "Store grid per bali_essentials_store mockup (cards via shared ProductCard) + working category filter tabs (Chairs/Desks/Accessories/Extras, #33) + breadcrumbs"
+    verify: "pnpm build"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["ui", "build"]
+  - id: 2
+    description: "Add-to-Setup action -> cart (respects caps); surfboard behaves as standard line item (#20)"
+    verify: "pnpm test -- StoreGrid.test.tsx"
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories: ["unit", "ui", "domain"]
+  - id: 3
+    description: "Image onError fallback -> local SVG placeholder (#31, N7); hero products keep Google URLs"
+    verify: "pnpm test -- StoreCard.test.tsx"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["unit", "ui"]

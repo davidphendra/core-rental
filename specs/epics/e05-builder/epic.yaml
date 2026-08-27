@@ -1,0 +1,24 @@
+id: e05
+title: Builder Feature
+wsjf: 3.5
+total_bcps: 12
+status: todo
+stories:
+  - id: e05s01
+    title: Builder canvas
+    bcps: 5
+    status: todo
+    spec: e05s01-builder-canvas.md
+    tasks: e05s01-tasks.yaml
+  - id: e05s02
+    title: Selection panel & quantity steppers
+    bcps: 4
+    status: todo
+    spec: e05s02-selection-panel.md
+    tasks: e05s02-tasks.yaml
+  - id: e05s03
+    title: Builder wiring
+    bcps: 3
+    status: todo
+    spec: e05s03-builder-wiring.md
+    tasks: e05s03-tasks.yaml

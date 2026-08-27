@@ -1,0 +1,12 @@
+id: e04
+title: Home Feature
+wsjf: 2.5
+total_bcps: 3
+status: todo
+stories:
+  - id: e04s01
+    title: Home page
+    bcps: 3
+    status: todo
+    spec: e04s01-home-page.md
+    tasks: e04s01-tasks.yaml

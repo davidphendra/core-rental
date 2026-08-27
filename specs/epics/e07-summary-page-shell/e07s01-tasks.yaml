@@ -1,0 +1,30 @@
+story_id: e07s01
+title: Summary view
+status: failing
+bcps: 4
+tasks:
+  - id: 1
+    description: "Line items + Qty + Monthly Total only (C1 — no delivery fee/grand total rows); visual preview section; zone tiles Coffee Station + Relax Zone with cart-driven fill states (C3)"
+    verify: "pnpm test -- SummaryView.test.tsx"
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories: ["unit", "ui", "domain"]
+  - id: 2
+    description: "Delivery Location input: trim + non-empty + max 120 chars (G3), inline error with aria-invalid/aria-describedby, Rent disabled until valid"
+    verify: "pnpm test -- DeliveryInput.test.tsx"
+    risk: P0
+    status: failing
+    security: low
+    allure:
+      severity: critical
+      categories: ["unit", "ui", "Security Review"]
+  - id: 3
+    description: "Empty-cart state: friendly copy + 'Start building' CTA -> /builder (#23)"
+    verify: "pnpm test -- SummaryView.test.tsx"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories: ["unit", "ui"]

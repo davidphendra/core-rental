@@ -1,0 +1,94 @@
+# Scope — Core Rental (SCOPE_LATEST)
+
+core_value: >
+  Design your dream workspace on a visual canvas and rent it month-to-month —
+  Core Rental delivers fully-equipped office setups to Bali digital nomads,
+  no furniture to buy, no long-term commitment.
+
+summary: >
+  Core Rental is a Next.js single-page application (four routes) that lets a
+  user visually build a workspace — pick a chair and desk, stack accessories
+  (monitors, lamps, plants, coffee machine, bean bag), add a surfboard extra,
+  and optionally request the partner motorcycle — then review the setup with a
+  live IDR monthly total and "rent" it via a mock confirmation flow.
+
+  The MVP is a frontend demo: data comes from a committed unified JSON catalog
+  served by one read-only route handler and fetched with TanStack Query; the
+  cart persists in localStorage with strict validate-and-fallback hydration;
+  the Rent flow ends in a demo-honest confirmation screen (no payment). It
+  ships on Vercel with Vercel-native observability, a full Vitest + Playwright
+  test suite, and security headers.
+
+in_scope:
+  - id: e01
+    title: "Project scaffold & tooling"
+    detail: Next.js 16 (Turbopack) + pnpm + Node 20, TS strict, ESLint/Prettier/husky, next.config headers + remotePatterns, layout/fonts, metadata + OG.
+  - id: e02
+    title: "Catalog & seed generation"
+    detail: Unified products.json (~55 products, IDR, 4 categories + partner), generator script + curated hero overlay, SVG placeholder assets, integrity tests.
+  - id: e03
+    title: "Shared layers"
+    detail: data (products.ts, useProducts), domain (pricing, setupRules, validateSetupState), state (BuilderStore + useLocalStorage + quota guard), ui primitives, types, config, observability logger.
+  - id: e04
+    title: "Home feature"
+    detail: Hero ("Your Bali Office, Delivered."), How-it-Works (3 steps, step-2 copy rewritten), floating product cards from catalog, anchor nav. No avatar.
+  - id: e05
+    title: "Builder feature"
+    detail: Canvas + slots + secondary zones, selection panel (chair/desk single-select, accessory steppers with caps), sticky monthly total, pre-selected defaults, keyboard-operable.
+  - id: e06
+    title: "Store feature"
+    detail: Grid + category filter tabs, Add-to-Setup actions, partner modal request flow (motorcycle), image fallback.
+  - id: e07
+    title: "Summary feature & page shell"
+    detail: Line items + Qty + Monthly Total, delivery-location input (validated), zone tiles (Coffee/Relax), mock confirmation; not-found/error/global-error/loading.
+  - id: e08
+    title: "E2E suite & CI"
+    detail: Playwright positive + N1-N11 negative flows against production build; CI workflow (lint → typecheck → unit → coverage gate → build → e2e); belt-and-braces bundle-content assertion.
+out_of_scope:
+  - item: Payment / real checkout / Stripe
+    why: "Decision #5 + C2 — demo-honest mock confirmation only."
+  - item: Backend, database, accounts, auth
+    why: "Decision #4 — static JSON, no server-side persistence; C5 drops the avatar affordance."
+  - item: Real product photography
+    why: "Decision #31 — hybrid placeholders; real photos later via image-path swap."
+  - item: Indonesian language / i18n
+    why: "Decision #2 — English MVP; routes kept retrofit-friendly for [locale] group."
+  - item: Dark mode
+    why: "Decision #8 — light only; tokens retained for future."
+  - item: '"Garage space" category'
+    why: "Decision #6 — appears in no design; C3 drops its summary tile."
+  - item: Delivery fees, minimum term, rental duration selector
+    why: "Decision #7 + C1/C6 — flat monthly, no fees, no commitment."
+  - item: OpenTelemetry / external tracing vendors
+    why: "Decision O4 — lightweight log-based tracing suffices for a one-function app."
+  - item: Full WCAG AA certification
+    why: "Decision #24 — baseline a11y only for the MVP."
+  - item: Analytics/SEO beyond Vercel-native + OG
+    why: "Decisions O1/D2 — Speed Insights + Analytics + basic metadata + OG."
+constraints:
+  - Next.js 16 (Turbopack), React 19, TypeScript strict (+noUncheckedIndexedAccess, zero any)
+  - Tailwind CSS v4 with tropical-tech tokens (light mode only)
+  - TanStack Query v5, @vercel/analytics + @vercel/speed-insights
+  - pnpm, Node 20 LTS
+  - Vitest + RTL (unit/integration, 80% branch on shared/domain), Playwright (E2E, root e2e/)
+  - Vercel deployment (zero-config), no vercel.json
+  - English-only copy
+  - One unit per file; feature barrels; no cross-feature deep imports
+success_criteria:
+  - "A visitor can build a setup (chair, desk, 2 monitors, bean bag), see the live IDR total, rent it, and see the mock confirmation with matching items and total."
+  - "The setup survives refresh (localStorage) and corrupt storage cannot break the app (validate-and-fallback)."
+  - "All 11 E2E negative flows + positive flows pass against the production build in CI; 80% branch coverage on shared/domain."
+  - "Security headers + CSP present on all routes; no raw errors, no PII, no secrets in client or logs."
+  - "Structured logs + Web Vitals + analytics flow to Vercel dashboards."
+  - "The four designed pages match the mockups with the C1-C6 rulings applied."
+references:
+  - specs/DECISION_RECORD.md
+  - specs/tech-architecture/tech-stack.md
+  - specs/tech-architecture/TEST_PLAN_LATEST.md
+  - specs/tech-architecture/SECURITY_PLAN_LATEST.md
+  - specs/tech-architecture/DESIGN_PLAN_LATEST.md
+  - docs/design/interactive_builder/code.html
+  - docs/design/bali_essentials_store/code.html
+  - docs/design/review_rent/code.html
+  - docs/design/moni_s_workspace_home/code.html
+  - docs/design/tropical_tech/DESIGN.md

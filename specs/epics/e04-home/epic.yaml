@@ -2,7 +2,7 @@ id: e04
 title: Home Feature
 wsjf: 2.5
 total_bcps: 3
-status: in_progress
+status: done
 stories:
   - id: e04s01
     title: Home page

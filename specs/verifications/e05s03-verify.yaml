@@ -1,0 +1,26 @@
+story_id: e05s03
+verified_at: "2026-08-27T11:55:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "builder-wiring (2) + builder-persistence (4) tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T11:54:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  security:
+    passed: true
+    note: "G1/N10 corrupt-storage recovery test-verified at the page level"
+  gaps:
+    closed: true
+    notes:
+      - "Structural bug caught pre-test: CartProvider got catalog={[]} (would reject all hydration) — fetch lifted above provider"

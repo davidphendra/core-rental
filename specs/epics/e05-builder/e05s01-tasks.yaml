@@ -1,29 +1,40 @@
 story_id: e05s01
 title: Builder canvas
-status: failing
+status: passing
 bcps: 5
 tasks:
   - id: 1
-    description: "Canvas layout per interactive_builder mockup: desk + chair visuals, empty/solid slots (monitor, lamp, plant), secondary zones (Coffee Station, Relax Zone), background dot-grid"
-    verify: "pnpm build"
+    description: "Canvas layout per interactive_builder mockup: desk + chair visuals,
+      empty/solid slots (monitor, lamp, plant), secondary zones (Coffee Station, Relax
+      Zone), background dot-grid"
+    verify: pnpm build
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["ui", "build"]
+      categories:
+        - ui
+        - build
   - id: 2
-    description: "Slots fill with selected item image; empty slots show dashed state + add affordance; slot click adds item (subject to caps)"
-    verify: "pnpm test -- BuilderCanvas.test.tsx"
+    description: Slots fill with selected item image; empty slots show dashed state
+      + add affordance; slot click adds item (subject to caps)
+    verify: pnpm test -- BuilderCanvas.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["unit", "ui", "domain"]
+      categories:
+        - unit
+        - ui
+        - domain
   - id: 3
-    description: "Keyboard operability (#24): tab to slots, Enter/Space to add, arrow keys adjust quantity; focus-visible states"
-    verify: "pnpm test -- BuilderCanvas.a11y.test.tsx"
+    description: "Keyboard operability (#24): tab to slots, Enter/Space to add, arrow
+      keys adjust quantity; focus-visible states"
+    verify: pnpm test -- BuilderCanvas.a11y.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["unit", "a11y"]
+      categories:
+        - unit
+        - a11y

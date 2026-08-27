@@ -1,6 +1,5 @@
 import type { Product } from "../types/product";
 import type { SetupState } from "../types/setup";
-
 /**
  * Per-category quantity caps (decision #22) — config table, easy to change.
  * Keys derive from product ids: `accessory-<key>-<slug>` or `extra-<slug>`.
@@ -38,6 +37,25 @@ export function capKeyForProduct(product: Pick<Product, "id" | "category">): Cap
 /** Whether a product may ever enter the cart (partner excluded, #20). */
 export function isCartEligible(product: Pick<Product, "category">): boolean {
   return product.category !== "partner";
+}
+
+/**
+ * D1 defaults, applied when the cart has no chair AND no desk (fresh cart).
+ * Returns the state to hydrate or null when defaults are not needed/possible.
+ */
+export function defaultsIfEmpty(
+  state: Pick<SetupState, "chairId" | "deskId">,
+  catalog: readonly Product[],
+): Pick<SetupState, "chairId" | "deskId"> | null {
+  if (state.chairId !== null || state.deskId !== null) {
+    return null;
+  }
+  const chair = catalog.find((p) => p.category === "chair");
+  const desk = catalog.find((p) => p.category === "desk");
+  if (chair === undefined || desk === undefined) {
+    return null;
+  }
+  return { chairId: chair.id, deskId: desk.id };
 }
 
 /**

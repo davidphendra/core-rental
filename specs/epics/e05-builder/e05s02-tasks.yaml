@@ -1,29 +1,39 @@
 story_id: e05s02
 title: Selection panel & quantity steppers
-status: failing
+status: passing
 bcps: 4
 tasks:
   - id: 1
-    description: "Selection panel tabs (Chairs / Desks / Accessories / Extras) filtering the unified catalog; product cards via shared ProductCard; scrollable panel"
-    verify: "pnpm build"
+    description: Selection panel tabs (Chairs / Desks / Accessories / Extras) filtering
+      the unified catalog; product cards via shared ProductCard; scrollable panel
+    verify: pnpm build
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["ui", "build"]
+      categories:
+        - ui
+        - build
   - id: 2
-    description: "Single-select chair/desk (exclusivity, #10); accessory QuantityStepper with per-category caps, disabled at cap (#22, N3)"
-    verify: "pnpm test -- QuantityStepper.test.tsx"
+    description: "Single-select chair/desk (exclusivity, #10); accessory QuantityStepper
+      with per-category caps, disabled at cap (#22, N3)"
+    verify: pnpm test -- QuantityStepper.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["unit", "ui", "domain"]
+      categories:
+        - unit
+        - ui
+        - domain
   - id: 3
-    description: "Sticky Monthly Total bar (live IDR total via pricing.ts), mobile bottom nav, 'View Setup Summary' -> /summary"
-    verify: "pnpm test -- StickySummaryBar.test.tsx"
+    description: Sticky Monthly Total bar (live IDR total via pricing.ts), mobile bottom
+      nav, 'View Setup Summary' -> /summary
+    verify: pnpm test -- StickySummaryBar.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["unit", "ui"]
+      categories:
+        - unit
+        - ui

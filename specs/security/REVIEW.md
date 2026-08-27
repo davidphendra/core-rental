@@ -1,29 +1,24 @@
-# Security Review — e03 (diff main..HEAD on feat/e03-shared)
+# Security Review — e05 (diff main..HEAD on feat/e05-builder)
 
-> verify-work step 5. Threat model: specs/security/epics/e03/THREAT_MODEL.md.
+> verify-work step 5. Threat model: specs/security/epics/e05/THREAT_MODEL.md.
 
 ## Scope scanned
 
-| File                                    | Surface                                                      |
-| --------------------------------------- | ------------------------------------------------------------ |
-| src/shared/domain/validateSetupState.ts | G1 hydration trust boundary (M1)                             |
-| src/shared/state/BuilderStore.tsx       | G2 reducer (caps, partner exclusion)                         |
-| src/shared/state/useLocalStorage.ts     | Validate-and-fallback reads (G1) + quota-guarded writes (E3) |
-| src/shared/observability/logger.ts      | PII-free logger (M2, O3)                                     |
-| src/shared/ui/*                         | Display-only primitives                                      |
-| src/app/global-error-handler.ts         | E4 structured capture                                        |
+- src/features/builder/* — canvas slots, selection panel, steppers, sticky bar, page wiring
+- src/shared/ui — SiteHeader, BottomNav, ProductCard (selected state)
+- src/shared/domain/setupRules.ts — defaultsIfEmpty addition
 
 ## Automated checks
 
 - Sinks (`innerHTML`, `eval(`, `new Function`, `dangerouslySetInnerHTML`): **none**
-- Secrets (`sk-`, `AKIA`, `ghp_`): **none**
-- PII guard: `PII_KEY_PATTERN` (address/email/phone/name/location/delivery) strips before emission — test-verified
-- Storage: try/catch write guard present (E3); reads validate-and-fallback (G1)
-- ErrorState/logger never render raw error text (#28)
+- Secrets: **none**
+- Cap enforcement: UI (`atCap`) AND reducer (`canAdd`) — defense in depth (B1)
+- Keyboard handlers gate on `event.key` (B2)
+- Image sources from catalog only + fallback (B4)
 
 ## Findings
 
-None new. M1 and M2 mitigations are now code + tests (validate-and-fallback boundary suite; logger PII-absence suite). L1 (PII at rest in localStorage) accepted by decision C4; XSS-by-construction + CSP protect it.
+None new. All B1–B4 are LOW and design-mitigated; N3/N5/N10 behaviors test-verified.
 
 ## Verdict
 

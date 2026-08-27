@@ -13,11 +13,23 @@ export const FALLBACK_IMAGE = "/fallback/product.svg";
  * Uses a plain <img> to match the mockups and keep the N7 fallback path simple.
  * onError swaps to the local fallback asset (decision #31).
  */
-export function ProductCard({ product, children }: { product: Product; children?: ReactNode }) {
+export function ProductCard({
+  product,
+  children,
+  selected = false,
+}: {
+  product: Product;
+  children?: ReactNode;
+  selected?: boolean;
+}) {
   const [imageSrc, setImageSrc] = useState(product.image);
 
   return (
-    <article className="border-surface-variant bg-surface-container-lowest p-stack-md tropical-card flex flex-col rounded-xl border">
+    <article
+      className={`bg-surface-container-lowest p-stack-md tropical-card flex flex-col rounded-xl border ${
+        selected ? "border-primary ring-primary/30 ring-2" : "border-surface-variant"
+      }`}
+    >
       <div className="bg-surface-container-low relative mb-3 h-48 w-full overflow-hidden rounded-lg">
         {/* eslint-disable-next-line @next/next/no-img-element -- mockups use <img>; keeps N7 fallback testable */}
         <img

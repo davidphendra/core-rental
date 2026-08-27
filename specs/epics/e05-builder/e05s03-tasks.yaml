@@ -1,22 +1,31 @@
 story_id: e05s03
 title: Builder wiring
-status: failing
+status: passing
 bcps: 3
 tasks:
   - id: 1
-    description: "Wire BuilderStore + useProducts into builder; pre-selected first chair + first desk on empty cart (D1); loading/error states via shared LoadingSkeleton/ErrorState (D4)"
-    verify: "pnpm test -- Builder.wiring.test.tsx"
+    description: Wire BuilderStore + useProducts into builder; pre-selected first chair
+      + first desk on empty cart (D1); loading/error states via shared LoadingSkeleton/ErrorState
+      (D4)
+    verify: pnpm test -- Builder.wiring.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["unit", "ui", "domain"]
+      categories:
+        - unit
+        - ui
+        - domain
   - id: 2
-    description: "Persistence integration: cart survives navigation and refresh; corrupt localStorage falls back to D1 defaults (G1/N10 path)"
-    verify: "pnpm test -- Builder.persistence.test.tsx"
+    description: "Persistence integration: cart survives navigation and refresh; corrupt
+      localStorage falls back to D1 defaults (G1/N10 path)"
+    verify: pnpm test -- Builder.persistence.test.tsx
     risk: P0
-    status: failing
+    status: passing
     security: low
     allure:
       severity: critical
-      categories: ["unit", "domain", "Security Review"]
+      categories:
+        - unit
+        - domain
+        - Security Review

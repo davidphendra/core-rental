@@ -1,0 +1,33 @@
+story_id: e05s01
+verified_at: "2026-08-27T11:55:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "BuilderCanvas (5) + a11y (6) tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T11:54:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  manual:
+    steps:
+      - step: "GET /builder on production server"
+        expected: "200 with the builder shell"
+        actual: "200; 'Design Your Workspace' present in HTML"
+        passed: true
+  security:
+    passed: true
+    note: "B1-B4 all LOW; caps enforced at UI (atCap) AND reducer (canAdd) — defense in depth"
+  gaps:
+    closed: true
+    notes:
+      - "empty-slot aria-label set to the CTA text (emptyHint)"
+      - "ArrowUp-from-empty adds (stepper UX)"

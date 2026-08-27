@@ -1,37 +1,52 @@
 story_id: e02s01
 title: Catalog generator & hero overlay
-status: failing
+status: passing
 bcps: 4
 tasks:
   - id: 1
-    description: "scripts/curated-hero.ts: the 7 hero products with mockup-exact data (names, IDR prices, Google image URLs)"
-    verify: "node scripts/curated-hero.ts && test -f scripts/curated-hero.ts"
+    description: "scripts/curated-hero.ts: the 7 hero products with mockup-exact data
+      (names, IDR prices, Google image URLs)"
+    verify: node scripts/curated-hero.ts && test -f scripts/curated-hero.ts
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["data", "unit"]
+      categories:
+        - data
+        - unit
   - id: 2
-    description: "scripts/generate-catalog.ts: deterministic builder producing src/shared/data/products.json (~55-60 products, 4 categories + partner, round IDR prices, SVG placeholder paths for non-hero)"
-    verify: "pnpm generate:catalog && node -e \"JSON.parse(require('fs').readFileSync('src/shared/data/products.json'))\""
+    description:
+      "scripts/generate-catalog.ts: deterministic builder producing src/shared/data/products.json
+      (~55-60 products, 4 categories + partner, round IDR prices, SVG placeholder paths
+      for non-hero)"
+    verify: pnpm generate:catalog && node -e "JSON.parse(require('fs').readFileSync('src/shared/data/products.json'))"
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["data", "unit"]
+      categories:
+        - data
+        - unit
   - id: 3
-    description: "Generate on-brand SVG placeholder tiles into public/placeholders/ (category-colored, Material icon, name + IDR price)"
-    verify: "test -f public/placeholders/monitor.svg && test -f public/placeholders/desk.svg"
+    description:
+      Generate on-brand SVG placeholder tiles into public/placeholders/ (category-colored,
+      Material icon, name + IDR price)
+    verify: test -f public/placeholders/monitor.svg && test -f public/placeholders/desk.svg
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["assets"]
+      categories:
+        - assets
   - id: 4
-    description: "Catalog integrity unit tests: every product typed (id/category/pricePerMonth/image), categories valid, per-category counts per decision #30, caps consistent"
-    verify: "pnpm test -- catalog.test.ts"
+    description:
+      "Catalog integrity unit tests: every product typed (id/category/pricePerMonth/image),
+      categories valid, per-category counts per decision #30, caps consistent"
+    verify: pnpm test -- catalog.test.ts
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["unit", "data"]
+      categories:
+        - unit
+        - data

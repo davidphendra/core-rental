@@ -1,0 +1,37 @@
+story_id: e02s01
+verified_at: "2026-08-27T11:05:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "9 catalog integrity tests + 2 e01 listener tests (18 total in suite)"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T11:03:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  manual:
+    steps:
+      - step: "pnpm generate:catalog"
+        expected: "57 products (10 chair / 10 desk / 32 accessory / 4 extra / 1 partner); 50 SVG tiles"
+        actual: "57 products exactly; 50 placeholders written; deterministic across runs"
+        passed: true
+      - step: "GET /placeholders/<slug>.svg on production server"
+        expected: "200 with valid SVG"
+        actual: "200, valid XML served"
+        passed: true
+  security:
+    passed: true
+    report: "specs/security/REVIEW.md (updated)"
+    findings: "No HIGH; generator path-writes safe-by-construction (S3), SVG names escaped (S2)"
+  gaps:
+    closed: true
+    notes:
+      - "Test caught contract guard accepting pricePerMonth: 0 -> fixed to require > 0"

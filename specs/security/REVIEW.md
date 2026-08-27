@@ -1,32 +1,30 @@
-# Security Review — e01 (diff 44adeaf..HEAD)
+# Security Review — e02 (diff main..HEAD on feat/e02-catalog)
 
-> verify-work step 5. Diff-scan of the e01 working set (src/ + next.config.ts).
-> Baseline: 44adeaf (planning artifacts). Threat model: specs/security/epics/e01/THREAT_MODEL.md.
+> verify-work step 5. Threat model: specs/security/epics/e02/THREAT_MODEL.md.
 
 ## Scope scanned
 
-| File                                       | Security-relevant surface                                                                                                                     |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| next.config.ts                             | CSP + X-Frame-Options + X-Content-Type-Options + Referrer-Policy + Permissions-Policy; images.remotePatterns (lh3.googleusercontent.com only) |
-| src/app/layout.tsx                         | Material Symbols external <link>; Analytics + SpeedInsights beacons; no secrets                                                               |
-| src/app/providers.tsx                      | QueryClient singleton                                                                                                                         |
-| src/app/global-error-handler.ts            | Global unhandledrejection/error listeners (E4)                                                                                                |
-| src/app/error-listeners.tsx                | Mounts listeners                                                                                                                              |
-| src/app/loading.tsx, page.tsx, globals.css | No security surface                                                                                                                           |
+| File                                                      | Surface                                                                         |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| scripts/generate-catalog.ts + curated-hero.ts             | File writes (fixed PROJECT_ROOT paths), SVG generation, developer-authored data |
+| src/app/api/products/route.ts                             | Read-only route; static import + contract guard → generic 500                   |
+| src/shared/data/products.ts                               | isProduct / isValidCatalog validation                                           |
+| src/shared/data/useProducts.ts                            | Client fetch of /api/products                                                   |
+| src/shared/data/products.json + public/placeholders/*.svg | Committed artifacts                                                             |
 
 ## Automated checks
 
 - Sinks (`dangerouslySetInnerHTML`, `innerHTML`, `eval(`, `new Function`): **none**
-- Secrets (`process.env`, api_key, token, secret, password): **none** (only CSS comment word "tokens" — false positive)
-- CSP: present, **no `unsafe-eval`**; hosts allowlisted per SECURITY_PLAN_LATEST (fonts.googleapis.com, fonts.gstatic.com, lh3.googleusercontent.com, va.vercel-scripts.com)
+- Secrets (`sk-`, `ghp_`, `AKIA`, env values): **none repo-wide**
+- Path operations: only the generator's fixed writes to `src/shared/data/` and `public/placeholders/`, keyed by developer-authored slugs (regex-validated in tests) — **S3 accepted by construction**
+- SVG names XML-escaped (`&`, `<`, `"`) — **S2 injection-proof, test-verified**
+- Contract guard returns generic `{"error":"Products unavailable"}` — **S1 mitigated, unit-tested**
+- Image hosts remain allowlisted (`lh3.googleusercontent.com` only) — **S4 unchanged from e01**
 
 ## Findings
 
-### F4-adjacent — LOW — global listeners log raw reason (CWE-532)
-
-- **Description:** `global-error-handler.ts` logs `event.reason` / `event.message` to console. A rejection reason could in theory carry data.
-- **Verdict:** Acceptable for e01. Console-only sink (no tracking tooling per demo posture); structured `logger` upgrade at e03s03 makes the sink PII-free by construction (O3). No action blocks this gate.
+None new. All e02 threat-model findings are design-mitigated or safe-by-construction and verified by the test suite.
 
 ## Verdict
 
-**PASS** — no HIGH/CRITICAL findings. LOWs documented above; no exceptions requested.
+**PASS** — no HIGH/CRITICAL. No exceptions requested.

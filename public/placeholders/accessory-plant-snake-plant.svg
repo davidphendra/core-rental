@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" rx="16" fill="#f3f4f5"/>
+  <rect x="24" y="24" width="352" height="160" rx="12" fill="#bb580d" opacity="0.18"/>
+  <circle cx="200" cy="104" r="40" fill="#bb580d"/>
+  <text x="200" y="120" text-anchor="middle" font-family="sans-serif" font-size="32" fill="#ffffff">accessory</text>
+  <text x="200" y="208" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="600" fill="#191c1d">Snake Plant</text>
+  <text x="200" y="238" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#3d4949">Rp 100.000/mo</text>
+</svg>

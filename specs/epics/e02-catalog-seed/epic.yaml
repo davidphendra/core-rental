@@ -2,7 +2,7 @@ id: e02
 title: Catalog & Seed Generation
 wsjf: 4.33
 total_bcps: 7
-status: in_progress
+status: done
 stories:
   - id: e02s01
     title: Catalog generator & hero overlay

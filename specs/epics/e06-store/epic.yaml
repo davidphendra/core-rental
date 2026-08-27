@@ -2,7 +2,7 @@ id: e06
 title: Store Feature
 wsjf: 3.5
 total_bcps: 6
-status: todo
+status: in_progress
 stories:
   - id: e06s01
     title: Store grid & category filter

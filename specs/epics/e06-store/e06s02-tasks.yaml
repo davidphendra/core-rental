@@ -1,21 +1,29 @@
 story_id: e06s02
 title: Partner request modal
-status: failing
+status: passing
 bcps: 3
 tasks:
   - id: 1
-    description: "PartnerRequestModal: motorcycle (category 'partner') shows 'Request Rental' (tertiary button), modal with details + mock confirmation in place (#20, C2 demo-honest copy)"
-    verify: "pnpm test -- PartnerRequestModal.test.tsx"
+    description: "PartnerRequestModal: motorcycle (category 'partner') shows 'Request
+      Rental' (tertiary button), modal with details + mock confirmation in place (#20,
+      C2 demo-honest copy)"
+    verify: pnpm test -- PartnerRequestModal.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
-      categories: ["unit", "ui"]
+      categories:
+        - unit
+        - ui
   - id: 2
-    description: "Partner exclusion: motorcycle never enters cart/summary — enforced structurally by category check in setupRules (N6 path)"
-    verify: "pnpm test -- PartnerRequestModal.test.tsx"
+    description: "Partner exclusion: motorcycle never enters cart/summary \u2014 enforced\
+      \ structurally by category check in setupRules (N6 path)"
+    verify: pnpm test -- PartnerRequestModal.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["unit", "domain", "Security Review"]
+      categories:
+        - unit
+        - domain
+        - Security Review

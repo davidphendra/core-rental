@@ -1,0 +1,30 @@
+story_id: e06s01
+verified_at: "2026-08-27T12:10:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "StoreCard (5) + StoreGrid (4) tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T12:09:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  manual:
+    steps:
+      - step: "GET /store on production server"
+        expected: "200"
+        actual: "200 (content client-hydrated)"
+        passed: true
+  security:
+    passed: true
+    note: "S1 caps enforced at UI + reducer (N3); S3 image fallback inherited; no sinks/secrets"
+  gaps:
+    closed: true

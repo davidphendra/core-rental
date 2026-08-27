@@ -8,9 +8,10 @@ release:
   last_tag: null
   last_publish: null
 epic_cycle:
-  current_step: 0
-  next_skill: security-review
-  completed_steps: []
+  current_step: 1
+  next_skill: survey-context
+  completed_steps:
+    - 0
   fast_mode: false
 bug_cycle:
   current_step: null

@@ -2,7 +2,7 @@ id: e05
 title: Builder Feature
 wsjf: 3.5
 total_bcps: 12
-status: in_progress
+status: done
 stories:
   - id: e05s01
     title: Builder canvas

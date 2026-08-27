@@ -2,7 +2,7 @@ id: e08
 title: E2E Suite & CI
 wsjf: 3.33
 total_bcps: 9
-status: in_progress
+status: done
 stories:
   - id: e08s01
     title: E2E positive suite

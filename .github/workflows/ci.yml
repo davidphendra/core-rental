@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: lint → typecheck → unit → coverage → build → e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit + integration
+        run: pnpm test
+
+      - name: Coverage gate (80% branch on shared/domain, decision D3)
+        run: pnpm test:coverage
+
+      - name: Build (production, Turbopack)
+        run: pnpm build
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E (positive + N1–N11 vs production build)
+        run: pnpm test:e2e
+
+      - name: Belt-and-braces — no test code in the production bundle
+        run: |
+          if find .next -name "*.test.*" | grep -q .; then
+            echo "FAIL: test files found in .next"; find .next -name "*.test.*"; exit 1
+          fi
+          if grep -rq "toBeInTheDocument" .next/static 2>/dev/null; then
+            echo "FAIL: test-only matcher found in .next/static"; exit 1
+          fi
+          echo "clean — no test code shipped"
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: test-results/
+          retention-days: 7

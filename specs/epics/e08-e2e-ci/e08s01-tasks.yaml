@@ -1,29 +1,37 @@
 story_id: e08s01
 title: E2E positive suite
-status: failing
+status: passing
 bcps: 4
 tasks:
   - id: 1
-    description: "Playwright setup: playwright.config.ts (webServer = next build && next start, chromium), e2e/fixtures/reset-state.ts (localStorage clear) + catalog-helpers.ts (import products.json, spec-local arithmetic, #37)"
-    verify: "pnpm test:e2e"
+    description: "Playwright setup: playwright.config.ts (webServer = next build &&
+      next start, chromium), e2e/fixtures/reset-state.ts (localStorage clear) + catalog-helpers.ts
+      (import products.json, spec-local arithmetic, #37)"
+    verify: pnpm test:e2e
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["e2e", "infra"]
+      categories:
+        - e2e
+        - infra
   - id: 2
-    description: "builder.spec.ts positive: select chair/desk, stack 2 monitors via stepper, sticky IDR total updates (assert rendered text)"
-    verify: "pnpm test:e2e -- builder"
+    description: "builder.spec.ts positive: select chair/desk, stack 2 monitors via
+      stepper, sticky IDR total updates (assert rendered text)"
+    verify: pnpm test:e2e -- builder
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["e2e"]
+      categories:
+        - e2e
   - id: 3
-    description: "store.spec.ts + summary.spec.ts positive: add surfboard, summary line items + total match spec-computed sum, Rent -> confirmation shows items + total"
-    verify: "pnpm test:e2e"
+    description: "store.spec.ts + summary.spec.ts positive: add surfboard, summary line
+      items + total match spec-computed sum, Rent -> confirmation shows items + total"
+    verify: pnpm test:e2e
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["e2e"]
+      categories:
+        - e2e

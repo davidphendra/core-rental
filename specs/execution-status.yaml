@@ -59,6 +59,10 @@ stories:
     started_at: null
     completed_at: "2026-08-27T11:58:12.398927Z"
   e08s01:
-    status: in_progress
+    status: done
     started_at: "2026-08-27T12:01:08.369249Z"
-  e08s02: todo
+    completed_at: "2026-08-27T12:06:47.116040Z"
+  e08s02:
+    status: done
+    started_at: null
+    completed_at: "2026-08-27T12:17:46.379761Z"

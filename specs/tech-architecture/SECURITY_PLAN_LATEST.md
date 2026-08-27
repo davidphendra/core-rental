@@ -4,18 +4,19 @@
 
 ## Trust boundary — the app never trusts user data
 
-| Surface | Protection |
-|---|---|
+| Surface                                                       | Protection                                                                                      |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | Rendered text (incl. delivery address echoed in confirmation) | XSS-safe by construction: React escapes all strings; `dangerouslySetInnerHTML` is **forbidden** |
-| `/api/products` | Read-only, no params/body — no server-side input surface |
-| URL/query params | None exist; unknown URLs → 404 |
-| localStorage hydration | `validateSetupState` (G1): shape + business rules; any failure → defaults |
-| Reducer actions | Validated via `setupRules` (G2): over-cap / partner adds rejected as no-ops |
-| Delivery Location input | Trim + non-empty + max 120 chars; inline error; Rent disabled until valid (G3) |
+| `/api/products`                                               | Read-only, no params/body — no server-side input surface                                        |
+| URL/query params                                              | None exist; unknown URLs → 404                                                                  |
+| localStorage hydration                                        | `validateSetupState` (G1): shape + business rules; any failure → defaults                       |
+| Reducer actions                                               | Validated via `setupRules` (G2): over-cap / partner adds rejected as no-ops                     |
+| Delivery Location input                                       | Trim + non-empty + max 120 chars; inline error; Rent disabled until valid (G3)                  |
 
 ## HTTP security headers (decision #13)
 
 Set via `headers()` in `next.config.ts` on all routes:
+
 - `Content-Security-Policy` (below)
 - `X-Frame-Options: DENY`
 - `X-Content-Type-Options: nosniff`
@@ -27,7 +28,7 @@ Set via `headers()` in `next.config.ts` on all routes:
 Pragmatic policy — no nonce ceremony (Tailwind inline styles need `'unsafe-inline'` for style):
 
 - `default-src 'self'`
-- `script-src 'self' https://va.vercel-scripts.com` — Vercel analytics/speed-insights beacon host (O3)
+- `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com` — **`'unsafe-inline'` is a documented deviation**: Next.js hydration requires inline bootstrap scripts (proven by E2E; strict script-src breaks the app). Accepted because the app has zero injection sinks (no `dangerouslySetInnerHTML`, enforced) and CSP still blocks arbitrary hosts + `'unsafe-eval'`. Nonce-based CSP is the documented future hardening path.
 - `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com` — Material Symbols `<link>` (D6)
 - `font-src 'self' https://fonts.gstatic.com` — Material Symbols font files (D6)
 - `img-src 'self' https://lh3.googleusercontent.com data: blob:` — hybrid product images (decision #31)

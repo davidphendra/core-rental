@@ -1,0 +1,32 @@
+story_id: e08s02
+verified_at: "2026-08-27T12:55:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "N1-N11 negative E2E + full positive suite (16 specs total)"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T12:54:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  coverage:
+    passed: true
+    command: "pnpm test:coverage"
+    result: "96.2% stmts / 96.77% branch on shared/domain (threshold 80%)"
+  security:
+    passed: true
+    note: "C1 no tokens in workflow; N9 headers asserted on all routes; belt-and-braces clean (no test code in .next)"
+  gaps:
+    closed: true
+    notes:
+      - "N8 needed a 15s timeout (TanStack retries precede the error state)"
+      - "N11 needs blur() to trigger the touched error (matches real-user behavior)"
+      - "getByRole('alert') collides with Next's route announcer — scoped with .first()"

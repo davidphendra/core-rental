@@ -1,0 +1,31 @@
+story_id: e08s01
+verified_at: "2026-08-27T12:55:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "5 positive E2E specs + 125 unit tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T12:54:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  e2e:
+    passed: true
+    command: "pnpm test:e2e"
+    note: "5/5 positive specs vs production build"
+  security:
+    passed: true
+    note: "C2 local-build isolation; E2E caught + fixed the CSP hydration bug (unsafe-inline for scripts, documented)"
+  gaps:
+    closed: true
+    notes:
+      - "CSP hydration bug found by E2E (React #412) -> script-src 'unsafe-inline' with documented rationale"
+      - "playwright.config moved to repo root (testDir ./e2e) per decision #38"

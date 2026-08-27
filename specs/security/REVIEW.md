@@ -1,24 +1,25 @@
-# Security Review — e07 (diff main..HEAD on feat/e07-summary)
+# Security Review — e08 (diff main..HEAD on feat/e08-e2e)
 
-> verify-work step 5. Threat model: specs/security/epics/e07/THREAT_MODEL.md.
+> verify-work step 5. Threat model: specs/security/epics/e08/THREAT_MODEL.md.
 
 ## Scope scanned
 
-- src/features/summary/* — SummaryView, DeliveryInput, ConfirmationScreen, EmptyState, ZoneTiles
-- src/app/summary/page.tsx — rent flow wiring
-- src/app/not-found.tsx, error.tsx, global-error.tsx — page shell
+- e2e/ suite (positive + N1–N11) + playwright.config.ts (root)
+- .github/workflows/ci.yml
+- next.config.ts CSP change (unsafe-inline for scripts)
 
 ## Automated checks
 
-- Sinks (`innerHTML`, `dangerouslySetInnerHTML`, `eval(`): **none**
-- Secrets: **none**
-- Delivery PII (T1): shared G3 validation; Rent gated; React-escaped echo; **never logged** (`delivery.submitted` via `logDeliverySubmitted(hasAddress, addressLength)`; PII-free test asserts no address in any log line)
-- Error boundaries (T2): generic copy only; raw error text not rendered (test-asserted); `error.boundary` structured logs in both boundaries
-- 404 + error routes carry the security headers (curl-verified on the 404)
+- C1: no secrets/tokens in the CI workflow ✓
+- C2: webServer runs a LOCAL production build (`next build && next start`) — tests never touch a deployed site ✓
+- C3: @playwright/test pinned via lockfile (14 refs); CI uses `playwright install --with-deps` ✓
+- CSP: `'unsafe-inline'` for scripts is a **documented deviation** (F1) — required for Next.js hydration, proven by E2E; accepted because the app has zero injection sinks and CSP still blocks arbitrary hosts + `'unsafe-eval'`
+- Belt-and-braces: no `*.test.*` in `.next`, no `toBeInTheDocument` in `.next/static` — test code provably never ships ✓
+- N9 asserts the full header posture on all routes + API ✓
 
 ## Findings
 
-None new. T1/T2 mitigations code + test-verified.
+None new. All C1–C3 LOW and mitigated; the CSP deviation is documented in F1 + SECURITY_PLAN_LATEST.
 
 ## Verdict
 

@@ -1,29 +1,29 @@
-# Security Review — e02 (diff main..HEAD on feat/e02-catalog)
+# Security Review — e03 (diff main..HEAD on feat/e03-shared)
 
-> verify-work step 5. Threat model: specs/security/epics/e02/THREAT_MODEL.md.
+> verify-work step 5. Threat model: specs/security/epics/e03/THREAT_MODEL.md.
 
 ## Scope scanned
 
-| File                                                      | Surface                                                                         |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| scripts/generate-catalog.ts + curated-hero.ts             | File writes (fixed PROJECT_ROOT paths), SVG generation, developer-authored data |
-| src/app/api/products/route.ts                             | Read-only route; static import + contract guard → generic 500                   |
-| src/shared/data/products.ts                               | isProduct / isValidCatalog validation                                           |
-| src/shared/data/useProducts.ts                            | Client fetch of /api/products                                                   |
-| src/shared/data/products.json + public/placeholders/*.svg | Committed artifacts                                                             |
+| File                                    | Surface                                                      |
+| --------------------------------------- | ------------------------------------------------------------ |
+| src/shared/domain/validateSetupState.ts | G1 hydration trust boundary (M1)                             |
+| src/shared/state/BuilderStore.tsx       | G2 reducer (caps, partner exclusion)                         |
+| src/shared/state/useLocalStorage.ts     | Validate-and-fallback reads (G1) + quota-guarded writes (E3) |
+| src/shared/observability/logger.ts      | PII-free logger (M2, O3)                                     |
+| src/shared/ui/*                         | Display-only primitives                                      |
+| src/app/global-error-handler.ts         | E4 structured capture                                        |
 
 ## Automated checks
 
-- Sinks (`dangerouslySetInnerHTML`, `innerHTML`, `eval(`, `new Function`): **none**
-- Secrets (`sk-`, `ghp_`, `AKIA`, env values): **none repo-wide**
-- Path operations: only the generator's fixed writes to `src/shared/data/` and `public/placeholders/`, keyed by developer-authored slugs (regex-validated in tests) — **S3 accepted by construction**
-- SVG names XML-escaped (`&`, `<`, `"`) — **S2 injection-proof, test-verified**
-- Contract guard returns generic `{"error":"Products unavailable"}` — **S1 mitigated, unit-tested**
-- Image hosts remain allowlisted (`lh3.googleusercontent.com` only) — **S4 unchanged from e01**
+- Sinks (`innerHTML`, `eval(`, `new Function`, `dangerouslySetInnerHTML`): **none**
+- Secrets (`sk-`, `AKIA`, `ghp_`): **none**
+- PII guard: `PII_KEY_PATTERN` (address/email/phone/name/location/delivery) strips before emission — test-verified
+- Storage: try/catch write guard present (E3); reads validate-and-fallback (G1)
+- ErrorState/logger never render raw error text (#28)
 
 ## Findings
 
-None new. All e02 threat-model findings are design-mitigated or safe-by-construction and verified by the test suite.
+None new. M1 and M2 mitigations are now code + tests (validate-and-fallback boundary suite; logger PII-absence suite). L1 (PII at rest in localStorage) accepted by decision C4; XSS-by-construction + CSP protect it.
 
 ## Verdict
 

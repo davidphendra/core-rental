@@ -6,8 +6,10 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
     environment: "jsdom",
+    globals: true, // enables @testing-library/react auto-cleanup between tests
     include: ["src/**/*.test.{ts,tsx}"],
     passWithNoTests: true,
+    setupFiles: ["src/test/setup.ts"],
     coverage: {
       provider: "v8",
       // D3 gate: 80% branch on shared/domain only (pure business logic).

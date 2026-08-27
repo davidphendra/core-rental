@@ -1,0 +1,32 @@
+story_id: e03s01
+verified_at: "2026-08-27T11:30:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "pricing (4) + setupRules (10) + validateSetupState (10) tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T11:29:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  coverage:
+    passed: true
+    command: "pnpm test:coverage"
+    result: "97.16% stmts / 96.1% branch on shared/domain (threshold 80%)"
+  security:
+    passed: true
+    note: "Threat model M1 (hydration boundary) — validateSetupState boundary-tested; E2E N10 pending e08"
+  gaps:
+    closed: true
+    notes:
+      - "formatIdr NBSP normalized for E2E-stable text (test caught)"
+      - "validateSetupState accepted null chair/desk only after fix (test caught)"
+      - "test:coverage script added (the -- --coverage separator bug)"

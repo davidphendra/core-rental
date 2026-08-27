@@ -11,18 +11,18 @@ Shared rules for all agents and contributors. Violations fail review.
 
 ## Commands
 
-| Task | Command |
-|---|---|
-| Install | `pnpm install` |
-| Dev | `pnpm dev` |
-| Unit/integration | `pnpm test` (Vitest) |
-| Coverage | `pnpm test -- --coverage` (80% branch on `shared/domain`) |
-| Lint | `pnpm lint` (eslint-config-next) |
-| Format | `pnpm format` (Prettier) |
-| Typecheck | `pnpm typecheck` (tsc --noEmit) |
-| Build | `pnpm build` (next build) |
-| E2E | `pnpm test:e2e` (Playwright vs production build) |
-| Preflight | `pnpm preflight` (test + lint + typecheck + build chained) |
+| Task             | Command                                                    |
+| ---------------- | ---------------------------------------------------------- |
+| Install          | `pnpm install`                                             |
+| Dev              | `pnpm dev`                                                 |
+| Unit/integration | `pnpm test` (Vitest)                                       |
+| Coverage         | `pnpm test:coverage` (80% branch on `shared/domain`)       |
+| Lint             | `pnpm lint` (eslint-config-next)                           |
+| Format           | `pnpm format` (Prettier)                                   |
+| Typecheck        | `pnpm typecheck` (tsc --noEmit)                            |
+| Build            | `pnpm build` (next build)                                  |
+| E2E              | `pnpm test:e2e` (Playwright vs production build)           |
+| Preflight        | `pnpm preflight` (test + lint + typecheck + build chained) |
 
 ## Architecture (ADR 0002)
 

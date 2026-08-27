@@ -2,7 +2,7 @@ id: e03
 title: Shared Layers
 wsjf: 4.33
 total_bcps: 11
-status: todo
+status: in_progress
 stories:
   - id: e03s01
     title: Domain services

@@ -16,13 +16,31 @@ describe("initGlobalErrorListeners (E4)", () => {
     expect(addSpy).toHaveBeenCalledWith("error", expect.any(Function));
   });
 
-  it("logs window errors to the console", () => {
+  it("logs window errors as structured events", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     initGlobalErrorListeners();
-    const err = new Error("boom");
-    window.dispatchEvent(new ErrorEvent("error", { message: "boom", error: err }));
+    window.dispatchEvent(new ErrorEvent("error", { message: "boom" }));
 
-    expect(errorSpy).toHaveBeenCalledWith("[error]", err);
+    const line = errorSpy.mock.calls[0]?.[0] as string;
+    const parsed = JSON.parse(line) as Record<string, unknown>;
+    expect(parsed.event).toBe("unhandlederror");
+    expect(parsed.message).toBe("boom");
+  });
+
+  it("logs unhandled rejections as structured events", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    initGlobalErrorListeners();
+    // jsdom does not implement PromiseRejectionEvent — dispatch a plain Event
+    // carrying the reason property the handler reads.
+    const event = new Event("unhandledrejection");
+    Object.defineProperty(event, "reason", { value: new Error("async boom") });
+    window.dispatchEvent(event);
+
+    const line = errorSpy.mock.calls[0]?.[0] as string;
+    const parsed = JSON.parse(line) as Record<string, unknown>;
+    expect(parsed.event).toBe("unhandledrejection");
+    expect(parsed.message).toBe("async boom");
   });
 });

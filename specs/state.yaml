@@ -1,5 +1,5 @@
 active_flow: build_epic
-active_epic_id: e03
+active_epic_id: e05
 active_story_id: null
 active_bug_id: null
 workflow_mode: solo-git
@@ -8,25 +8,18 @@ release:
   last_tag: null
   last_publish: null
 epic_cycle:
-  current_step: 7
-  next_skill: commit-message
-  completed_steps:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
+  current_step: 0
+  next_skill: security-review
+  completed_steps: []
   fast_mode: false
-  audit_result: pass
 bug_cycle:
   current_step: null
   completed_steps: []
 git:
   branch: main
-  hash: e9d891a
-  note: "e02 released to main (v1.1.0 tag). Next epic: e03."
+  hash: 8c99f92
+  note: "e03 released to main (v1.2.0). Next epic: e05 (builder \u2014 the product\
+    \ hero)."
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

@@ -50,19 +50,22 @@ export function useCartTotals(catalog: readonly Product[]) {
   const { state } = useBuilderStore();
 
   return useMemo(() => {
-    const items: { pricePerMonth: number; quantity: number }[] = [];
+    const items: { product: Product; quantity: number }[] = [];
 
     const chair = state.chairId ? catalog.find((p) => p.id === state.chairId) : undefined;
     const desk = state.deskId ? catalog.find((p) => p.id === state.deskId) : undefined;
 
-    if (chair) items.push({ pricePerMonth: chair.pricePerMonth, quantity: 1 });
-    if (desk) items.push({ pricePerMonth: desk.pricePerMonth, quantity: 1 });
+    if (chair) items.push({ product: chair, quantity: 1 });
+    if (desk) items.push({ product: desk, quantity: 1 });
 
     for (const [id, quantity] of Object.entries(state.quantities)) {
       const product = catalog.find((p) => p.id === id);
-      if (product) items.push({ pricePerMonth: product.pricePerMonth, quantity });
+      if (product) items.push({ product, quantity });
     }
 
-    return { lineItems: items, total: monthlyTotal(items) };
+    const total = monthlyTotal(
+      items.map((item) => ({ pricePerMonth: item.product.pricePerMonth, quantity: item.quantity })),
+    );
+    return { lineItems: items, total };
   }, [state, catalog]);
 }

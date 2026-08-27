@@ -2,7 +2,7 @@ id: e07
 title: Summary Feature & Page Shell
 wsjf: 3.0
 total_bcps: 10
-status: todo
+status: in_progress
 stories:
   - id: e07s01
     title: Summary view

@@ -19,3 +19,7 @@ locks:
     locked_by: "agent: build-epic"
     locked_at: "2026-08-27T12:00:00Z"
     files_touched: []
+  - story_id: e07s01
+    locked_by: "agent: build-epic"
+    locked_at: "2026-08-27T12:15:00Z"
+    files_touched: []

@@ -1,0 +1,32 @@
+story_id: e07s03
+verified_at: "2026-08-27T12:30:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "page-shell (3) tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T12:29:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  manual:
+    steps:
+      - step: "GET /nonexistent-page on production server"
+        expected: "404 with playful copy + funnel CTAs"
+        actual: "404; 'This page has surfed away' present; CSP header present on the 404"
+        passed: true
+  security:
+    passed: true
+    note: "T2: error boundaries render generic copy, raw error never rendered (test-asserted); error.boundary structured logs"
+  gaps:
+    closed: true
+    notes:
+      - "test import collision with the global Error constructor — renamed imports"

@@ -1,22 +1,29 @@
 story_id: e07s02
 title: Rent flow & mock confirmation
-status: failing
+status: passing
 bcps: 3
 tasks:
   - id: 1
-    description: "Rent button -> mock confirmation screen (demo-honest copy, no Stripe/payment language, C2); confirmation echoes delivery location (C4) and shows line items + total matching the cart"
-    verify: "pnpm test -- ConfirmationScreen.test.tsx"
+    description: Rent button -> mock confirmation screen (demo-honest copy, no Stripe/payment
+      language, C2); confirmation echoes delivery location (C4) and shows line items
+      + total matching the cart
+    verify: pnpm test -- ConfirmationScreen.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
-      categories: ["unit", "ui", "domain"]
+      categories:
+        - unit
+        - ui
+        - domain
   - id: 2
-    description: "Log rent.clicked + delivery.submitted (O2 taxonomy, PII-free) on the flow"
-    verify: "pnpm test -- ConfirmationScreen.test.tsx"
+    description: Log rent.clicked + delivery.submitted (O2 taxonomy, PII-free) on the
+      flow
+    verify: pnpm test -- ConfirmationScreen.test.tsx
     risk: P2
-    status: failing
+    status: passing
     security: low
     allure:
       severity: normal
-      categories: ["observability"]
+      categories:
+        - observability

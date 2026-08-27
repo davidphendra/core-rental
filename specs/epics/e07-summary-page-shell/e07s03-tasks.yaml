@@ -1,30 +1,39 @@
 story_id: e07s03
 title: Page shell
-status: failing
+status: passing
 bcps: 3
 tasks:
   - id: 1
-    description: "not-found.tsx: playful 404 ('this page has surfed away') + Back to Home + Start Building CTAs (#27)"
-    verify: "pnpm build"
+    description: "not-found.tsx: playful 404 ('this page has surfed away') + Back
+      to Home + Start Building CTAs (#27)"
+    verify: pnpm build
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["ui", "build"]
+      categories:
+        - ui
+        - build
   - id: 2
-    description: "error.tsx + global-error.tsx: Client Component boundaries, generic copy + Try again (reset) + Back to Home, structured error.boundary log, raw error never rendered (#28, E1)"
-    verify: "pnpm build"
+    description: "error.tsx + global-error.tsx: Client Component boundaries, generic
+      copy + Try again (reset) + Back to Home, structured error.boundary log, raw error
+      never rendered (#28, E1)"
+    verify: pnpm build
     risk: P0
-    status: failing
+    status: passing
     security: low
     allure:
       severity: critical
-      categories: ["build", "Security Review"]
+      categories:
+        - build
+        - Security Review
   - id: 3
-    description: "loading.tsx brand skeleton wired to code-split route chunks (#29)"
-    verify: "pnpm build"
+    description: loading.tsx brand skeleton wired to code-split route chunks (#29)
+    verify: pnpm build
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
-      categories: ["ui", "build"]
+      categories:
+        - ui
+        - build

@@ -1,0 +1,26 @@
+story_id: e07s01
+verified_at: "2026-08-27T12:30:00Z"
+verifier: verify-work
+phases:
+  build:
+    passed: true
+    command: "pnpm build"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+  tests:
+    passed: true
+    note: "SummaryView (4) + DeliveryInput (3) tests"
+  terminal_verdict:
+    command: "pnpm preflight"
+    exit_code: 0
+    captured_at: "2026-08-27T12:29:00Z"
+    note: "Single contiguous run — test + lint + typecheck + build exit 0"
+  security:
+    passed: true
+    note: "T1 delivery PII: G3 validation + shared rule; Rent gated; input aria-invalid"
+  gaps:
+    closed: true
+    notes:
+      - "useCartTotals upgraded to carry product objects (receipt needs names)"

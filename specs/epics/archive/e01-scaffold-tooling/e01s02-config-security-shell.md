@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e01s02 |
+| Field | Value                   |
+| ----- | ----------------------- |
+| ID    | e01s02                  |
 | Title | Config & security shell |
-| Epic | e01 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e01                     |
+| Type  | feat                    |
+| Risk  | P1                      |
 
 ## 2. Summary
 

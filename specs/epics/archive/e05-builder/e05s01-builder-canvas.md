@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e05s01 |
+| Field | Value          |
+| ----- | -------------- |
+| ID    | e05s01         |
 | Title | Builder canvas |
-| Epic | e05 |
-| Type | feat |
-| Risk | P0 |
+| Epic  | e05            |
+| Type  | feat           |
+| Risk  | P0             |
 
 ## 2. Summary
 

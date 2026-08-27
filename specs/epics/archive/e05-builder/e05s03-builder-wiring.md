@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e05s03 |
+| Field | Value          |
+| ----- | -------------- |
+| ID    | e05s03         |
 | Title | Builder wiring |
-| Epic | e05 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e05            |
+| Type  | feat           |
+| Risk  | P1             |
 
 ## 2. Summary
 

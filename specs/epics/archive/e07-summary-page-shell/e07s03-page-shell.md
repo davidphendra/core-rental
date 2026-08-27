@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e07s03 |
+| Field | Value      |
+| ----- | ---------- |
+| ID    | e07s03     |
 | Title | Page shell |
-| Epic | e07 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e07        |
+| Type  | feat       |
+| Risk  | P1         |
 
 ## 2. Summary
 

@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e02s01 |
+| Field | Value                            |
+| ----- | -------------------------------- |
+| ID    | e02s01                           |
 | Title | Catalog generator & hero overlay |
-| Epic | e02 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e02                              |
+| Type  | feat                             |
+| Risk  | P1                               |
 
 ## 2. Summary
 

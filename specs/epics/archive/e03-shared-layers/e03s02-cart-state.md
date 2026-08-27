@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e03s02 |
+| Field | Value                    |
+| ----- | ------------------------ |
+| ID    | e03s02                   |
 | Title | Cart state & persistence |
-| Epic | e03 |
-| Type | feat |
-| Risk | P0 |
+| Epic  | e03                      |
+| Type  | feat                     |
+| Risk  | P0                       |
 
 ## 2. Summary
 

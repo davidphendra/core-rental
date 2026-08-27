@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e07s02 |
+| Field | Value                         |
+| ----- | ----------------------------- |
+| ID    | e07s02                        |
 | Title | Rent flow & mock confirmation |
-| Epic | e07 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e07                           |
+| Type  | feat                          |
+| Risk  | P1                            |
 
 ## 2. Summary
 

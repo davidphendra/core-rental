@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e03s01 |
+| Field | Value           |
+| ----- | --------------- |
+| ID    | e03s01          |
 | Title | Domain services |
-| Epic | e03 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e03             |
+| Type  | feat            |
+| Risk  | P1              |
 
 ## 2. Summary
 

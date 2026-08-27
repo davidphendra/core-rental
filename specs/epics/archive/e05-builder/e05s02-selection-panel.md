@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e05s02 |
+| Field | Value                               |
+| ----- | ----------------------------------- |
+| ID    | e05s02                              |
 | Title | Selection panel & quantity steppers |
-| Epic | e05 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e05                                 |
+| Type  | feat                                |
+| Risk  | P1                                  |
 
 ## 2. Summary
 

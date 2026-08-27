@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e03s03 |
+| Field | Value                                |
+| ----- | ------------------------------------ |
+| ID    | e03s03                               |
 | Title | Shared UI primitives & observability |
-| Epic | e03 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e03                                  |
+| Type  | feat                                 |
+| Risk  | P1                                   |
 
 ## 2. Summary
 

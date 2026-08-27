@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e06s01 |
+| Field | Value                        |
+| ----- | ---------------------------- |
+| ID    | e06s01                       |
 | Title | Store grid & category filter |
-| Epic | e06 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e06                          |
+| Type  | feat                         |
+| Risk  | P1                           |
 
 ## 2. Summary
 

@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e01s01 |
+| Field | Value            |
+| ----- | ---------------- |
+| ID    | e01s01           |
 | Title | Project scaffold |
-| Epic | e01 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e01              |
+| Type  | feat             |
+| Risk  | P1               |
 
 ## 2. Summary
 

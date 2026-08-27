@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e06s02 |
+| Field | Value                 |
+| ----- | --------------------- |
+| ID    | e06s02                |
 | Title | Partner request modal |
-| Epic | e06 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e06                   |
+| Type  | feat                  |
+| Risk  | P1                    |
 
 ## 2. Summary
 

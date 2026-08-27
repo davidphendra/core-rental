@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e08s01 |
+| Field | Value              |
+| ----- | ------------------ |
+| ID    | e08s01             |
 | Title | E2E positive suite |
-| Epic | e08 |
-| Type | feat |
-| Risk | P0 |
+| Epic  | e08                |
+| Type  | feat               |
+| Risk  | P0                 |
 
 ## 2. Summary
 

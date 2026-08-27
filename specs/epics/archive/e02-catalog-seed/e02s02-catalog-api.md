@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e02s02 |
+| Field | Value                     |
+| ----- | ------------------------- |
+| ID    | e02s02                    |
 | Title | Catalog API & query layer |
-| Epic | e02 |
-| Type | feat |
-| Risk | P1 |
+| Epic  | e02                       |
+| Type  | feat                      |
+| Risk  | P1                        |
 
 ## 2. Summary
 
@@ -54,7 +54,7 @@ No UI (loading/error states land in e03s03 shared primitives).
 
 ## 10. Validation Rules
 
-Contract guard on response payload (non-empty array, well-typed). Client hydration of the *cart* is separate (G1, e03s02).
+Contract guard on response payload (non-empty array, well-typed). Client hydration of the _cart_ is separate (G1, e03s02).
 
 ## 11. Security
 

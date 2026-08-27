@@ -10,13 +10,13 @@
 
 ## 1. Metadata
 
-| Field | Value |
-|---|---|
-| ID | e04s01 |
+| Field | Value     |
+| ----- | --------- |
+| ID    | e04s01    |
 | Title | Home page |
-| Epic | e04 |
-| Type | feat |
-| Risk | P2 |
+| Epic  | e04       |
+| Type  | feat      |
+| Risk  | P2        |
 
 ## 2. Summary
 

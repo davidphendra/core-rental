@@ -62,6 +62,8 @@ git:
       summary: Added a SiteFooter on every page showing the current app version (git semantic version via scripts/version.ts + prebuild hook, e.g. v1.7.0), centered.
     - date: 2025
       summary: Summary page bottom spacing tightened — removed min-h-screen (content now hugs the footer, 259px → 72px gap after Rent); root body carries bg-background for a seamless page.
+    - date: 2025
+      summary: Home + store pages got the same bottom-spacing treatment — min-h-screen removed (home also dropped its mobile-only h-24 spacer), store main pb-32 → pb-4; footer now sits ~32-48px after the content.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

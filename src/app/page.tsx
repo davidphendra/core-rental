@@ -12,13 +12,12 @@ export default function HomePage() {
   const catalog = getCatalog();
 
   return (
-    <div className="bg-background text-on-background min-h-screen">
+    <div className="bg-background text-on-background">
       <SiteHeader />
       <main>
         <Hero catalog={catalog} />
         <HowItWorks />
       </main>
-      <div className="h-24 lg:hidden" />
       <BottomNav />
     </div>
   );

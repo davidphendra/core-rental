@@ -12,7 +12,7 @@ import { StoreGrid } from "@/features/store";
 
 function StoreContent({ catalog }: { catalog: readonly Product[] }) {
   return (
-    <main className="max-w-container-max mx-auto w-full px-4 py-8 pb-32 md:px-10">
+    <main className="max-w-container-max mx-auto w-full px-4 py-8 pb-4 md:px-10">
       <nav
         aria-label="Breadcrumb"
         className="text-label-md text-on-surface-variant mb-6 flex items-center gap-2"
@@ -61,7 +61,7 @@ function StorePageInner() {
 
 export default function StorePage() {
   return (
-    <div className="bg-background text-on-background min-h-screen">
+    <div className="bg-background text-on-background">
       <SiteHeader />
       <StorePageInner />
       <BottomNav />

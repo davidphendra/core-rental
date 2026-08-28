@@ -85,7 +85,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
                 <img
                   src={desk.image}
                   alt={desk.name}
-                  className="h-24 w-40 object-contain drop-shadow-md"
+                  className="h-24 w-32 object-contain drop-shadow-md"
                 />
                 {/* Direct removal (like the other product cards) */}
                 <button
@@ -122,7 +122,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
             <img
               src={chair.image}
               alt={chair.name}
-              className="h-36 w-32 object-contain drop-shadow-md"
+              className="h-36 w-48 object-contain drop-shadow-md"
             />
             {/* Direct removal (like the other product cards) */}
             <button

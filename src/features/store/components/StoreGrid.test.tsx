@@ -63,11 +63,11 @@ describe("StoreGrid — category filter (decision #33)", () => {
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
   });
 
-  it("Extras tab shows the surfboard AND the partner motorcycle (N6 display-only)", () => {
+  it("has only chair/desk/accessory tabs — extras + partner are not listed", () => {
     render(<StoreGrid catalog={catalog} />);
-    clickTab("Extras");
-    expect(screen.getByText("Surfboard Rack")).toBeInTheDocument();
-    expect(screen.getByText("Motorcycle Rental")).toBeInTheDocument();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("tab")).toHaveLength(3);
+    expect(screen.queryByRole("tab", { name: "Extras" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Surfboard Rack")).not.toBeInTheDocument();
+    expect(screen.queryByText("Motorcycle Rental")).not.toBeInTheDocument();
   });
 });

@@ -11,31 +11,22 @@ import type { Product } from "@/shared/types/product";
 
 import { QuantityStepper } from "./QuantityStepper";
 
-type Tab = "chair" | "desk" | "accessory" | "extra";
+type Tab = "chair" | "desk" | "accessory";
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: "chair", label: "Chairs", icon: "chair" },
   { key: "desk", label: "Desks", icon: "desk" },
   { key: "accessory", label: "Accessories", icon: "keyboard" },
-  { key: "extra", label: "Extras", icon: "beach_access" },
 ];
 
-/** Extras tab shows the zone items (coffee + bean bag) per the ruling — the
- * surfboard stays store-only (decision #20). */
-const EXTRAS_CAP_KEYS: CapKey[] = ["coffee", "beanbag"];
-
-function isExtraProduct(product: Product): boolean {
-  const key = capKeyForProduct(product);
-  return key !== null && EXTRAS_CAP_KEYS.includes(key);
-}
-
 /** Accessory subtype group headers keep the 32-item tab navigable. */
-const SUBTYPE_ORDER: CapKey[] = ["monitor", "lamp", "plant", "coffee", "beanbag"];
+const SUBTYPE_ORDER: CapKey[] = ["monitor", "lamp", "plant"];
 
 /**
  * Builder selection panel (interactive_builder mockup): tabs filter the unified
- * catalog; chairs/desks are single-select (exclusivity, #10); accessories and
- * zone items get quantity steppers (caps, #22).
+ * catalog; chairs/desks are single-select (exclusivity, #10); accessories get
+ * quantity steppers (caps, #22). Coffee/beanbag are managed on the canvas
+ * zones (Coffee Station / Relax Zone) — not in the panel.
  */
 export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
   const { state, dispatch } = useBuilderStore();
@@ -43,7 +34,6 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
 
   const filtered = catalog.filter((p) => {
     if (tab === "accessory") return p.category === "accessory";
-    if (tab === "extra") return isExtraProduct(p);
     return p.category === tab;
   });
 

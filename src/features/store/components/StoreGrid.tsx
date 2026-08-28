@@ -6,20 +6,15 @@ import type { Product } from "@/shared/types/product";
 
 import { StoreCard } from "./StoreCard";
 
-type Tab = "chair" | "desk" | "accessory" | "extra";
+type Tab = "chair" | "desk" | "accessory";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "chair", label: "Chairs" },
   { key: "desk", label: "Desks" },
   { key: "accessory", label: "Accessories" },
-  { key: "extra", label: "Extras" },
 ];
 
-/** Extras tab surfaces extras AND the partner service (mockup store grid). */
 function matchesTab(product: Product, tab: Tab): boolean {
-  if (tab === "extra") {
-    return product.category === "extra" || product.category === "partner";
-  }
   return product.category === tab;
 }
 
@@ -29,8 +24,8 @@ interface StoreGridProps {
 
 /**
  * Store grid + working category filter (decision #33). Display-only catalog
- * gallery — the motorcycle partner item lives under Extras as an
- * informational card (never addable, N6).
+ * gallery — the Extras category (surfboard family + partner motorcycle) is not
+ * listed in the store.
  */
 export function StoreGrid({ catalog }: StoreGridProps) {
   const [tab, setTab] = useState<Tab>("chair");

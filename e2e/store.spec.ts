@@ -22,17 +22,19 @@ test.describe("store catalog gallery (decision #32)", () => {
   });
 
   test("cards are display-only: no Add or Request buttons anywhere", async ({ page }) => {
-    const surfboard = firstOfCategory("extra");
-
     await page.goto("/store");
-    await page.getByRole("tab", { name: "Extras" }).click();
-    await expect(page.getByRole("heading", { name: surfboard.name })).toBeVisible();
+    // Only three category tabs remain (extras removed from the store).
+    await expect(page.getByRole("tab")).toHaveCount(3);
+    await expect(page.getByRole("tab", { name: "Extras" })).toHaveCount(0);
 
     await expect(page.getByRole("button", { name: /Add .* to setup/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Request/ })).toHaveCount(0);
   });
 
-  test("N6: the motorcycle is display-only and never appears in the summary", async ({ page }) => {
+  test("N6: extras + partner products never appear in the store or the summary", async ({
+    page,
+  }) => {
+    const surfboard = firstOfCategory("extra");
     const motorcycle = firstOfCategory("partner");
     const chair = firstOfCategory("chair");
 
@@ -40,16 +42,16 @@ test.describe("store catalog gallery (decision #32)", () => {
     await page.goto("/builder");
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
 
-    // The store shows the motorcycle as an informational card — no affordance.
+    // The store lists only chair/desk/accessory — no surfboard, no partner.
     await page.goto("/store");
-    await page.getByRole("tab", { name: "Extras" }).click();
-    await expect(page.getByRole("heading", { name: motorcycle.name })).toBeVisible();
-    await expect(page.getByText("Partner Service", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Add .* to setup/ })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: surfboard.name })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: motorcycle.name })).toHaveCount(0);
+    await expect(page.getByText("Partner Service", { exact: true })).toHaveCount(0);
 
-    // The summary shows the workspace setup — never the motorcycle (N6).
+    // The summary shows the workspace setup — never extras or the motorcycle (N6).
     await page.goto("/summary");
     await expect(page.getByText("Monthly Total")).toBeVisible();
     await expect(page.getByText(motorcycle.name)).toHaveCount(0);
+    await expect(page.getByText(surfboard.name)).toHaveCount(0);
   });
 });

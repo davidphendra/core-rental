@@ -105,16 +105,17 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(screen.getAllByRole("button", { name: "Selected" })).toHaveLength(1);
   });
 
-  it("Extras tab shows the zone items (coffee + bean bag) and NOT the surfboard (#20 ruling)", () => {
+  it("has only chair/desk/accessory tabs (extras are managed on the canvas zones)", () => {
     render(
       <Harness>
         <SelectionPanel catalog={catalog} />
       </Harness>,
     );
-    fireEvent.click(screen.getByRole("tab", { name: "Extras" }));
-    expect(screen.getByText("Espresso")).toBeInTheDocument();
-    expect(screen.getByText("Bean Bag")).toBeInTheDocument();
-    expect(screen.queryByText("Surfboard Rack")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("tab")).toHaveLength(3);
+    expect(screen.queryByRole("tab", { name: "Extras" })).not.toBeInTheDocument();
+    // Zone products are no longer listed in the panel.
+    expect(screen.queryByText("Espresso")).not.toBeInTheDocument();
+    expect(screen.queryByText("Bean Bag")).not.toBeInTheDocument();
   });
 
   it("Accessories tab groups by subtype and provides steppers", () => {

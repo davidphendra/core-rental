@@ -10,7 +10,7 @@ machines and tropical extras — to digital nomads and startups in Bali,
 ## Stack
 
 Next.js 16 (App Router, Turbopack) · React 19 · TypeScript strict · Tailwind v4
-· TanStack Query v5 · pnpm · Node 20 · Vitest + Playwright · Vercel.
+· TanStack Query v5 · pnpm · Node 22 · Vitest + Playwright · Vercel.
 
 ## Commands
 

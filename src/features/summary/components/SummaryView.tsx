@@ -36,7 +36,7 @@ export function SummaryView({ catalog, onRent }: SummaryViewProps) {
   const deliveryValid = isDeliveryValid(delivery);
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full">
       <h2 className="border-surface-variant text-headline-md font-headline-md text-primary border-b pb-4">
         Order Summary
       </h2>

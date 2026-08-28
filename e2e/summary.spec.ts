@@ -38,6 +38,13 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
     await expect(rent).toBeEnabled();
     await rent.click();
 
+    // Demo-verification gate: type the phrase to confirm (C2).
+    const dialog = page.getByRole("dialog", { name: "Confirm this is a demo" });
+    await expect(dialog).toBeVisible();
+    await expect(page.getByRole("button", { name: "OK" })).toBeDisabled();
+    await page.getByLabel("Confirmation phrase").fill("this is a demo");
+    await page.getByRole("button", { name: "OK" }).click();
+
     // Confirmation shows the same items + total and echoes the delivery (C2/C4).
     await expect(page.getByText("Your request is in!")).toBeVisible();
     await expect(page.getByText(monitor.name)).toBeVisible();
@@ -50,6 +57,43 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
     await expect(page.getByText(delivery)).toBeVisible();
     // Demo-honest: no payment language anywhere on the confirmation.
     await expect(page.getByText(/no payment taken/i)).toBeVisible();
+
+    // The order was removed from storage: returning to /summary shows the
+    // empty state (fresh cart, D1 re-applies on the builder).
+    await page.goto("/summary");
+    await expect(page.getByText("Your workspace is empty")).toBeVisible();
+  });
+
+  test("wrong demo phrase shows an error and keeps OK disabled", async ({ page }) => {
+    const chair = firstOfCategory("chair");
+    const desk = firstOfCategory("desk");
+    await page.addInitScript(
+      (args) => {
+        const { key, setup } = args as { key: string; setup: string };
+        localStorage.setItem(key, setup);
+      },
+      {
+        key: "core-rental:setup:v1",
+        setup: JSON.stringify({ chairId: chair.id, deskId: desk.id, quantities: {} }),
+      },
+    );
+
+    await page.goto("/summary");
+    await page.getByLabel("Delivery Location").fill("Villa Lotus, Canggu");
+    await page.getByRole("button", { name: /Rent This Setup/i }).click();
+
+    const input = page.getByLabel("Confirmation phrase");
+    await input.fill("wrong phrase");
+    await input.blur();
+    await expect(page.getByText(/doesn't match/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "OK" })).toBeDisabled();
+    await expect(page.getByText("Your request is in!")).toHaveCount(0);
+
+    // Matching phrase (case-insensitive) enables OK and confirms.
+    await input.fill("THIS IS A DEMO");
+    await expect(page.getByRole("button", { name: "OK" })).toBeEnabled();
+    await page.getByRole("button", { name: "OK" }).click();
+    await expect(page.getByText("Your request is in!")).toBeVisible();
   });
 });
 

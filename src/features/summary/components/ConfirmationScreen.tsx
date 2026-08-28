@@ -7,14 +7,32 @@ import { useCartTotals } from "@/shared/state/CartProvider";
 import { PriceTag } from "@/shared/ui/PriceTag";
 import type { Product } from "@/shared/types/product";
 
+interface ConfirmationScreenProps {
+  catalog: readonly Product[];
+  /** Snapshot passed by SummaryContent after demo verification (C2 gate). */
+  delivery?: string;
+  lineItems?: { product: Product; quantity: number }[];
+  total?: number;
+}
+
 /**
  * Mock confirmation (decisions #5, C2, C4): demo-honest copy — no payment
  * language — echoing the delivery location and showing exactly the cart's line
- * items + total (the E2E displayed-value verification target, #37).
+ * items + total (the E2E displayed-value verification target, #37). When the
+ * summary's demo gate has cleared the cart, renders from the snapshot props.
  */
-export function ConfirmationScreen({ catalog }: { catalog: readonly Product[] }) {
+export function ConfirmationScreen({
+  catalog,
+  delivery,
+  lineItems: receiptItems,
+  total: receiptTotal,
+}: ConfirmationScreenProps) {
   const { state } = useBuilderStore();
-  const { lineItems, total } = useCartTotals(catalog);
+  const totals = useCartTotals(catalog);
+
+  const items = receiptItems ?? totals.lineItems;
+  const sum = receiptTotal ?? totals.total;
+  const address = delivery ?? state.deliveryLocation ?? "";
 
   return (
     <div className="border-surface-variant bg-surface-container-lowest mx-auto w-full max-w-2xl rounded-2xl border p-8 text-center">
@@ -24,12 +42,12 @@ export function ConfirmationScreen({ catalog }: { catalog: readonly Product[] })
       <h1 className="text-display-lg font-display-lg text-on-surface mt-2">Your request is in!</h1>
       <p className="text-body-lg text-on-surface-variant mt-3">
         We&apos;ll deliver to{" "}
-        <strong className="text-on-surface whitespace-pre-line">{state.deliveryLocation}</strong>.
-        Our team will reach out to confirm your setup.
+        <strong className="text-on-surface whitespace-pre-line">{address}</strong>. Our team will
+        reach out to confirm your setup.
       </p>
 
       <ul className="border-surface-variant bg-surface mt-8 rounded-xl border p-4 text-left">
-        {lineItems.map(({ product, quantity }) => (
+        {items.map(({ product, quantity }) => (
           <li
             key={product.id}
             className="border-surface-variant flex items-center justify-between border-b py-2 last:border-b-0"
@@ -46,7 +64,7 @@ export function ConfirmationScreen({ catalog }: { catalog: readonly Product[] })
         <li className="mt-2 flex items-center justify-between">
           <span className="text-headline-md font-headline-md text-on-surface">Monthly Total</span>
           <PriceTag
-            amount={total}
+            amount={sum}
             suffix="/mo"
             className="text-headline-md font-headline-md text-primary"
           />

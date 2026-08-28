@@ -36,6 +36,8 @@ git:
       summary: Summary workspace preview filler removed (C8) — the dead gray placeholder is gone; the Order Summary is the whole, centered content at max-w-2xl, matching the confirmation step.
     - date: 2025
       summary: Summary receipt final layout (C8 updated) — Order Summary is borderless, full-width, left-aligned; Delivery Location is a 2-line true-multiline textarea (G3 cap raised 120 → 200); Rent button is regular-width, right-aligned.
+    - date: 2025
+      summary: Demo verification gate on Rent (#42) — a dismissable dialog requires typing "this is a demo"; on match the order is cleared from localStorage + memory and the confirmation renders from a receipt snapshot; mismatch shows an inline error with OK disabled.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

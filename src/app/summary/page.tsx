@@ -5,34 +5,70 @@ import { useState } from "react";
 import { useProducts } from "@/shared/data/useProducts";
 import { logger, logDeliverySubmitted } from "@/shared/observability/logger";
 import { useBuilderStore } from "@/shared/state/BuilderStore";
-import { CartProvider } from "@/shared/state/CartProvider";
+import { CartProvider, useCartTotals } from "@/shared/state/CartProvider";
+import { STORAGE_KEY } from "@/shared/state/useLocalStorage";
 import { BottomNav } from "@/shared/ui/BottomNav";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { SiteHeader } from "@/shared/ui/SiteHeader";
 import type { Product } from "@/shared/types/product";
 
-import { ConfirmationScreen, SummaryView } from "@/features/summary";
+import { DemoVerifyModal, ConfirmationScreen, SummaryView } from "@/features/summary";
 
+interface Receipt {
+  delivery: string;
+  lineItems: { product: Product; quantity: number }[];
+  total: number;
+}
+
+/**
+ * Summary flow with the demo-verification gate: Rent opens a dialog asking for
+ * the phrase "this is a demo"; on match the receipt is snapshotted, the order
+ * is cleared from localStorage + memory, and the confirmation renders from the
+ * snapshot (C2 gate).
+ */
 export function SummaryContent({ catalog }: { catalog: readonly Product[] }) {
   const [confirmed, setConfirmed] = useState(false);
-  const { state } = useBuilderStore();
+  const [showVerify, setShowVerify] = useState(false);
+  const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const { state, dispatch } = useBuilderStore();
+  const { lineItems, total } = useCartTotals(catalog);
 
-  const onRent = () => {
-    const delivery = state.deliveryLocation ?? "";
+  const onVerified = () => {
+    // Snapshot BEFORE clearing so the confirmation renders the paid receipt.
+    setReceipt({ delivery: state.deliveryLocation ?? "", lineItems, total });
     const itemCount =
       1 +
       (state.chairId !== null ? 1 : 0) +
       Object.values(state.quantities).reduce((a, b) => a + b, 0);
     logger.info("rent.clicked", { items: itemCount });
+    const delivery = state.deliveryLocation ?? "";
     logDeliverySubmitted(delivery.trim().length > 0, delivery.trim().length);
+    // Order removed: reset in-memory + drop the persisted cart (E3-guarded).
+    dispatch({ type: "reset" });
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // E1: targeted guard — storage removal must never break the flow.
+    }
+    setShowVerify(false);
     setConfirmed(true);
   };
 
   return confirmed ? (
-    <ConfirmationScreen catalog={catalog} />
+    <ConfirmationScreen
+      catalog={catalog}
+      delivery={receipt?.delivery}
+      lineItems={receipt?.lineItems}
+      total={receipt?.total}
+    />
   ) : (
-    <SummaryView catalog={catalog} onRent={onRent} />
+    <>
+      <SummaryView catalog={catalog} onRent={() => setShowVerify(true)} />
+      {showVerify ? (
+        <DemoVerifyModal onConfirm={onVerified} onClose={() => setShowVerify(false)} />
+      ) : null}
+    </>
   );
 }
 

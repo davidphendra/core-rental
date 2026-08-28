@@ -36,7 +36,7 @@ describe("Rent flow (decisions #5, C2, O2)", () => {
     window.localStorage.clear();
   });
 
-  it("Rent → confirmation after a valid delivery, logging rent.clicked + delivery.submitted (PII-free)", async () => {
+  it("Rent → demo-verify modal → confirmation, logging rent.clicked + delivery.submitted (PII-free)", async () => {
     const infoSpy = vi.spyOn(console, "info").mockImplementation(() => undefined);
     window.localStorage.setItem(
       STORAGE_KEY,
@@ -52,9 +52,24 @@ describe("Rent flow (decisions #5, C2, O2)", () => {
     fireEvent.change(input, { target: { value: "Villa Lotus, Canggu" } });
     const rent = screen.getByRole("button", { name: /Rent This Setup/i });
     expect(rent).toBeEnabled();
+
+    // Rent now opens the demo-verification dialog (C2 gate).
     fireEvent.click(rent);
+    const dialog = screen.getByRole("dialog", { name: "Confirm this is a demo" });
+    expect(dialog).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "OK" })).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Confirmation phrase"), {
+      target: { value: "this is a demo" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
     await waitFor(() => expect(screen.getByText("Your request is in!")).toBeInTheDocument());
+    // The order is removed after confirmation: storage holds a fresh empty
+    // setup (the write-through persistence effect rewrites the reset state).
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    expect(stored).not.toBeNull();
+    expect(JSON.parse(stored as string)).toEqual({ chairId: null, deskId: null, quantities: {} });
 
     const lines = infoSpy.mock.calls.map(
       (call) => JSON.parse(call[0] as string) as { event: string },
@@ -65,6 +80,28 @@ describe("Rent flow (decisions #5, C2, O2)", () => {
     for (const line of lines) {
       expect(JSON.stringify(line)).not.toContain("Villa Lotus");
     }
+  });
+
+  it("cancelling the demo dialog leaves the cart and order intact", async () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ chairId: "chair-a", deskId: "desk-a", quantities: {} }),
+    );
+    render(
+      <CartProvider catalog={catalog}>
+        <SummaryContent catalog={catalog} />
+      </CartProvider>,
+    );
+
+    fireEvent.change(screen.getByLabelText("Delivery Location"), {
+      target: { value: "Villa Lotus, Canggu" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Rent This Setup/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByText("Order Summary")).toBeInTheDocument();
+    expect(window.localStorage.getItem(STORAGE_KEY)).not.toBeNull();
   });
 
   it("the /summary page shell renders", () => {

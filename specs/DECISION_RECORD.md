@@ -98,6 +98,7 @@
 | C5  | Home profile avatar                    | **Dropped** — no accounts                                                                                                                                                                                                                                             |
 | C6  | "Select your rental duration" copy     | **Rewritten** — "month-to-month, no long-term commitment"                                                                                                                                                                                                             |
 | C7  | Store card actions                     | **Removed** — the store is a display-only catalog gallery (mockup shows "Add to Setup" buttons; product decision to deviate); adding happens in the Builder's Selection Panel; partner card shows an informational "Partner Service" pill instead of the request flow |
+| C8  | Summary workspace preview              | **Removed** — the left-side preview filler (mockup shows a workspace photo there) had no real content; the Order Summary is now the whole, centered content (`max-w-2xl`, matching the confirmation step)                                                             |
 
 ## Change log
 

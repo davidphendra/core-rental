@@ -32,6 +32,8 @@ git:
       summary: Store page converted to a display-only catalog gallery — Add to Setup and Request Rental buttons removed, partner request modal deleted (decision #20 superseded). Adding lives only in the Builder's Selection Panel.
     - date: 2025
       summary: ZoneTiles removed from the summary page (ruling C3 superseded) — the tiles always rendered "(Empty)" in the default flow. Zone concept still lives in the Builder canvas.
+    - date: 2025
+      summary: Summary workspace preview filler removed (C8) — the dead gray placeholder is gone; the Order Summary is the whole, centered content at max-w-2xl, matching the confirmation step.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

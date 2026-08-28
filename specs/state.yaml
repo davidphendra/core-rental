@@ -48,6 +48,8 @@ git:
       summary: Add Lamp slot relocated from right-40 to left-12 — it overlapped the centered desk image (96x96px); the bottom row is now Lamp | Desk | Plant, all clear with ~16px gaps.
     - date: 2025
       summary: Add Monitor slot moved down from the canvas top to bottom-36 — now centered just above the desk (24px gap), between the lamp and plant, so all four elements cluster together.
+    - date: 2025
+      summary: Builder panel category filter changed from stacked buttons to a horizontal icon-only tab strip — category names show as hover tooltips (and via aria-label for accessibility).
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

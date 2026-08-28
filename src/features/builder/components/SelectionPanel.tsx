@@ -66,27 +66,39 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
         <p className="text-label-md font-label-md text-on-surface-variant mt-1">Build your setup</p>
       </div>
 
-      <div role="tablist" aria-label="Product categories" className="flex flex-col gap-2">
+      <div
+        role="tablist"
+        aria-label="Product categories"
+        className="mb-4 flex justify-between gap-1"
+      >
         {TABS.map(({ key, label, icon }) => {
           const active = tab === key;
           return (
-            <button
-              key={key}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setTab(key)}
-              className={`text-label-md font-label-md focus-visible:outline-primary flex items-center gap-2 rounded-xl p-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                active
-                  ? "bg-primary-container text-on-primary-container scale-95"
-                  : "text-on-surface-variant hover:bg-surface-variant"
-              }`}
-            >
-              <span className="material-symbols-outlined" aria-hidden="true">
-                {icon}
+            <div key={key} className="group relative">
+              <button
+                type="button"
+                role="tab"
+                aria-label={label}
+                aria-selected={active}
+                onClick={() => setTab(key)}
+                className={`focus-visible:outline-primary flex h-11 w-11 items-center justify-center rounded-xl transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                  active
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:bg-surface-variant"
+                }`}
+              >
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  {icon}
+                </span>
+              </button>
+              {/* Category name as a hover tooltip (icon-only tabs) */}
+              <span
+                aria-hidden="true"
+                className="text-label-sm font-label-sm bg-on-surface text-inverse-on-surface pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 opacity-0 shadow transition-opacity group-hover:opacity-100"
+              >
+                {label}
               </span>
-              {label}
-            </button>
+            </div>
           );
         })}
       </div>

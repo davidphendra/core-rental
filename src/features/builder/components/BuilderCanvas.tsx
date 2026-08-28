@@ -68,16 +68,24 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           state={state}
         />
 
-        {/* Desk — the table-layout surface (grilled: restore the workspace table look) */}
+        {/* Desk — table surface + the selected desk's product image overlapping it */}
         {desk ? (
-          <div
-            role="img"
-            aria-label="Selected desk"
-            className="relative z-0 h-10 w-full rounded-md border border-[#c49a6c] bg-[#e8cdb4] shadow-md"
-          >
-            <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
-            <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
-          </div>
+          <>
+            <div
+              role="img"
+              aria-label="Selected desk"
+              className="relative z-0 h-10 w-full rounded-md border border-[#c49a6c] bg-[#e8cdb4] shadow-md"
+            >
+              <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+              <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element -- desk product on the table (mockup parity) */}
+            <img
+              src={desk.image}
+              alt={desk.name}
+              className="absolute bottom-6 left-1/2 z-10 h-24 w-40 -translate-x-1/2 object-contain drop-shadow-md"
+            />
+          </>
         ) : (
           <div
             className="slot-empty h-10 w-full rounded-md"

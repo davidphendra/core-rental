@@ -42,6 +42,8 @@ git:
       summary: Builder desk representation fix — the CSS beige bar (invisible at 1.72:1 contrast) was replaced with the selected desk's product image behind the chair, symmetric with the chair's image treatment.
     - date: 2025
       summary: Chair relocated on the builder canvas — it no longer overlaps the desk; it sits in its own centered row above the Coffee Station / Relax Zone tiles, and the desk is back to the mockup's table-layout surface (wood tone deepened slightly so it reads).
+    - date: 2025
+      summary: Desk product image restored on the canvas — the selected desk's product image renders overlapping the table surface (16px overlap, centered), showing both the table layout and the selected desk; chair remains in its own row below.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

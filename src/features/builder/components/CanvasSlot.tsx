@@ -111,7 +111,7 @@ export function CanvasSlot({
       type="button"
       aria-label={`${labelForSlot}: ${quantity}`}
       aria-pressed="true"
-      className={`border-primary bg-surface-container-low focus-visible:outline-primary group relative flex items-center justify-center overflow-hidden rounded-xl border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 ${isZone ? "h-24 w-full" : "h-32 w-48"} ${className}`}
+      className={`border-primary bg-surface-container-low focus-visible:outline-primary group flex items-center justify-center overflow-hidden rounded-xl border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 ${isZone ? "relative" : ""} ${isZone ? "h-24 w-full" : "h-32 w-48"} ${className}`}
       onClick={onAdd}
       onKeyDown={onKeyDown}
     >

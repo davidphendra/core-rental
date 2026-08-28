@@ -54,6 +54,8 @@ git:
       summary: Select/Selected buttons in the panel's chair/desk cards compacted to size sm (were CTA-sized px-6 py-3), matching the stepper buttons.
     - date: 2025
       summary: Select/Selected buttons now span the full card row (w-full), matching the stepper layout — no empty space to the right.
+    - date: 2025
+      summary: Fixed filled canvas slot positioning — the filled monitor/lamp/plant buttons carried both relative and absolute classes (relative won, items jumped to the top-right). relative is now zone-only; canvas slots stay absolute at their slot position.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

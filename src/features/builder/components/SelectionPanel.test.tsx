@@ -99,10 +99,22 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
       </Harness>,
     );
     clickNth("button", "Select", 0);
-    expect(screen.getByRole("button", { name: "Selected" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Deselect" })).toBeInTheDocument();
     clickNth("button", "Select", 0);
-    // Exclusivity: exactly one Selected at a time (N5).
-    expect(screen.getAllByRole("button", { name: "Selected" })).toHaveLength(1);
+    // Exclusivity: exactly one Deselect at a time (N5).
+    expect(screen.getAllByRole("button", { name: "Deselect" })).toHaveLength(1);
+  });
+
+  it("deselecting a chair clears it (toggle back to Select)", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    clickNth("button", "Select", 0);
+    fireEvent.click(screen.getByRole("button", { name: "Deselect" }));
+    expect(screen.queryByRole("button", { name: "Deselect" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Select" }).length).toBeGreaterThan(0);
   });
 
   it("has only chair/desk/accessory tabs (extras are managed on the canvas zones)", () => {

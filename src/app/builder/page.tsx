@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { defaultsIfEmpty } from "@/shared/domain/setupRules";
 import { useProducts } from "@/shared/data/useProducts";
@@ -20,9 +20,16 @@ export function BuilderContent({ catalog }: { catalog: readonly Product[] }) {
   const { total } = useCartTotals(catalog);
 
   // D1: pre-select the first chair + first desk on a fresh (empty) cart.
+  // Applied ONCE per mount so deliberate removal is never undone by the
+  // defaults (they only seed a fresh cart, not re-seed user edits).
+  const defaultsApplied = useRef(false);
   useEffect(() => {
+    if (defaultsApplied.current) {
+      return;
+    }
     const defaults = defaultsIfEmpty(state, catalog);
     if (defaults !== null) {
+      defaultsApplied.current = true;
       dispatch({ type: "hydrate", state: { ...state, ...defaults } });
     }
   }, [state, catalog, dispatch]);

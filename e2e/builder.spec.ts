@@ -27,13 +27,13 @@ test.describe("builder happy path (decision #35)", () => {
 
     // Swap to the second chair via its card.
     const chairCard = page.locator("article").filter({ hasText: chair.name });
-    await chairCard.getByRole("button", { name: "Select" }).click();
-    await expect(chairCard.getByRole("button", { name: "Selected" })).toBeVisible();
+    await chairCard.getByRole("button", { name: "Select", exact: true }).click();
+    await expect(chairCard.getByRole("button", { name: "Deselect", exact: true })).toBeVisible();
 
-    // Desks tab → select the first desk.
+    // Desks tab → the first desk is already pre-selected by D1 defaults.
     await page.getByRole("tab", { name: "Desks" }).click();
     const deskCard = page.locator("article").filter({ hasText: desk.name });
-    await deskCard.getByRole("button", { name: "Select" }).click();
+    await expect(deskCard.getByRole("button", { name: "Deselect", exact: true })).toBeVisible();
 
     // Accessories tab → add 2 monitors via the stepper.
     await page.getByRole("tab", { name: "Accessories" }).click();
@@ -130,10 +130,24 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
 
     const cardA = page.locator("article").filter({ hasText: chairA.name });
     const cardB = page.locator("article").filter({ hasText: chairB.name });
-    await cardA.getByRole("button", { name: "Select" }).click();
-    await cardB.getByRole("button", { name: "Select" }).click();
+    // chairA is pre-selected by D1 defaults; selecting chairB replaces it.
+    await cardB.getByRole("button", { name: "Select", exact: true }).click();
 
-    await expect(cardB.getByRole("button", { name: "Selected" })).toBeVisible();
-    await expect(cardA.getByRole("button", { name: "Select" })).toBeVisible(); // N5
+    await expect(cardB.getByRole("button", { name: "Deselect", exact: true })).toBeVisible();
+    await expect(cardA.getByRole("button", { name: "Select", exact: true })).toBeVisible(); // N5
+  });
+
+  test("the canvas chair and desk × buttons remove them directly", async ({ page }) => {
+    const chair = firstOfCategory("chair");
+    await page.goto("/builder");
+    await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
+
+    const canvas = page.locator('div[class*="rounded-[2rem]"]');
+    // Chair is selected by D1 defaults — remove it via its ×.
+    await page.getByRole("button", { name: "Remove chair" }).click();
+    await expect(canvas.getByRole("img", { name: "No chair selected" })).toBeVisible();
+    // Desk too.
+    await page.getByRole("button", { name: "Remove desk" }).click();
+    await expect(canvas.getByRole("img", { name: "No desk selected" })).toBeVisible();
   });
 });

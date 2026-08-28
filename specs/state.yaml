@@ -74,6 +74,8 @@ git:
       summary: Extras category removed from the builder and store — builder panel is now Chairs/Desks/Accessories (coffee/beanbag managed on the canvas zones); the store browses Chairs/Desks/Accessories only (surfboard family + partner unlisted).
     - date: 2025
       summary: Extras (surfboard) products removed from the catalog data itself — the generator no longer emits them and the curated hero entry is gone; catalog is now 53 products (10 chairs / 10 desks / 32 accessories / 1 partner).
+    - date: 2025
+      summary: Selected chair and desk now removable via top-left × buttons on the workspace (like the other product cards); deselect actions + panel Select/Deselect toggle rebuilt, D1 defaults apply once per mount.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

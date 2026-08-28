@@ -46,6 +46,8 @@ test.describe("resilience negative flows (N7, N8, N10)", () => {
     const firstChairCard = page
       .locator("article")
       .filter({ hasText: firstOfCategory("chair").name });
-    await expect(firstChairCard.getByRole("button", { name: "Selected" })).toBeVisible();
+    await expect(
+      firstChairCard.getByRole("button", { name: "Deselect", exact: true }),
+    ).toBeVisible();
   });
 });

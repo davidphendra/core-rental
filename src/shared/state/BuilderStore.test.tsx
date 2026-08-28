@@ -56,6 +56,16 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
     expect(s2.chairId).toBe("chair-b");
   });
 
+  it("deselectChair / deselectDesk clear the selection", () => {
+    const s1 = act(EMPTY_SETUP, { type: "selectChair", product: chair });
+    const s2 = act(s1, { type: "selectDesk", product: desk });
+    const s3 = act(s2, { type: "deselectChair" });
+    expect(s3.chairId).toBeNull();
+    expect(s3.deskId).toBe("desk-a");
+    const s4 = act(s3, { type: "deselectDesk" });
+    expect(s4.deskId).toBeNull();
+  });
+
   it("addAccessory increments up to the cap, then no-ops", () => {
     const s1 = act(EMPTY_SETUP, { type: "addAccessory", product: monitor });
     const s2 = act(s1, { type: "addAccessory", product: monitor });

@@ -131,13 +131,17 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
                       aria-pressed={selected}
                       onClick={() =>
                         dispatch(
-                          tab === "chair"
-                            ? { type: "selectChair", product }
-                            : { type: "selectDesk", product },
+                          selected
+                            ? tab === "chair"
+                              ? { type: "deselectChair" }
+                              : { type: "deselectDesk" }
+                            : tab === "chair"
+                              ? { type: "selectChair", product }
+                              : { type: "selectDesk", product },
                         )
                       }
                     >
-                      {selected ? "Selected" : "Select"}
+                      {selected ? "Deselect" : "Select"}
                     </Button>
                   ) : (
                     <QuantityStepper product={product} />

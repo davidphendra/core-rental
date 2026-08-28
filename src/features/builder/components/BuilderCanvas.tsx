@@ -79,12 +79,27 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
               <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
               <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
             </div>
-            {/* eslint-disable-next-line @next/next/no-img-element -- desk product on the table (mockup parity) */}
-            <img
-              src={desk.image}
-              alt={desk.name}
-              className="absolute bottom-6 left-1/2 z-10 h-24 w-40 -translate-x-1/2 object-contain drop-shadow-md"
-            />
+            <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element -- desk product on the table (mockup parity) */}
+                <img
+                  src={desk.image}
+                  alt={desk.name}
+                  className="h-24 w-40 object-contain drop-shadow-md"
+                />
+                {/* Direct removal (like the other product cards) */}
+                <button
+                  type="button"
+                  aria-label="Remove desk"
+                  onClick={() => dispatch({ type: "deselectDesk" })}
+                  className="bg-on-surface/70 text-inverse-on-surface focus-visible:outline-primary hover:bg-on-surface absolute left-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+                    close
+                  </span>
+                </button>
+              </div>
+            </div>
           </>
         ) : (
           <div
@@ -102,12 +117,25 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
       {/* Selected chair — its own row above the zone tiles (grilled) */}
       <div className="mt-8 flex justify-center">
         {chair ? (
-          // eslint-disable-next-line @next/next/no-img-element -- chair (mockup parity)
-          <img
-            src={chair.image}
-            alt={chair.name}
-            className="h-36 w-32 object-contain drop-shadow-md"
-          />
+          <div className="relative">
+            {/* eslint-disable-next-line @next/next/no-img-element -- chair (mockup parity) */}
+            <img
+              src={chair.image}
+              alt={chair.name}
+              className="h-36 w-32 object-contain drop-shadow-md"
+            />
+            {/* Direct removal (like the other product cards) */}
+            <button
+              type="button"
+              aria-label="Remove chair"
+              onClick={() => dispatch({ type: "deselectChair" })}
+              className="bg-on-surface/70 text-inverse-on-surface focus-visible:outline-primary hover:bg-on-surface absolute left-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+                close
+              </span>
+            </button>
+          </div>
         ) : (
           <div
             className="slot-empty flex h-24 w-32 items-center justify-center rounded-md"

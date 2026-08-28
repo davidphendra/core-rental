@@ -11,6 +11,8 @@ export type BuilderAction =
   | { type: "hydrate"; state: SetupState }
   | { type: "selectChair"; product: Product }
   | { type: "selectDesk"; product: Product }
+  | { type: "deselectChair" }
+  | { type: "deselectDesk" }
   | { type: "addAccessory"; product: Product }
   | { type: "removeAccessory"; productId: string }
   | { type: "setQuantity"; product: Product; quantity: number }
@@ -34,6 +36,12 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
 
     case "selectDesk":
       return { ...state, deskId: action.product.id };
+
+    case "deselectChair":
+      return { ...state, chairId: null };
+
+    case "deselectDesk":
+      return { ...state, deskId: null };
 
     case "addAccessory": {
       if (!canAdd(state, action.product)) {

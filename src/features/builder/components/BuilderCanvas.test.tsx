@@ -143,6 +143,23 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.queryByRole("button", { name: /Remove Monitor/ })).not.toBeInTheDocument();
   });
 
+  it("removes the selected chair and desk directly via their × buttons", () => {
+    render(
+      <Harness initial={{ chairId: "chair-a", deskId: "desk-a", quantities: {} }}>
+        <BuilderCanvas catalog={catalog} />
+      </Harness>,
+    );
+    expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Selected desk" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove chair" }));
+    expect(screen.queryByRole("img", { name: "Uluwatu Chair" })).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "No chair selected" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove desk" }));
+    expect(screen.getByRole("img", { name: "No desk selected" })).toBeInTheDocument();
+  });
+
   it("fills zone tiles when the zone item is in the cart", () => {
     render(
       <Harness initial={{ chairId: null, deskId: null, quantities: { "accessory-coffee-c1": 1 } }}>

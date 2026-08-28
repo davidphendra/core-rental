@@ -46,10 +46,10 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           state={state}
         />
 
-        {/* Lamp + plant slots (bottom-right cluster, mockup) */}
+        {/* Lamp + plant slots (bottom-left/right of the desk, mockup) */}
         <CanvasSlot
           capKey="lamp"
-          className="absolute bottom-2 right-40"
+          className="absolute bottom-2 left-12"
           dispatch={dispatch}
           emptyHint="Add Lamp"
           icon="light"

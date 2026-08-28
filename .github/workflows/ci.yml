@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 11
+        # Version comes from package.json "packageManager" (Corepack) — the
+        # action errors if it is ALSO pinned here (Multiple versions of pnpm).
 
       - uses: actions/setup-node@v4
         with:

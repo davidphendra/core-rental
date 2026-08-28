@@ -22,7 +22,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="bg-surface-container-low px-margin-mobile py-section-gap md:px-margin-desktop"
+      className="bg-surface-container-low px-margin-mobile pt-section-gap md:px-margin-desktop pb-4"
     >
       <div className="max-w-container-max mx-auto">
         <div className="mb-16 text-center">

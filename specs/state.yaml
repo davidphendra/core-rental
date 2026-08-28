@@ -50,6 +50,8 @@ git:
       summary: Add Monitor slot moved down from the canvas top to bottom-36 — now centered just above the desk (24px gap), between the lamp and plant, so all four elements cluster together.
     - date: 2025
       summary: Builder panel category filter changed from stacked buttons to a horizontal icon-only tab strip — category names show as hover tooltips (and via aria-label for accessibility).
+    - date: 2025
+      summary: Select/Selected buttons in the panel's chair/desk cards compacted to size sm (were CTA-sized px-6 py-3), matching the stepper buttons.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

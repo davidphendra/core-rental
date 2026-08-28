@@ -104,6 +104,7 @@
 ## Change log
 
 - **2025 — summary zone overview removed (supersedes C3):** `ZoneTiles` deleted from the summary page — the two tiles rendered "(Empty)" in the default flow and added no information about the built workspace. The zone concept remains in the Builder canvas (Coffee Station / Relax Zone slots, Extras steppers).
+- **2025 — Select/Selected buttons compacted (fix):** the chairs/desks Select buttons were CTA-sized (px-6 py-3) in the compact cards; they now use size="sm" like the stepper buttons.
 - **2025 — builder panel tabs icon-only (UX):** the Selection Panel's stacked category buttons became a horizontal icon-only tab strip (chair/desk/keyboard/beach_access); the category name appears as a hover tooltip and via aria-label (accessible + testable).
 - **2025 — Add Monitor slot moved down (fix):** the monitor sat at the canvas top, ~192px above the desk cluster. It now sits centered just above the desk (bottom-36, 24px gap), horizontally between the lamp and plant — a 'monitor on the desk' arrangement.
 - **2025 — Add Lamp slot relocated (fix):** the lamp sat at right-40 and overlapped the centered desk product image (96px×96px). It now sits at left-12 — the bottom row reads Lamp | Desk | Plant, all clear with ~16px gaps.

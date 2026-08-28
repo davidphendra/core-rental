@@ -135,6 +135,7 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
                 >
                   {isSelection ? (
                     <Button
+                      size="sm"
                       variant={selected ? "primary" : "secondary"}
                       aria-pressed={selected}
                       onClick={() =>

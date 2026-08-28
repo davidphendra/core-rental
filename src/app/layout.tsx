@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 
 import { Providers } from "./providers";
 import { ErrorListeners } from "./error-listeners";
+import { SiteFooter } from "@/shared/ui/SiteFooter";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="font-sans antialiased">
         <Providers>{children}</Providers>
+        <SiteFooter />
         <ErrorListeners />
         <Analytics />
         <SpeedInsights />

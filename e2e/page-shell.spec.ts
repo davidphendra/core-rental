@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+test.describe("page shell", () => {
+  test("the footer shows the current app version from the git tag", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByText(/Core Rental · v\d+\.\d+\.\d+/)).toBeVisible();
+  });
+});
+
 test.describe("page shell negative flows (N2, N9)", () => {
   test("N2: an unknown URL shows the playful 404 with funnel CTAs", async ({ page }) => {
     await page.goto("/this-page-does-not-exist");

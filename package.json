@@ -1,6 +1,6 @@
 {
   "name": "core-rental",
-  "version": "0.1.0",
+  "version": "1.7.0",
   "private": true,
   "engines": {
     "node": ">=22.13"
@@ -18,7 +18,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "generate:catalog": "tsx scripts/generate-catalog.ts",
-    "preflight": "pnpm test && pnpm lint && pnpm typecheck && pnpm build"
+    "preflight": "pnpm test && pnpm lint && pnpm typecheck && pnpm build",
+    "prebuild": "tsx scripts/version.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.0",

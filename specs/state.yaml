@@ -58,6 +58,8 @@ git:
       summary: Fixed filled canvas slot positioning — the filled monitor/lamp/plant buttons carried both relative and absolute classes (relative won, items jumped to the top-right). relative is now zone-only; canvas slots stay absolute at their slot position.
     - date: 2025
       summary: Workspace canvas tightened — inner flex height reduced from 440px to 300px, removing ~140px of dead space above the monitor (201px → 61px of normal padding); all slots keep their relative layout, no overlaps, desk legs visible.
+    - date: 2025
+      summary: Added a SiteFooter on every page showing the current app version (git semantic version via scripts/version.ts + prebuild hook, e.g. v1.7.0), centered.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

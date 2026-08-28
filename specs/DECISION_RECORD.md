@@ -104,6 +104,7 @@
 ## Change log
 
 - **2025 — summary zone overview removed (supersedes C3):** `ZoneTiles` deleted from the summary page — the two tiles rendered "(Empty)" in the default flow and added no information about the built workspace. The zone concept remains in the Builder canvas (Coffee Station / Relax Zone slots, Extras steppers).
+- **2025 — summary bottom spacing (fix):** the summary page's min-h-screen wrapper stretched short content to the viewport height, leaving ~259px between the Rent button and the footer; the wrapper now hugs its content (footer gap 72px) and the root body carries bg-background.
 - **2025 — footer with git version (add):** a SiteFooter renders "Core Rental · v<tag>" centered on every page. The version is sourced from the git semantic version at build time (scripts/version.ts runs `git describe --tags` via a prebuild hook, falls back to package.json) into the committed src/shared/config/version.ts.
 - **2025 — canvas height tightened (fix):** the workspace canvas inner flex dropped from h-[440px] to h-[300px] — ~140px of dead space above the monitor removed (201px → 61px, just the card padding); all slots keep their relative layout with zero overlaps.
 - **2025 — filled canvas slot positioning (fix):** the filled monitor/lamp/plant slot carried both `relative` and `absolute` classes; `.relative` won the cascade and the selected item jumped to the top-right. `relative` is now zone-only — canvas slots stay absolutely positioned at their slot.

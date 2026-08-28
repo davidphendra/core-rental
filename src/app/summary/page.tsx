@@ -96,9 +96,9 @@ function SummaryPageInner() {
 
 export default function SummaryPage() {
   return (
-    <div className="bg-background text-on-background min-h-screen">
+    <div className="bg-background text-on-background">
       <SiteHeader />
-      <main className="max-w-container-max mx-auto w-full px-4 py-8 pb-32 md:px-10">
+      <main className="max-w-container-max mx-auto w-full px-4 py-8 pb-4 md:px-10">
         <header className="mb-8">
           <h1 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface md:text-headline-lg md:font-headline-lg">
             Review Your Workspace

@@ -46,7 +46,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           rel="stylesheet"
         />
       </head>
-      <body className="font-sans antialiased">
+      <body className="bg-background font-sans antialiased">
         <Providers>{children}</Providers>
         <SiteFooter />
         <ErrorListeners />

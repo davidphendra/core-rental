@@ -89,6 +89,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.getByRole("button", { name: "Place a Plant" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add Machine" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add Bean Bag" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "No chair selected" })).toBeInTheDocument();
   });
 
   it("renders desk and chair from the cart", () => {
@@ -98,8 +99,9 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
       </Harness>,
     );
     expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Selected desk" })).toBeInTheDocument();
     expect(screen.queryByText("No desk selected")).not.toBeInTheDocument();
+    expect(screen.queryByText("No chair selected")).not.toBeInTheDocument();
   });
 
   it("clicking an empty slot adds the first product of its cap key", () => {

@@ -104,6 +104,7 @@
 ## Change log
 
 - **2025 — summary zone overview removed (supersedes C3):** `ZoneTiles` deleted from the summary page — the two tiles rendered "(Empty)" in the default flow and added no information about the built workspace. The zone concept remains in the Builder canvas (Coffee Station / Relax Zone slots, Extras steppers).
+- **2025 — chair relocated on the builder canvas (fix):** the chair no longer overlays the desk — it now sits in its own centered row above the Coffee Station / Relax Zone tiles; the desk is back to the mockup's table-layout surface (slightly deepened wood tone so it reads).
 - **2025 — builder desk representation (fix):** the desk was a near-invisible CSS beige bar (1.72:1 contrast on the white canvas) hidden under the chair; it now renders the selected desk's product image behind the chair, symmetric with the chair's image treatment.
 - **2025 — demo verification gate on Rent (new #42):** "Rent This Setup" now opens a dismissable dialog requiring the phrase `this is a demo` (trimmed, case-insensitive). On match the order is cleared from localStorage + memory and the confirmation renders from a receipt snapshot; mismatch shows an inline error with the OK button disabled.
 - **2025 — summary receipt final layout (C8):** the Order Summary is now borderless, full-width, left-aligned (no card box); Delivery Location became a 2-line true-multiline textarea with the G3 cap raised 120 → 200; the Rent button is regular-width and right-aligned.

@@ -68,15 +68,16 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           state={state}
         />
 
-        {/* Desk — the selected desk's product image (grilled: show its
-        appearance like the chair does) */}
+        {/* Desk — the table-layout surface (grilled: restore the workspace table look) */}
         {desk ? (
-          // eslint-disable-next-line @next/next/no-img-element -- desk overlay (mockup parity)
-          <img
-            src={desk.image}
-            alt={desk.name}
-            className="absolute bottom-0 left-1/2 z-10 h-28 w-48 -translate-x-1/2 object-contain drop-shadow-md"
-          />
+          <div
+            role="img"
+            aria-label="Selected desk"
+            className="relative z-0 h-10 w-full rounded-md border border-[#c49a6c] bg-[#e8cdb4] shadow-md"
+          >
+            <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+            <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+          </div>
         ) : (
           <div
             className="slot-empty h-10 w-full rounded-md"
@@ -88,16 +89,28 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
             </span>
           </div>
         )}
+      </div>
 
-        {/* Chair overlay */}
+      {/* Selected chair — its own row above the zone tiles (grilled) */}
+      <div className="mt-8 flex justify-center">
         {chair ? (
-          // eslint-disable-next-line @next/next/no-img-element -- chair overlay (mockup parity)
+          // eslint-disable-next-line @next/next/no-img-element -- chair (mockup parity)
           <img
             src={chair.image}
             alt={chair.name}
-            className="absolute -bottom-12 left-1/2 z-20 h-36 w-32 -translate-x-1/2 object-contain drop-shadow-md"
+            className="h-36 w-32 object-contain drop-shadow-md"
           />
-        ) : null}
+        ) : (
+          <div
+            className="slot-empty flex h-24 w-32 items-center justify-center rounded-md"
+            role="img"
+            aria-label="No chair selected"
+          >
+            <span className="text-label-sm font-label-sm text-outline text-center">
+              Add a chair from the panel
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Secondary zones (mockup: "Secondary Zones (Extras)") */}

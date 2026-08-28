@@ -33,7 +33,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
         }}
       />
 
-      <div className="relative flex h-[440px] w-full max-w-2xl flex-col items-center justify-end gap-6">
+      <div className="relative flex h-[300px] w-full max-w-2xl flex-col items-center justify-end gap-6">
         {/* Monitor slot (centered above the desk, mockup) */}
         <CanvasSlot
           capKey="monitor"

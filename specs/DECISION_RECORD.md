@@ -104,6 +104,7 @@
 ## Change log
 
 - **2025 — summary zone overview removed (supersedes C3):** `ZoneTiles` deleted from the summary page — the two tiles rendered "(Empty)" in the default flow and added no information about the built workspace. The zone concept remains in the Builder canvas (Coffee Station / Relax Zone slots, Extras steppers).
+- **2025 — canvas height tightened (fix):** the workspace canvas inner flex dropped from h-[440px] to h-[300px] — ~140px of dead space above the monitor removed (201px → 61px, just the card padding); all slots keep their relative layout with zero overlaps.
 - **2025 — filled canvas slot positioning (fix):** the filled monitor/lamp/plant slot carried both `relative` and `absolute` classes; `.relative` won the cascade and the selected item jumped to the top-right. `relative` is now zone-only — canvas slots stay absolutely positioned at their slot.
 - **2025 — Select/Selected full-width (fix):** the panel's Select/Selected buttons now span the full card row (w-full), matching the stepper row — no dead space on the right.
 - **2025 — Select/Selected buttons compacted (fix):** the chairs/desks Select buttons were CTA-sized (px-6 py-3) in the compact cards; they now use size="sm" like the stepper buttons.

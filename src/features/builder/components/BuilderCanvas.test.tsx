@@ -100,8 +100,8 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     );
     expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "Selected desk" })).toBeInTheDocument();
-    expect(screen.queryByText("No desk selected")).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Desk table" })).toBeInTheDocument();
+    expect(screen.queryByText("Add a desk from the panel")).not.toBeInTheDocument();
     expect(screen.queryByText("No chair selected")).not.toBeInTheDocument();
   });
 
@@ -150,14 +150,17 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
       </Harness>,
     );
     expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "Selected desk" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Desk table" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Remove chair" }));
     expect(screen.queryByRole("img", { name: "Uluwatu Chair" })).not.toBeInTheDocument();
     expect(screen.getByRole("img", { name: "No chair selected" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Remove desk" }));
-    expect(screen.getByRole("img", { name: "No desk selected" })).toBeInTheDocument();
+    // The table stays; only the product image + hint change.
+    expect(screen.getByRole("img", { name: "Desk table" })).toBeInTheDocument();
+    expect(screen.getByText("Add a desk from the panel")).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: "Seminyak Desk" })).not.toBeInTheDocument();
   });
 
   it("fills zone tiles when the zone item is in the cart", () => {

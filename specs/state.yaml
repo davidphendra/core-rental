@@ -78,6 +78,8 @@ git:
       summary: Selected chair and desk now removable via top-left × buttons on the workspace (like the other product cards); deselect actions + panel Select/Deselect toggle rebuilt, D1 defaults apply once per mount.
     - date: 2025
       summary: Fixed the chair/desk × placement — the product boxes now match the 4:3 SVG aspect (chair 192x144, desk 128x96) so the × sits on the product instead of the letterbox margin.
+    - date: 2025
+      summary: The desk table layout now always stays on the canvas — removing the selected desk only removes its product image (an "Add a desk" hint appears on the table instead of the whole table disappearing).
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

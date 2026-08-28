@@ -68,50 +68,46 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           state={state}
         />
 
-        {/* Desk — table surface + the selected desk's product image overlapping it */}
+        {/* Desk table — always visible (workspace scene); the selected desk's
+        product image + x overlap it, or an add hint sits on it when empty */}
+        <div
+          role="img"
+          aria-label="Desk table"
+          className="relative z-0 h-10 w-full rounded-md border border-[#c49a6c] bg-[#e8cdb4] shadow-md"
+        >
+          <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+          <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+          {desk === undefined ? (
+            <div className="slot-empty absolute inset-0 flex items-center justify-center rounded-md">
+              <span className="text-label-sm font-label-sm text-outline">
+                Add a desk from the panel
+              </span>
+            </div>
+          ) : null}
+        </div>
         {desk ? (
-          <>
-            <div
-              role="img"
-              aria-label="Selected desk"
-              className="relative z-0 h-10 w-full rounded-md border border-[#c49a6c] bg-[#e8cdb4] shadow-md"
-            >
-              <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
-              <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
+          <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
+            <div className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element -- desk product on the table (mockup parity) */}
+              <img
+                src={desk.image}
+                alt={desk.name}
+                className="h-24 w-32 object-contain drop-shadow-md"
+              />
+              {/* Direct removal (like the other product cards) */}
+              <button
+                type="button"
+                aria-label="Remove desk"
+                onClick={() => dispatch({ type: "deselectDesk" })}
+                className="bg-on-surface/70 text-inverse-on-surface focus-visible:outline-primary hover:bg-on-surface absolute left-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+                  close
+                </span>
+              </button>
             </div>
-            <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element -- desk product on the table (mockup parity) */}
-                <img
-                  src={desk.image}
-                  alt={desk.name}
-                  className="h-24 w-32 object-contain drop-shadow-md"
-                />
-                {/* Direct removal (like the other product cards) */}
-                <button
-                  type="button"
-                  aria-label="Remove desk"
-                  onClick={() => dispatch({ type: "deselectDesk" })}
-                  className="bg-on-surface/70 text-inverse-on-surface focus-visible:outline-primary hover:bg-on-surface absolute left-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
-                    close
-                  </span>
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div
-            className="slot-empty h-10 w-full rounded-md"
-            role="img"
-            aria-label="No desk selected"
-          >
-            <span className="text-label-sm font-label-sm text-outline">
-              Add a desk from the panel
-            </span>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Selected chair — its own row above the zone tiles (grilled) */}

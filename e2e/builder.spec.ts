@@ -82,6 +82,16 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     await resetStorage(page);
   });
 
+  test("a canvas slot can be removed directly via its × button", async ({ page }) => {
+    await page.goto("/builder");
+    await expect(page.getByRole("button", { name: "Add Monitor" })).toBeVisible();
+    await page.getByRole("button", { name: "Add Monitor" }).click();
+    await expect(page.getByRole("button", { name: "Monitor: 1" })).toBeVisible();
+    await page.getByRole("button", { name: "Remove Monitor" }).click();
+    await expect(page.getByRole("button", { name: "Add Monitor" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Remove Monitor/ })).toHaveCount(0);
+  });
+
   test("N3: the stepper disables at cap", async ({ page }) => {
     const monitor = firstWithIdPrefix("accessory-monitor-");
     await page.goto("/builder");

@@ -68,6 +68,8 @@ git:
       summary: Home pre-footer spacing fixed — HowItWorks bottom padding cut from section-gap (80px) to pb-4; the dead space before the footer dropped 136px → 72px.
     - date: 2025
       summary: Stepper + / - buttons are now 32x32 circles (Button size circle), matching the home page's circular add button; the shared Button owns the radius per size.
+    - date: 2025
+      summary: Canvas slots got direct removal — a × button on filled monitor/lamp/plant/coffee/beanbag cards decrements the quantity (empties at 1), so items can be removed without going back to the panel steppers.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

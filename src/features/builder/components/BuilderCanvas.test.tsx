@@ -128,6 +128,21 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.getByRole("button", { name: "Monitor: 3" })).toBeInTheDocument();
   });
 
+  it("removes a filled slot directly via its × button (decrements, then empties)", () => {
+    render(
+      <Harness initial={{ chairId: null, deskId: null, quantities: { "accessory-monitor-m1": 2 } }}>
+        <BuilderCanvas catalog={catalog} />
+      </Harness>,
+    );
+    // Decrement: 2 -> 1
+    fireEvent.click(screen.getByRole("button", { name: "Remove Monitor" }));
+    expect(screen.getByRole("button", { name: "Monitor: 1" })).toBeInTheDocument();
+    // Remove: 1 -> dashed empty slot
+    fireEvent.click(screen.getByRole("button", { name: "Remove Monitor" }));
+    expect(screen.getByRole("button", { name: "Add Monitor" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Remove Monitor/ })).not.toBeInTheDocument();
+  });
+
   it("fills zone tiles when the zone item is in the cart", () => {
     render(
       <Harness initial={{ chairId: null, deskId: null, quantities: { "accessory-coffee-c1": 1 } }}>

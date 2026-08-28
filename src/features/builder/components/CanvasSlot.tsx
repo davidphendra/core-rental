@@ -107,24 +107,39 @@ export function CanvasSlot({
   }
 
   return (
-    <button
-      type="button"
-      aria-label={`${labelForSlot}: ${quantity}`}
-      aria-pressed="true"
-      className={`border-primary bg-surface-container-low focus-visible:outline-primary group flex items-center justify-center overflow-hidden rounded-xl border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 ${isZone ? "relative" : ""} ${isZone ? "h-24 w-full" : "h-32 w-48"} ${className}`}
-      onClick={onAdd}
-      onKeyDown={onKeyDown}
+    <div
+      className={`${isZone ? "relative" : ""} ${isZone ? "h-24 w-full" : "h-32 w-48"} ${className}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- slot thumbnails (mockup parity) */}
-      <img src={selected.image} alt={selected.name} className="h-full w-full object-cover" />
-      <span className="bg-primary text-label-sm text-on-primary absolute right-1 top-1 rounded-full px-2 py-0.5 font-bold">
-        ×{quantity}
-      </span>
-      {!canAddMore ? (
-        <span className="bg-on-surface/70 text-label-sm text-inverse-on-surface absolute inset-x-0 bottom-0 py-0.5 text-center font-bold">
-          Max
+      <button
+        type="button"
+        aria-label={`${labelForSlot}: ${quantity}`}
+        aria-pressed="true"
+        className="border-primary bg-surface-container-low focus-visible:outline-primary group flex h-full w-full items-center justify-center overflow-hidden rounded-xl border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={onAdd}
+        onKeyDown={onKeyDown}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- slot thumbnails (mockup parity) */}
+        <img src={selected.image} alt={selected.name} className="h-full w-full object-cover" />
+        <span className="bg-primary text-label-sm text-on-primary absolute right-1 top-1 rounded-full px-2 py-0.5 font-bold">
+          ×{quantity}
         </span>
-      ) : null}
-    </button>
+        {!canAddMore ? (
+          <span className="bg-on-surface/70 text-label-sm text-inverse-on-surface absolute inset-x-0 bottom-0 py-0.5 text-center font-bold">
+            Max
+          </span>
+        ) : null}
+      </button>
+      {/* Direct removal from the card (grilled): decrements one, empties at 1 */}
+      <button
+        type="button"
+        aria-label={`Remove ${labelForSlot}`}
+        onClick={() => onStep(-1)}
+        className="bg-on-surface/70 text-inverse-on-surface focus-visible:outline-primary hover:bg-on-surface absolute left-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+          close
+        </span>
+      </button>
+    </div>
   );
 }

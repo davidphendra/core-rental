@@ -11,7 +11,7 @@
 | URL/query params                                              | None exist; unknown URLs → 404                                                                  |
 | localStorage hydration                                        | `validateSetupState` (G1): shape + business rules; any failure → defaults                       |
 | Reducer actions                                               | Validated via `setupRules` (G2): over-cap / partner adds rejected as no-ops                     |
-| Delivery Location input                                       | Trim + non-empty + max 120 chars; inline error; Rent disabled until valid (G3)                  |
+| Delivery Location input                                       | Trim + non-empty + max 200 chars; inline error; Rent disabled until valid (G3)                  |
 
 ## HTTP security headers (decision #13)
 

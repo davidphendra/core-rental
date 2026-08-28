@@ -6,6 +6,6 @@ export interface SetupState {
   deskId: string | null;
   /** Accessory quantities keyed by product id, within per-category caps (#22). */
   quantities: Record<string, number>;
-  /** Optional delivery location (decision C4) — trim, non-empty, ≤ 120 chars (G3). */
+  /** Optional delivery location (decision C4) — trim, non-empty, ≤ 200 chars (G3). */
   deliveryLocation?: string;
 }

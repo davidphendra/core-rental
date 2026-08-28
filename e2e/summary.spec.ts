@@ -88,14 +88,14 @@ test.describe("summary negative flows (N1, N11)", () => {
     await expect(rent).toBeDisabled();
 
     // Over-length → inline error (after blur, like a real user) + still disabled.
-    await input.fill("x".repeat(121));
+    await input.fill("x".repeat(201));
     await input.blur();
-    await expect(page.getByText(/120 characters or fewer/)).toBeVisible();
+    await expect(page.getByText(/200 characters or fewer/)).toBeVisible();
     await expect(rent).toBeDisabled();
 
     // Valid → error clears, Rent enabled.
     await input.fill("Villa Lotus, Canggu");
-    await expect(page.getByText(/120 characters or fewer/)).toHaveCount(0);
+    await expect(page.getByText(/200 characters or fewer/)).toHaveCount(0);
     await expect(rent).toBeEnabled();
   });
 });

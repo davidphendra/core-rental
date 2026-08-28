@@ -124,15 +124,18 @@ describe("validateSetupState — G1 trust boundary (threat model M1)", () => {
 });
 
 describe("validateDeliveryLocation (G3)", () => {
-  it("accepts a trimmed non-empty value ≤ 120 chars", () => {
+  it("accepts a trimmed non-empty value ≤ 200 chars", () => {
     expect(validateDeliveryLocation("Villa Lotus, Canggu")).toBe("Villa Lotus, Canggu");
     expect(validateDeliveryLocation("  Ubud  ")).toBe("Ubud");
+    expect(validateDeliveryLocation("Villa Lotus, Jl. Raya Canggu\nKuta Utara, Badung")).toBe(
+      "Villa Lotus, Jl. Raya Canggu\nKuta Utara, Badung",
+    );
   });
 
   it("rejects empty, whitespace-only, over-length, and non-strings", () => {
     expect(validateDeliveryLocation("")).toBeNull();
     expect(validateDeliveryLocation("   ")).toBeNull();
-    expect(validateDeliveryLocation("x".repeat(121))).toBeNull();
+    expect(validateDeliveryLocation("x".repeat(201))).toBeNull();
     expect(validateDeliveryLocation(null)).toBeNull();
     expect(validateDeliveryLocation(42)).toBeNull();
   });

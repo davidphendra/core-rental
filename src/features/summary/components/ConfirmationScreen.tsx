@@ -23,7 +23,8 @@ export function ConfirmationScreen({ catalog }: { catalog: readonly Product[] })
       </span>
       <h1 className="text-display-lg font-display-lg text-on-surface mt-2">Your request is in!</h1>
       <p className="text-body-lg text-on-surface-variant mt-3">
-        We&apos;ll deliver to <strong className="text-on-surface">{state.deliveryLocation}</strong>.
+        We&apos;ll deliver to{" "}
+        <strong className="text-on-surface whitespace-pre-line">{state.deliveryLocation}</strong>.
         Our team will reach out to confirm your setup.
       </p>
 

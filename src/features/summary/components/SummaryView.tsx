@@ -18,8 +18,8 @@ interface SummaryViewProps {
 /**
  * Summary receipt (review_rent mockup with rulings): line items + Qty +
  * Monthly Total only (C1 — no delivery fee/grand total), Delivery Location
- * input (C4/G3), and the N1 empty state (#23). The workspace preview filler
- * is removed (C8) — the Order Summary is the whole, centered content.
+ * input (C4/G3), and the N1 empty state (#23). Borderless full-width receipt
+ * (C8) — the Order Summary is the whole, left-aligned content.
  */
 export function SummaryView({ catalog, onRent }: SummaryViewProps) {
   const { state, dispatch } = useBuilderStore();
@@ -36,7 +36,7 @@ export function SummaryView({ catalog, onRent }: SummaryViewProps) {
   const deliveryValid = isDeliveryValid(delivery);
 
   return (
-    <div className="border-surface-variant bg-surface mx-auto w-full max-w-2xl rounded-2xl border p-6 shadow-sm">
+    <div className="w-full p-6">
       <h2 className="border-surface-variant text-headline-md font-headline-md text-primary border-b pb-4">
         Order Summary
       </h2>
@@ -76,17 +76,14 @@ export function SummaryView({ catalog, onRent }: SummaryViewProps) {
         />
       </div>
 
-      <Button
-        variant="tertiary"
-        className="mt-6 w-full"
-        disabled={!deliveryValid}
-        onClick={() => onRent?.()}
-      >
-        <span className="material-symbols-outlined" aria-hidden="true">
-          shopping_cart_checkout
-        </span>
-        Rent This Setup
-      </Button>
+      <div className="mt-6 flex justify-end">
+        <Button variant="tertiary" disabled={!deliveryValid} onClick={() => onRent?.()}>
+          <span className="material-symbols-outlined" aria-hidden="true">
+            shopping_cart_checkout
+          </span>
+          Rent This Setup
+        </Button>
+      </div>
     </div>
   );
 }

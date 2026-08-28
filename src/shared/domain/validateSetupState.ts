@@ -2,10 +2,10 @@ import type { Product } from "../types/product";
 import type { SetupState } from "../types/setup";
 import { QUANTITY_CAPS, capKeyForProduct, isCartEligible } from "./setupRules";
 
-export const DELIVERY_MAX_LENGTH = 120;
+export const DELIVERY_MAX_LENGTH = 200;
 
 /**
- * G3 rule: trim + non-empty + ≤ 120 chars. Returns the trimmed value when
+ * G3 rule: trim + non-empty + ≤ 200 chars. Returns the trimmed value when
  * valid, otherwise null. Shared by the summary input and hydration validation.
  */
 export function validateDeliveryLocation(value: unknown): string | null {

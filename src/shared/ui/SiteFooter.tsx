@@ -7,7 +7,7 @@ import { APP_VERSION } from "@/shared/config/version";
  */
 export function SiteFooter() {
   return (
-    <footer className="border-surface-variant bg-surface mt-8 border-t px-4 pb-20 pt-4 lg:pb-8">
+    <footer className="bg-surface mt-8 px-4 pb-20 pt-4 lg:pb-8">
       <p className="text-label-sm font-label-sm text-on-surface-variant text-center">
         Core Rental · {APP_VERSION}
       </p>

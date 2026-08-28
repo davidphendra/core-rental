@@ -8,7 +8,6 @@ import type { Product } from "@/shared/types/product";
 
 import { DeliveryInput, isDeliveryValid } from "./DeliveryInput";
 import { EmptyState } from "./EmptyState";
-import { ZoneTiles } from "./ZoneTiles";
 
 interface SummaryViewProps {
   catalog: readonly Product[];
@@ -18,8 +17,8 @@ interface SummaryViewProps {
 
 /**
  * Summary receipt (review_rent mockup with rulings): line items + Qty +
- * Monthly Total only (C1 — no delivery fee/grand total), zone tiles (C3),
- * Delivery Location input (C4/G3), and the N1 empty state (#23).
+ * Monthly Total only (C1 — no delivery fee/grand total), Delivery Location
+ * input (C4/G3), and the N1 empty state (#23).
  */
 export function SummaryView({ catalog, onRent }: SummaryViewProps) {
   const { state, dispatch } = useBuilderStore();
@@ -38,9 +37,6 @@ export function SummaryView({ catalog, onRent }: SummaryViewProps) {
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
       <div className="flex flex-1 flex-col gap-4">
-        {/* Zone overview (C3) */}
-        <ZoneTiles catalog={catalog} state={state} />
-
         {/* Visual preview placeholder (mockup) */}
         <div
           className="border-surface-variant bg-surface-container-low aspect-video w-full rounded-2xl border"

@@ -75,20 +75,6 @@ describe("SummaryView (decisions C1, C3, #7, N1)", () => {
     expect(screen.queryByText(/Delivery & Setup|Grand Total/i)).not.toBeInTheDocument();
   });
 
-  it("renders cart-driven zone tiles (C3) — Coffee filled when espresso in cart", () => {
-    render(
-      <Harness
-        initial={{ chairId: "chair-a", deskId: "desk-a", quantities: { "accessory-coffee-c1": 1 } }}
-      >
-        <SummaryView catalog={catalog} />
-      </Harness>,
-    );
-    expect(screen.getByText("Coffee Station")).toBeInTheDocument();
-    expect(screen.getByText("Relax Zone (Empty)")).toBeInTheDocument();
-    expect(screen.queryByText("Garage")).not.toBeInTheDocument();
-    expect(screen.queryByText("Outdoor Gear")).not.toBeInTheDocument();
-  });
-
   it("shows the empty state when the cart has nothing (N1)", () => {
     render(
       <Harness initial={{ chairId: null, deskId: null, quantities: {} }}>

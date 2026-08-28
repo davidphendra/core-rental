@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Fetch full history + tags so scripts/version.ts can read the
+          # git semantic version (shallow clones have no tags).
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         # Version comes from package.json "packageManager" (Corepack) — the

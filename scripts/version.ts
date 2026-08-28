@@ -35,7 +35,7 @@ function packageVersion(): string {
   }
 }
 
-const version = gitTag() ?? packageVersion();
+const version = (gitTag() ?? packageVersion()).replace(/^v/, "");
 
 writeFileSync(
   OUT,

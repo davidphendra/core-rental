@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("page shell", () => {
   test("the footer shows the current app version from the git tag", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText(/Core Rental · v\d+\.\d+\.\d+/)).toBeVisible();
+    await expect(page.getByText(/Core Rental · \d+\.\d+\.\d+/)).toBeVisible();
   });
 });
 

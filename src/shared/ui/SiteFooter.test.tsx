@@ -9,6 +9,6 @@ describe("SiteFooter", () => {
     const footer = screen.getByRole("contentinfo");
     expect(footer).toBeInTheDocument();
     // Version comes from the generated config (git tag, e.g. v1.7.0).
-    expect(screen.getByText(/Core Rental · v\d+\.\d+\.\d+/)).toBeInTheDocument();
+    expect(screen.getByText(/Core Rental · \d+\.\d+\.\d+/)).toBeInTheDocument();
   });
 });

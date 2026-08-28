@@ -113,13 +113,6 @@ const BEANBAG_TEMPLATE: Template = {
   description: (name) => `${name}: the relax-zone essential.`,
 };
 
-const SURFBOARD_TEMPLATE: Template = {
-  names: ["Board Storage Rail", "Wax & Repair Station", "Stand-Up Paddle Rack"],
-  priceMin: 100_000,
-  priceStep: 25_000,
-  description: (name) => `${name}: keep the gear safe between sessions.`,
-};
-
 function slugify(name: string): string {
   return name
     .toLowerCase()
@@ -128,7 +121,7 @@ function slugify(name: string): string {
 }
 
 function buildFromTemplate(
-  category: "chair" | "desk" | "extra",
+  category: "chair" | "desk",
   template: Template,
   heroIds: Set<string>,
 ): Product[] {
@@ -183,7 +176,6 @@ export function buildCatalog(): Product[] {
     ...buildFromTemplate("chair", CHAIR_TEMPLATE, heroIds),
     ...buildFromTemplate("desk", DESK_TEMPLATE, heroIds),
     ...buildAccessories(heroIds),
-    ...buildFromTemplate("extra", SURFBOARD_TEMPLATE, heroIds),
   ];
 
   // Hero wins by ID; everything else from the generated set.

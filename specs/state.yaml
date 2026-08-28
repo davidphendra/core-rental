@@ -72,6 +72,8 @@ git:
       summary: Canvas slots got direct removal — a × button on filled monitor/lamp/plant/coffee/beanbag cards decrements the quantity (empties at 1), so items can be removed without going back to the panel steppers.
     - date: 2025
       summary: Extras category removed from the builder and store — builder panel is now Chairs/Desks/Accessories (coffee/beanbag managed on the canvas zones); the store browses Chairs/Desks/Accessories only (surfboard family + partner unlisted).
+    - date: 2025
+      summary: Extras (surfboard) products removed from the catalog data itself — the generator no longer emits them and the curated hero entry is gone; catalog is now 53 products (10 chairs / 10 desks / 32 accessories / 1 partner).
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

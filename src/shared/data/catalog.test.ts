@@ -18,8 +18,8 @@ describe("catalog integrity (decisions #19, #30, #31, #32)", () => {
       return acc;
     }, {});
 
-    expect(counts).toEqual({ chair: 10, desk: 10, accessory: 32, extra: 4, partner: 1 });
-    expect(committed).toHaveLength(57);
+    expect(counts).toEqual({ chair: 10, desk: 10, accessory: 32, partner: 1 });
+    expect(committed).toHaveLength(53);
   });
 
   it("every product is complete and typed", () => {

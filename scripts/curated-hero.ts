@@ -56,15 +56,6 @@ export const HERO_PRODUCTS: Product[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDTzT4Tf58tkbo6X7I2a_aF5XrHlXm7pV5GAMydtstbloGCCC5_LoXb0tmuXW4wxWFYp-K9r_DSFRd1FhGZfwlTIYs9u_Sjj1mFpCjduawANJZfqSIyG6At13g6nueBMlme0wHSmw-E-EfohvvNKC2bxhS5hjAytlxV74b3eU4-sS57APj0jGatARBLneuXhfgqykyMcCtzQkWzlSZRG8qSUB5-oQ8bepiLtS2v0uGGLiAqRSWf3aYV7A",
   },
   {
-    id: "extra-surfboard-rack",
-    name: "Surfboard Rack",
-    category: "extra",
-    pricePerMonth: 150_000,
-    description: "Keep your board safe and ready for the dawn patrol just outside your workspace.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAecaEM7eKFfeS2KXqo23hYmEQpN16h33suYUTcL2IcFQg9BTVu4WhGWqgN9AG_tWe_6Y4yNE7KZbqTM3-S6lORwkLJjuSTROKUCTQIWRs8F74ZtLSURFvOgLc74VdfBQvYFB50PqlumGpSDFL3Q7I3quMsneSf_EOTQijXihKkeg-b_eJIqgFGkla9fhkfLYGna8OzJ8sDCE6QRrK3ldRDCs6UDOZaiiVl6xsmQFPi8i7iW6umY8fN9g",
-  },
-  {
     id: "partner-motorcycle-rental",
     name: "Motorcycle Rental",
     category: "partner",

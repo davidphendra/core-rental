@@ -68,12 +68,15 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           state={state}
         />
 
-        {/* Desk */}
+        {/* Desk — the selected desk's product image (grilled: show its
+        appearance like the chair does) */}
         {desk ? (
-          <div className="relative z-0 h-10 w-full rounded-md border border-[#d2b496] bg-[#e8cdb4] shadow-sm">
-            <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#d2b496]" />
-            <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#d2b496]" />
-          </div>
+          // eslint-disable-next-line @next/next/no-img-element -- desk overlay (mockup parity)
+          <img
+            src={desk.image}
+            alt={desk.name}
+            className="absolute bottom-0 left-1/2 z-10 h-28 w-48 -translate-x-1/2 object-contain drop-shadow-md"
+          />
         ) : (
           <div
             className="slot-empty h-10 w-full rounded-md"

@@ -98,6 +98,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
       </Harness>,
     );
     expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
     expect(screen.queryByText("No desk selected")).not.toBeInTheDocument();
   });
 

@@ -25,14 +25,14 @@ function matchesTab(product: Product, tab: Tab): boolean {
 
 interface StoreGridProps {
   catalog: readonly Product[];
-  onRequestPartner?: (product: Product) => void;
 }
 
 /**
- * Store grid + working category filter (decision #33). The motorcycle partner
- * item lives under Extras, with its own Request Rental flow (#20).
+ * Store grid + working category filter (decision #33). Display-only catalog
+ * gallery — the motorcycle partner item lives under Extras as an
+ * informational card (never addable, N6).
  */
-export function StoreGrid({ catalog, onRequestPartner }: StoreGridProps) {
+export function StoreGrid({ catalog }: StoreGridProps) {
   const [tab, setTab] = useState<Tab>("chair");
   const filtered = catalog.filter((p) => matchesTab(p, tab));
 
@@ -69,7 +69,7 @@ export function StoreGrid({ catalog, onRequestPartner }: StoreGridProps) {
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((product) => (
-            <StoreCard key={product.id} product={product} onRequestPartner={onRequestPartner} />
+            <StoreCard key={product.id} product={product} />
           ))}
         </div>
       )}

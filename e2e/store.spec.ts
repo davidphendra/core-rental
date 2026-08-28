@@ -1,41 +1,38 @@
 import { expect, test } from "@playwright/test";
 
-import { firstOfCategory, firstWithIdPrefix, resetStorage } from "./fixtures/catalog-helpers";
+import { firstOfCategory, resetStorage } from "./fixtures/catalog-helpers";
 
-test.describe("store happy path (decision #35, #20)", () => {
+test.describe("store catalog gallery (decision #32)", () => {
   test.beforeEach(async ({ page }) => {
     await resetStorage(page);
   });
 
-  test("add the surfboard extra from the store", async ({ page }) => {
+  test("browse the catalog by category", async ({ page }) => {
+    const chair = firstOfCategory("chair");
+    const accessory = firstOfCategory("accessory");
+
+    await page.goto("/store");
+    // Default tab is Chairs.
+    await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
+    await expect(page.getByRole("heading", { name: accessory.name })).toHaveCount(0);
+
+    await page.getByRole("tab", { name: "Accessories" }).click();
+    await expect(page.getByRole("heading", { name: accessory.name })).toBeVisible();
+    await expect(page.getByRole("heading", { name: chair.name })).toHaveCount(0);
+  });
+
+  test("cards are display-only: no Add or Request buttons anywhere", async ({ page }) => {
     const surfboard = firstOfCategory("extra");
 
     await page.goto("/store");
     await page.getByRole("tab", { name: "Extras" }).click();
+    await expect(page.getByRole("heading", { name: surfboard.name })).toBeVisible();
 
-    const addSurfboard = page.getByRole("button", { name: `Add ${surfboard.name} to setup` });
-    await expect(addSurfboard).toBeVisible();
-    await addSurfboard.click();
-    await expect(addSurfboard).toHaveText(/Added/);
+    await expect(page.getByRole("button", { name: /Add .* to setup/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Request/ })).toHaveCount(0);
   });
 
-  test("request the partner motorcycle via its modal (N6: never in the cart)", async ({ page }) => {
-    const motorcycle = firstOfCategory("partner");
-
-    await page.goto("/store");
-    await page.getByRole("tab", { name: "Extras" }).click();
-
-    await page.getByRole("button", { name: `Request rental for ${motorcycle.name}` }).click();
-    await expect(page.getByRole("dialog", { name: motorcycle.name })).toBeVisible();
-    await page.getByRole("button", { name: "Request Rental", exact: true }).click();
-    await expect(page.getByText("Request received")).toBeVisible();
-    await page.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByRole("dialog")).toHaveCount(0);
-  });
-});
-
-test.describe("store negative flows (N6)", () => {
-  test("N6: the motorcycle never appears in the summary", async ({ page }) => {
+  test("N6: the motorcycle is display-only and never appears in the summary", async ({ page }) => {
     const motorcycle = firstOfCategory("partner");
     const chair = firstOfCategory("chair");
 
@@ -43,14 +40,14 @@ test.describe("store negative flows (N6)", () => {
     await page.goto("/builder");
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
 
-    // Request the partner motorcycle.
+    // The store shows the motorcycle as an informational card — no affordance.
     await page.goto("/store");
     await page.getByRole("tab", { name: "Extras" }).click();
-    await page.getByRole("button", { name: `Request rental for ${motorcycle.name}` }).click();
-    await page.getByRole("button", { name: "Request Rental", exact: true }).click();
-    await expect(page.getByText("Request received")).toBeVisible();
+    await expect(page.getByRole("heading", { name: motorcycle.name })).toBeVisible();
+    await expect(page.getByText("Partner Service", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Add .* to setup/ })).toHaveCount(0);
 
-    // The summary shows the workspace setup — never the motorcycle (decision #20).
+    // The summary shows the workspace setup — never the motorcycle (N6).
     await page.goto("/summary");
     await expect(page.getByText("Monthly Total")).toBeVisible();
     await expect(page.getByText(motorcycle.name)).toHaveCount(0);

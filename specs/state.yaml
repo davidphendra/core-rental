@@ -27,6 +27,9 @@ git:
   branch: main
   hash: null
   note: ALL 8 EPICS RELEASED (v1.0.0 - v1.7.0). Product complete.
+  change_log:
+    - date: 2025
+      summary: Store page converted to a display-only catalog gallery — Add to Setup and Request Rental buttons removed, partner request modal deleted (decision #20 superseded). Adding lives only in the Builder's Selection Panel.
 handoff:
   last_step_completed: "plan-work done: 18 countable-story specs (20 sections, Gherkin
     ACs) + 18 refined tasks.yaml (risk P0-P3, allure, status failing) across 8 epic

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { useProducts } from "@/shared/data/useProducts";
 import { CartProvider } from "@/shared/state/CartProvider";
 import { BottomNav } from "@/shared/ui/BottomNav";
@@ -10,11 +8,9 @@ import { LoadingSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { SiteHeader } from "@/shared/ui/SiteHeader";
 import type { Product } from "@/shared/types/product";
 
-import { PartnerRequestModal, StoreGrid } from "@/features/store";
+import { StoreGrid } from "@/features/store";
 
 function StoreContent({ catalog }: { catalog: readonly Product[] }) {
-  const [partner, setPartner] = useState<Product | null>(null);
-
   return (
     <main className="max-w-container-max mx-auto w-full px-4 py-8 pb-32 md:px-10">
       <nav
@@ -25,11 +21,7 @@ function StoreContent({ catalog }: { catalog: readonly Product[] }) {
         <span className="material-symbols-outlined text-sm" aria-hidden="true">
           chevron_right
         </span>
-        <span>Extras</span>
-        <span className="material-symbols-outlined text-sm" aria-hidden="true">
-          chevron_right
-        </span>
-        <span className="text-primary font-bold">Summary</span>
+        <span className="text-primary font-bold">Store</span>
       </nav>
       <header className="mb-8">
         <h1 className="text-display-lg font-display-lg text-on-surface">Add Your Bali Vibes</h1>
@@ -38,10 +30,7 @@ function StoreContent({ catalog }: { catalog: readonly Product[] }) {
           curated selection.
         </p>
       </header>
-      <StoreGrid catalog={catalog} onRequestPartner={setPartner} />
-      {partner !== null ? (
-        <PartnerRequestModal product={partner} onClose={() => setPartner(null)} />
-      ) : null}
+      <StoreGrid catalog={catalog} />
     </main>
   );
 }

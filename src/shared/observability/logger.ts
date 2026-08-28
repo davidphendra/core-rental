@@ -5,7 +5,6 @@ type LogLevel = "debug" | "info" | "warn" | "error";
  */
 export type LogEventName =
   | "rent.clicked"
-  | "partner.requested"
   | "delivery.submitted"
   | "catalog.loaded"
   | "catalog.failed"

@@ -17,10 +17,13 @@ export function ProductCard({
   product,
   children,
   selected = false,
+  imageBadge,
 }: {
   product: Product;
   children?: ReactNode;
   selected?: boolean;
+  /** Optional overlay centered on the image (store partner pill). */
+  imageBadge?: ReactNode;
 }) {
   const [imageSrc, setImageSrc] = useState(product.image);
 
@@ -38,6 +41,9 @@ export function ProductCard({
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           onError={() => setImageSrc(FALLBACK_IMAGE)}
         />
+        {imageBadge !== undefined ? (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">{imageBadge}</div>
+        ) : null}
       </div>
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-headline-md font-headline-md text-on-surface">{product.name}</h3>

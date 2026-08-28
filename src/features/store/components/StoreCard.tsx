@@ -1,77 +1,32 @@
-"use client";
-
-import { QUANTITY_CAPS, capKeyForProduct } from "@/shared/domain/setupRules";
-import { useBuilderStore } from "@/shared/state/BuilderStore";
-import { Button } from "@/shared/ui/Button";
 import { ProductCard } from "@/shared/ui/ProductCard";
 import type { Product } from "@/shared/types/product";
 
 interface StoreCardProps {
   product: Product;
-  /** Wired by e06s02 to open the partner request modal. */
-  onRequestPartner?: (product: Product) => void;
 }
 
 /**
- * Store product card (bali_essentials_store mockup). Chairs/desks select
- * (exclusivity), accessories/extras add with caps (N3), partner items open the
- * request flow (#20).
+ * Store product card (bali_essentials_store mockup). The store is a pure
+ * catalog gallery: cards are display-only and adding happens in the Builder's
+ * Selection Panel. Partner items carry an informational "Partner Service" pill
+ * (mockup line 259) instead of any action (N6 — never addable, never in cart).
  */
-export function StoreCard({ product, onRequestPartner }: StoreCardProps) {
-  const { state, dispatch } = useBuilderStore();
-
-  const isChair = product.category === "chair";
-  const isDesk = product.category === "desk";
+export function StoreCard({ product }: StoreCardProps) {
   const isPartner = product.category === "partner";
 
-  const selected = isChair
-    ? state.chairId === product.id
-    : isDesk
-      ? state.deskId === product.id
-      : (state.quantities[product.id] ?? 0) > 0;
-
-  const cap = capKeyForProduct(product);
-  const max = cap === null ? null : QUANTITY_CAPS[cap];
-  const atCap = max !== null && (state.quantities[product.id] ?? 0) >= max;
-
-  const onAdd = () => {
-    if (isChair) {
-      dispatch({ type: "selectChair", product });
-    } else if (isDesk) {
-      dispatch({ type: "selectDesk", product });
-    } else {
-      dispatch({ type: "addAccessory", product });
-    }
-  };
-
   return (
-    <ProductCard product={product} selected={selected}>
-      {isPartner ? (
-        <Button
-          variant="tertiary"
-          className="w-full"
-          aria-label={`Request rental for ${product.name}`}
-          onClick={() => onRequestPartner?.(product)}
-        >
-          <span className="material-symbols-outlined" aria-hidden="true">
-            two_wheeler
+    <ProductCard
+      product={product}
+      imageBadge={
+        isPartner ? (
+          <span className="bg-surface/90 border-surface-variant text-on-surface text-label-md font-label-md flex items-center gap-2 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm">
+            <span className="material-symbols-outlined text-tertiary-container" aria-hidden="true">
+              verified
+            </span>
+            <span className="font-bold">Partner Service</span>
           </span>
-          Request Rental
-        </Button>
-      ) : (
-        <Button
-          variant="secondary"
-          className="w-full"
-          disabled={atCap}
-          aria-label={`Add ${product.name} to setup`}
-          onClick={onAdd}
-        >
-          <span className="material-symbols-outlined" aria-hidden="true">
-            add_circle
-          </span>
-          {selected ? "Added" : "Add to Setup"}
-        </Button>
-      )}
-    </ProductCard>
+        ) : undefined
+      }
+    />
   );
 }

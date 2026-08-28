@@ -33,7 +33,7 @@ interface StoreGridProps {
  * item lives under Extras, with its own Request Rental flow (#20).
  */
 export function StoreGrid({ catalog, onRequestPartner }: StoreGridProps) {
-  const [tab, setTab] = useState<Tab>("accessory");
+  const [tab, setTab] = useState<Tab>("chair");
   const filtered = catalog.filter((p) => matchesTab(p, tab));
 
   return (

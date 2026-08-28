@@ -11,6 +11,7 @@ describe("PriceTag (decision #3 single IDR home)", () => {
 
   it("appends an optional suffix", () => {
     render(<PriceTag amount={450_000} suffix="/mo" />);
-    expect(screen.getByText("Rp 450.000/mo")).toBeInTheDocument();
+    expect(screen.getByText(/Rp 450\.000/)).toBeInTheDocument();
+    expect(screen.getByText("/mo")).toBeInTheDocument();
   });
 });

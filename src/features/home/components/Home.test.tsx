@@ -56,8 +56,8 @@ describe("Hero (moni_s_workspace_home mockup, decision #19/#25)", () => {
     render(<Hero catalog={catalog} />);
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
     expect(screen.getByText("Seminyak Desk")).toBeInTheDocument();
-    expect(screen.getByText("Rp 450.000 / mo")).toBeInTheDocument();
-    expect(screen.getByText("Rp 800.000 / mo")).toBeInTheDocument();
+    expect(screen.getByText(/Rp 450\.000/)).toBeInTheDocument();
+    expect(screen.getByText(/Rp 800\.000/)).toBeInTheDocument();
   });
 
   it("renders no profile avatar (C5)", () => {

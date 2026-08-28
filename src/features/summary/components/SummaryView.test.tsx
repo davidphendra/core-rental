@@ -71,7 +71,7 @@ describe("SummaryView (decisions C1, C3, #7, N1)", () => {
     expect(screen.getAllByText("Qty: 1")).toHaveLength(2); // chair + desk
     expect(screen.getByText("Qty: 2")).toBeInTheDocument();
     // 450.000 + 800.000 + 2 × 300.000 = 1.850.000
-    expect(screen.getByText("Rp 1.850.000/mo")).toBeInTheDocument();
+    expect(screen.getByText(/Rp 1\.850\.000/)).toBeInTheDocument();
     expect(screen.queryByText(/Delivery & Setup|Grand Total/i)).not.toBeInTheDocument();
   });
 

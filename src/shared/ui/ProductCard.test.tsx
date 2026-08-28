@@ -17,7 +17,8 @@ describe("ProductCard (decision #19, #31)", () => {
   it("renders name, price, and description", () => {
     render(<ProductCard product={product} />);
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
-    expect(screen.getByText("Rp 450.000/mo")).toBeInTheDocument();
+    expect(screen.getByText(/Rp 450\.000/)).toBeInTheDocument();
+    expect(screen.getByText("/mo")).toBeInTheDocument();
     expect(screen.getByText("Mesh ergonomic chair.")).toBeInTheDocument();
   });
 
@@ -35,5 +36,12 @@ describe("ProductCard (decision #19, #31)", () => {
       </ProductCard>,
     );
     expect(screen.getByRole("button", { name: "Add to Setup" })).toBeInTheDocument();
+  });
+
+  it("compact variant renders the builder tile: small name, small price, no description", () => {
+    render(<ProductCard product={product} variant="compact" />);
+    expect(screen.getByRole("heading", { name: "Uluwatu Chair" })).toBeInTheDocument();
+    expect(screen.getByText(/Rp 450\.000/)).toBeInTheDocument();
+    expect(screen.queryByText("Mesh ergonomic chair.")).not.toBeInTheDocument();
   });
 });

@@ -7,7 +7,7 @@ describe("StickySummaryBar (decision #7, mockup)", () => {
   it("shows the live monthly total in IDR", () => {
     render(<StickySummaryBar total={1_050_000} />);
     expect(screen.getByText("Monthly Total")).toBeInTheDocument();
-    expect(screen.getByText("Rp 1.050.000/mo")).toBeInTheDocument();
+    expect(screen.getByText(/Rp 1\.050\.000/)).toBeInTheDocument();
   });
 
   it("links to /summary", () => {

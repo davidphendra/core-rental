@@ -100,7 +100,7 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 {items.map((product) => (
-                  <ProductCard key={product.id} product={product}>
+                  <ProductCard key={product.id} product={product} variant="compact">
                     <QuantityStepper product={product} />
                   </ProductCard>
                 ))}
@@ -115,7 +115,12 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
               const selected =
                 tab === "chair" ? state.chairId === product.id : state.deskId === product.id;
               return (
-                <ProductCard key={product.id} product={product} selected={selected}>
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  selected={selected}
+                  variant="compact"
+                >
                   {isSelection ? (
                     <Button
                       variant={selected ? "primary" : "secondary"}

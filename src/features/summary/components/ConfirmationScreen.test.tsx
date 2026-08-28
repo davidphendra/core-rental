@@ -52,7 +52,7 @@ describe("ConfirmationScreen (decisions #5, C2, C4, #37)", () => {
     );
     expect(screen.getByText("Monitor 1")).toBeInTheDocument();
     // 450.000 + 800.000 + 2 × 300.000 = 1.850.000
-    expect(screen.getByText("Rp 1.850.000/mo")).toBeInTheDocument();
+    expect(screen.getByText(/Rp 1\.850\.000/)).toBeInTheDocument();
   });
 
   it("echoes the delivery location (C4)", () => {

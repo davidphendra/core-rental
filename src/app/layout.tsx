@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${plusJakartaSans.variable} ${manrope.variable}`}>
       <head>
         {/* Material Symbols (decision D6): <link> to preserve the FILL axis; CSP allowlists fonts.googleapis.com */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           rel="stylesheet"
         />
       </head>
-      <body className={`${plusJakartaSans.variable} ${manrope.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <Providers>{children}</Providers>
         <ErrorListeners />
         <Analytics />

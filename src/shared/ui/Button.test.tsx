@@ -13,7 +13,14 @@ describe("Button (a11y baseline #24)", () => {
     const { container } = render(<Button variant="tertiary">Go</Button>);
     const button = container.querySelector("button");
     expect(button?.className).toContain("bg-tertiary-container");
+    expect(button?.className).toContain("px-6 py-3"); // md size default
     expect(button?.type).toBe("button");
+  });
+
+  it("supports the compact sm size (stepper buttons)", () => {
+    const { container } = render(<Button size="sm">+</Button>);
+    const button = container.querySelector("button");
+    expect(button?.className).toContain("px-2 py-1");
   });
 
   it("respects disabled state", () => {

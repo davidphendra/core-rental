@@ -58,14 +58,14 @@ function Harness({ children }: { children: ReactNode }) {
 const clickTab = (name: string) => fireEvent.click(screen.getByRole("tab", { name }));
 
 describe("StoreGrid — category filter (decision #33)", () => {
-  it("defaults to Accessories and shows only accessories", () => {
+  it("defaults to Chairs and shows only chairs", () => {
     render(
       <Harness>
         <StoreGrid catalog={catalog} />
       </Harness>,
     );
-    expect(screen.getByText("Monitor 1")).toBeInTheDocument();
-    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
+    expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
+    expect(screen.queryByText("Monitor 1")).not.toBeInTheDocument();
   });
 
   it("filters Chairs", () => {
@@ -74,9 +74,9 @@ describe("StoreGrid — category filter (decision #33)", () => {
         <StoreGrid catalog={catalog} />
       </Harness>,
     );
-    clickTab("Chairs");
-    expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
-    expect(screen.queryByText("Monitor 1")).not.toBeInTheDocument();
+    clickTab("Accessories");
+    expect(screen.getByText("Monitor 1")).toBeInTheDocument();
+    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
   });
 
   it("Extras tab shows the surfboard AND the partner motorcycle (#20)", () => {
@@ -96,6 +96,7 @@ describe("StoreGrid — category filter (decision #33)", () => {
         <StoreGrid catalog={catalog} />
       </Harness>,
     );
+    clickTab("Accessories");
     fireEvent.click(screen.getByRole("button", { name: "Add Monitor 1 to setup" }));
     expect(screen.getByRole("button", { name: "Add Monitor 1 to setup" })).toHaveTextContent(
       "Added",

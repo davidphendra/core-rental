@@ -25,7 +25,7 @@ export function QuantityStepper({ product }: QuantityStepperProps) {
     <div className="flex items-center justify-between gap-3">
       <Button
         variant="secondary"
-        size="sm"
+        size="circle"
         aria-label={`Remove ${product.name}`}
         disabled={quantity === 0}
         onClick={() => dispatch({ type: "removeAccessory", productId: product.id })}
@@ -37,7 +37,7 @@ export function QuantityStepper({ product }: QuantityStepperProps) {
       </span>
       <Button
         variant="primary"
-        size="sm"
+        size="circle"
         aria-label={`Add ${product.name}`}
         disabled={atCap}
         onClick={() => dispatch({ type: "addAccessory", product })}

@@ -104,6 +104,7 @@
 ## Change log
 
 - **2025 — summary zone overview removed (supersedes C3):** `ZoneTiles` deleted from the summary page — the two tiles rendered "(Empty)" in the default flow and added no information about the built workspace. The zone concept remains in the Builder canvas (Coffee Station / Relax Zone slots, Extras steppers).
+- **2025 — stepper buttons circular (UX):** the panel's + / - buttons switched from rounded pills to h-8 w-8 circles (new Button size="circle"), matching the home page's circular add button; the shared Button now owns the radius per size (deterministic).
 - **2025 — home page pre-footer spacing (fix):** HowItWorks used py-section-gap (80px bottom padding) which stacked with the footer margin — 136px of dead space before the footer. Bottom padding trimmed to pb-4 → 72px gap.
 - **2025 — home + store bottom spacing (fix):** same treatment as summary — removed min-h-screen from the wrappers (home also dropped its mobile-only h-24 spacer) and store's main pb-32 → pb-4; the footer now follows the content with ~32-48px gaps.
 - **2025 — summary bottom spacing (fix):** the summary page's min-h-screen wrapper stretched short content to the viewport height, leaving ~259px between the Rent button and the footer; the wrapper now hugs its content (footer gap 72px) and the root body carries bg-background.

@@ -104,6 +104,7 @@
 ## Change log
 
 - **2025 — summary zone overview removed (supersedes C3):** `ZoneTiles` deleted from the summary page — the two tiles rendered "(Empty)" in the default flow and added no information about the built workspace. The zone concept remains in the Builder canvas (Coffee Station / Relax Zone slots, Extras steppers).
+- **2025 — Add Monitor slot moved down (fix):** the monitor sat at the canvas top, ~192px above the desk cluster. It now sits centered just above the desk (bottom-36, 24px gap), horizontally between the lamp and plant — a 'monitor on the desk' arrangement.
 - **2025 — Add Lamp slot relocated (fix):** the lamp sat at right-40 and overlapped the centered desk product image (96px×96px). It now sits at left-12 — the bottom row reads Lamp | Desk | Plant, all clear with ~16px gaps.
 - **2025 — desk product image on the table (add):** the selected desk's product image now renders overlapping the canvas table surface (16px vertical overlap, centered) — the workspace shows both the table layout and which desk is selected; the chair stays in its own row below.
 - **2025 — chair relocated on the builder canvas (fix):** the chair no longer overlays the desk — it now sits in its own centered row above the Coffee Station / Relax Zone tiles; the desk is back to the mockup's table-layout surface (slightly deepened wood tone so it reads).

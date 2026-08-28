@@ -34,10 +34,10 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
       />
 
       <div className="relative flex h-[440px] w-full max-w-2xl flex-col items-center justify-end gap-6">
-        {/* Monitor slot */}
+        {/* Monitor slot (centered above the desk, mockup) */}
         <CanvasSlot
           capKey="monitor"
-          className="absolute left-1/2 top-0 -translate-x-1/2"
+          className="absolute bottom-36 left-1/2 -translate-x-1/2"
           dispatch={dispatch}
           emptyHint="Add Monitor"
           icon="add"

@@ -26,7 +26,7 @@ describe("isValidCatalog contract guard (E2, threat model S1)", () => {
   it("accepts a valid catalog", () => {
     expect(
       isValidCatalog([
-        { id: "a", name: "A", pricePerMonth: 100, description: "d", image: "/x.svg" },
+        { skuNo: "CHAA1B2C3D4E", name: "A", pricePerMonth: 100, description: "d", image: "/x.svg" },
       ]),
     ).toBe(true);
   });
@@ -40,9 +40,11 @@ describe("isValidCatalog contract guard (E2, threat model S1)", () => {
 
   it("rejects malformed entries", () => {
     expect(isValidCatalog([{}])).toBe(false);
-    expect(isValidCatalog([{ id: 1 }])).toBe(false);
+    expect(isValidCatalog([{ skuNo: "CHAA1B2C3D4E" }])).toBe(false);
     expect(
-      isValidCatalog([{ id: "a", name: "A", pricePerMonth: 0, description: "d", image: "/x.svg" }]),
+      isValidCatalog([
+        { skuNo: "CHAA1B2C3D4E", name: "A", pricePerMonth: 0, description: "d", image: "/x.svg" },
+      ]),
     ).toBe(false);
   });
 });

@@ -11,7 +11,7 @@ tasks:
       slug (decoupled from the sku); merge/dedupe by skuNo
     verify: pnpm generate:catalog && node -e "const p=require('./src/shared/data/products.json'); if(!p.every(x=>/^[A-Z]{3}[A-Z0-9]{9}$/.test(x.skuNo))){console.error('bad sku');process.exit(1)} if(new Set(p.map(x=>x.skuNo)).size!==p.length){console.error('dup sku');process.exit(1)} console.log('sku OK',p.length)"
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -22,7 +22,7 @@ tasks:
       12-char format, a known code prefix, and uniqueness"
     verify: pnpm test -- catalog.test.ts
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -33,7 +33,7 @@ tasks:
       coffee/beanbag); QUANTITY_CAPS unchanged; hero monstera cap quirk resolved"
     verify: pnpm test -- setupRules.test.ts
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -44,7 +44,7 @@ tasks:
       deskId, quantities); STORAGE_KEY bumped so old carts reset to D1 defaults"
     verify: pnpm test -- validateSetupState.test.ts BuilderStore.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -56,7 +56,7 @@ tasks:
       remaining call sites)"
     verify: pnpm test
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -66,7 +66,7 @@ tasks:
     description: "E2E fixtures + specs read skuNo instead of id"
     verify: pnpm build && pnpm test:e2e
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:

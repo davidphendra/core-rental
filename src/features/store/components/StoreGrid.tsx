@@ -64,7 +64,7 @@ export function StoreGrid({ catalog }: StoreGridProps) {
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((product) => (
-            <StoreCard key={product.id} product={product} />
+            <StoreCard key={product.skuNo} product={product} />
           ))}
         </div>
       )}

@@ -35,8 +35,8 @@ describe("capKeyForProduct (decision #22; e09 sku-prefix derivation)", () => {
   it("derives cap keys from the sku code prefix", () => {
     expect(capKeyForProduct(prod(MON, "accessory"))).toBe("monitor");
     expect(capKeyForProduct(prod(PLT, "accessory"))).toBe("plant");
-    expect(capKeyForProduct(prod("CFEA1B2C3D4E", "accessory"))).toBe("coffee");
-    expect(capKeyForProduct(prod("BBGA1B2C3D4E", "accessory"))).toBe("beanbag");
+    expect(capKeyForProduct(prod(CFE, "accessory"))).toBe("coffee");
+    expect(capKeyForProduct(prod(BBG, "accessory"))).toBe("beanbag");
     expect(capKeyForProduct(prod("LMPA1B2C3D4E", "accessory"))).toBe("lamp");
   });
 

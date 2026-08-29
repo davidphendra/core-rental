@@ -2,6 +2,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { codeForCapKey, codeForCategory, computeSku } from "./sku";
+import type { CapKey } from "../src/shared/domain/setupRules";
 import { HERO_PRODUCTS } from "./curated-hero";
 import type { Product, ProductCategory } from "../src/shared/types/product";
 
@@ -123,22 +125,24 @@ function slugify(name: string): string {
 function buildFromTemplate(
   category: "chair" | "desk",
   template: Template,
-  heroIds: Set<string>,
+  heroSkus: Set<string>,
 ): Product[] {
+  const code = codeForCategory(category);
+  if (code === null) throw new Error(`no sku code for ${category}`);
   return template.names.map((name, i) => {
-    const id = `${category}-${slugify(name)}`;
+    const skuNo = computeSku(code, name);
     return {
-      id,
+      skuNo,
       name,
       category,
       pricePerMonth: template.priceMin + i * template.priceStep,
       description: template.description(name),
-      image: heroIds.has(id) ? "" : `/placeholders/${id}.svg`,
+      image: heroSkus.has(skuNo) ? "" : `/placeholders/${category}-${slugify(name)}.svg`,
     };
   });
 }
 
-const ACCESSORY_SUBTYPES: { name: string; template: Template }[] = [
+const ACCESSORY_SUBTYPES: { name: CapKey; template: Template }[] = [
   { name: "monitor", template: MONITOR_TEMPLATE },
   { name: "lamp", template: LAMP_TEMPLATE },
   { name: "plant", template: PLANT_TEMPLATE },
@@ -146,18 +150,18 @@ const ACCESSORY_SUBTYPES: { name: string; template: Template }[] = [
   { name: "beanbag", template: BEANBAG_TEMPLATE },
 ];
 
-function buildAccessories(heroIds: Set<string>): Product[] {
+function buildAccessories(heroSkus: Set<string>): Product[] {
   const products: Product[] = [];
   for (const { name, template } of ACCESSORY_SUBTYPES) {
     for (const [i, itemName] of template.names.entries()) {
-      const id = `accessory-${name}-${slugify(itemName)}`;
+      const skuNo = computeSku(codeForCapKey(name), itemName);
       products.push({
-        id,
+        skuNo,
         name: itemName,
         category: "accessory",
         pricePerMonth: template.priceMin + i * template.priceStep,
         description: template.description(itemName),
-        image: heroIds.has(id) ? "" : `/placeholders/${id}.svg`,
+        image: heroSkus.has(skuNo) ? "" : `/placeholders/accessory-${slugify(itemName)}.svg`,
       });
     }
   }
@@ -166,22 +170,26 @@ function buildAccessories(heroIds: Set<string>): Product[] {
 
 /**
  * Deterministically builds the full unified catalog: hero overlay (mockup-exact,
- * wins by ID) + generated products (decisions #19, #30, #31, #32).
+ * wins by skuNo) + generated products (decisions #19, #30, #31, #32; e09 skus).
  */
 export function buildCatalog(): Product[] {
   const hero = [...HERO_PRODUCTS];
-  const heroIds = new Set(hero.map((p) => p.id));
+  const heroSkus = new Set(hero.map((p) => p.skuNo));
 
   const generated: Product[] = [
-    ...buildFromTemplate("chair", CHAIR_TEMPLATE, heroIds),
-    ...buildFromTemplate("desk", DESK_TEMPLATE, heroIds),
-    ...buildAccessories(heroIds),
+    ...buildFromTemplate("chair", CHAIR_TEMPLATE, heroSkus),
+    ...buildFromTemplate("desk", DESK_TEMPLATE, heroSkus),
+    ...buildAccessories(heroSkus),
   ];
 
-  // Hero wins by ID; everything else from the generated set.
-  const byId = new Map<string, Product>();
-  for (const p of generated) byId.set(p.id, p);
-  for (const p of hero) byId.set(p.id, p);
+  // Hero wins by skuNo; everything else from the generated set.
+  const bySku = new Map<string, Product>();
+  for (const p of generated) bySku.set(p.skuNo, p);
+  for (const p of hero) bySku.set(p.skuNo, p);
+
+  if (bySku.size !== generated.length + hero.length) {
+    throw new Error("sku collision in generated catalog — computeSku must be unique per name");
+  }
 
   const CATEGORY_ORDER: Record<ProductCategory, number> = {
     chair: 0,
@@ -191,8 +199,9 @@ export function buildCatalog(): Product[] {
     partner: 4,
   };
 
-  return [...byId.values()].sort(
-    (a, b) => CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category] || a.id.localeCompare(b.id),
+  return [...bySku.values()].sort(
+    (a, b) =>
+      CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category] || a.skuNo.localeCompare(b.skuNo),
   );
 }
 
@@ -246,7 +255,8 @@ function main(): void {
 
   for (const product of catalog) {
     if (!product.image.startsWith("/placeholders/")) continue;
-    const file = join(publicDir, `${product.id}.svg`);
+    // Filenames derive from the image path (name slug) — decoupled from the sku.
+    const file = join(publicDir, product.image.replace(/^\/placeholders\//, ""));
     writeFileSync(file, placeholderSvg(product));
   }
 

@@ -9,7 +9,7 @@ import {
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Chair A",
     category: "chair",
     pricePerMonth: 100,
@@ -17,7 +17,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Desk A",
     category: "desk",
     pricePerMonth: 100,
@@ -25,7 +25,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "M1",
     category: "accessory",
     pricePerMonth: 100,
@@ -33,7 +33,7 @@ const catalog: Product[] = [
     image: "/m.svg",
   },
   {
-    id: "accessory-plant-p1",
+    skuNo: "PLTA1B2C3D4E",
     name: "P1",
     category: "accessory",
     pricePerMonth: 100,
@@ -41,7 +41,7 @@ const catalog: Product[] = [
     image: "/p.svg",
   },
   {
-    id: "partner-moto",
+    skuNo: "partner-moto",
     name: "Moto",
     category: "partner",
     pricePerMonth: 100,
@@ -53,7 +53,7 @@ const catalog: Product[] = [
 const valid = {
   chairId: "chair-a",
   deskId: "desk-a",
-  quantities: { "accessory-monitor-m1": 2 },
+  quantities: { MONA1B2C3D4E: 2 },
   deliveryLocation: "Villa Lotus, Canggu",
 };
 
@@ -84,21 +84,11 @@ describe("validateSetupState — G1 trust boundary (threat model M1)", () => {
   });
 
   it("rejects over-cap, negative, non-integer, and unknown quantities", () => {
-    expect(
-      validateSetupState({ ...valid, quantities: { "accessory-monitor-m1": 4 } }, catalog),
-    ).toBeNull(); // cap 3
-    expect(
-      validateSetupState({ ...valid, quantities: { "accessory-monitor-m1": 0 } }, catalog),
-    ).toBeNull();
-    expect(
-      validateSetupState({ ...valid, quantities: { "accessory-monitor-m1": -1 } }, catalog),
-    ).toBeNull();
-    expect(
-      validateSetupState({ ...valid, quantities: { "accessory-monitor-m1": 1.5 } }, catalog),
-    ).toBeNull();
-    expect(
-      validateSetupState({ ...valid, quantities: { "accessory-plant-p1": 5 } }, catalog),
-    ).toBeNull(); // cap 4
+    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 4 } }, catalog)).toBeNull(); // cap 3
+    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 0 } }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: -1 } }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 1.5 } }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 5 } }, catalog)).toBeNull(); // cap 4
     expect(validateSetupState({ ...valid, quantities: { ghost: 1 } }, catalog)).toBeNull();
   });
 

@@ -24,14 +24,14 @@ function isValidId(value: unknown): value is string {
 }
 
 function isSelectedProduct(
-  id: unknown,
+  skuNo: unknown,
   category: Product["category"],
   catalog: readonly Product[],
-): id is string {
-  if (!isValidId(id)) {
+): skuNo is string {
+  if (!isValidId(skuNo)) {
     return false;
   }
-  const product = catalog.find((p) => p.id === id);
+  const product = catalog.find((p) => p.skuNo === skuNo);
   return product?.category === category;
 }
 
@@ -47,7 +47,7 @@ function isValidQuantities(
     return true; // empty quantities are valid
   }
   return entries.every(([id, quantity]) => {
-    const product = catalog.find((p) => p.id === id);
+    const product = catalog.find((p) => p.skuNo === id);
     if (!product || !isCartEligible(product)) {
       return false; // unknown or partner id
     }

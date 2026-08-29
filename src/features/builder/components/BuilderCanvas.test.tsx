@@ -9,7 +9,7 @@ import { BuilderCanvas } from "./BuilderCanvas";
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -17,7 +17,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,
@@ -25,7 +25,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,
@@ -33,7 +33,7 @@ const catalog: Product[] = [
     image: "/m1.svg",
   },
   {
-    id: "accessory-lamp-l1",
+    skuNo: "LMPA1B2C3D4E",
     name: "Lamp 1",
     category: "accessory",
     pricePerMonth: 120_000,
@@ -41,7 +41,7 @@ const catalog: Product[] = [
     image: "/l1.svg",
   },
   {
-    id: "accessory-plant-p1",
+    skuNo: "PLTA1B2C3D4E",
     name: "Plant 1",
     category: "accessory",
     pricePerMonth: 100_000,
@@ -49,7 +49,7 @@ const catalog: Product[] = [
     image: "/p1.svg",
   },
   {
-    id: "accessory-coffee-c1",
+    skuNo: "CFEA1B2C3D4E",
     name: "Espresso",
     category: "accessory",
     pricePerMonth: 750_000,
@@ -57,7 +57,7 @@ const catalog: Product[] = [
     image: "/c1.svg",
   },
   {
-    id: "accessory-beanbag-b1",
+    skuNo: "BBGA1B2C3D4E",
     name: "Bean Bag",
     category: "accessory",
     pricePerMonth: 350_000,
@@ -116,7 +116,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
   });
 
   it("shows the quantity badge and respects caps (N3)", () => {
-    const monitor = "accessory-monitor-m1";
+    const monitor = "MONA1B2C3D4E";
     render(
       <Harness initial={{ chairId: null, deskId: null, quantities: { [monitor]: 3 } }}>
         <BuilderCanvas catalog={catalog} />
@@ -130,7 +130,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
 
   it("removes a filled slot directly via its × button (decrements, then empties)", () => {
     render(
-      <Harness initial={{ chairId: null, deskId: null, quantities: { "accessory-monitor-m1": 2 } }}>
+      <Harness initial={{ chairId: null, deskId: null, quantities: { MONA1B2C3D4E: 2 } }}>
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
@@ -165,7 +165,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
 
   it("fills zone tiles when the zone item is in the cart", () => {
     render(
-      <Harness initial={{ chairId: null, deskId: null, quantities: { "accessory-coffee-c1": 1 } }}>
+      <Harness initial={{ chairId: null, deskId: null, quantities: { CFEA1B2C3D4E: 1 } }}>
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );

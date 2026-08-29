@@ -9,7 +9,7 @@ import { SelectionPanel } from "./SelectionPanel";
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -17,7 +17,7 @@ const catalog: Product[] = [
     image: "/c1.svg",
   },
   {
-    id: "chair-b",
+    skuNo: "chair-b",
     name: "Canggu Task",
     category: "chair",
     pricePerMonth: 600_000,
@@ -25,7 +25,7 @@ const catalog: Product[] = [
     image: "/c2.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,
@@ -33,7 +33,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,
@@ -41,7 +41,7 @@ const catalog: Product[] = [
     image: "/m1.svg",
   },
   {
-    id: "accessory-coffee-c1",
+    skuNo: "CFEA1B2C3D4E",
     name: "Espresso",
     category: "accessory",
     pricePerMonth: 750_000,
@@ -49,7 +49,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "accessory-beanbag-b1",
+    skuNo: "BBGA1B2C3D4E",
     name: "Bean Bag",
     category: "accessory",
     pricePerMonth: 350_000,
@@ -57,7 +57,7 @@ const catalog: Product[] = [
     image: "/b.svg",
   },
   {
-    id: "extra-surfboard-rack",
+    skuNo: "extra-surfboard-rack",
     name: "Surfboard Rack",
     category: "extra",
     pricePerMonth: 150_000,

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import {
   computeTotal,
   firstOfCategory,
-  firstWithIdPrefix,
+  firstWithSkuPrefix,
   idr,
   nthOfCategory,
   resetStorage,
@@ -19,7 +19,7 @@ test.describe("builder happy path (decision #35)", () => {
   }) => {
     const chair = nthOfCategory("chair", 1); // the second chair (exclusivity swap)
     const desk = firstOfCategory("desk");
-    const monitor = firstWithIdPrefix("accessory-monitor-");
+    const monitor = firstWithSkuPrefix("MON");
 
     await page.goto("/builder");
     // Panel loaded (chairs listed).
@@ -43,9 +43,9 @@ test.describe("builder happy path (decision #35)", () => {
 
     // Sticky bar shows the live total (displayed-value verification).
     const expected = computeTotal([
-      { id: chair.id, quantity: 1 },
-      { id: desk.id, quantity: 1 },
-      { id: monitor.id, quantity: 2 },
+      { skuNo: chair.skuNo, quantity: 1 },
+      { skuNo: desk.skuNo, quantity: 1 },
+      { skuNo: monitor.skuNo, quantity: 2 },
     ]);
     await expect(page.getByText(`${idr(expected)}/mo`)).toBeVisible();
   });
@@ -53,7 +53,7 @@ test.describe("builder happy path (decision #35)", () => {
   test("navigating to the summary shows the same line items and total", async ({ page }) => {
     const chair = firstOfCategory("chair");
     const desk = firstOfCategory("desk");
-    const monitor = firstWithIdPrefix("accessory-monitor-");
+    const monitor = firstWithSkuPrefix("MON");
 
     await page.goto("/builder");
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
@@ -69,9 +69,9 @@ test.describe("builder happy path (decision #35)", () => {
     await expect(page.getByText("Qty: 2")).toBeVisible();
 
     const expected = computeTotal([
-      { id: chair.id, quantity: 1 },
-      { id: desk.id, quantity: 1 },
-      { id: monitor.id, quantity: 2 },
+      { skuNo: chair.skuNo, quantity: 1 },
+      { skuNo: desk.skuNo, quantity: 1 },
+      { skuNo: monitor.skuNo, quantity: 2 },
     ]);
     await expect(page.getByText(`${idr(expected)}/mo`)).toBeVisible();
   });
@@ -93,7 +93,7 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
   });
 
   test("N3: the stepper disables at cap", async ({ page }) => {
-    const monitor = firstWithIdPrefix("accessory-monitor-");
+    const monitor = firstWithSkuPrefix("MON");
     await page.goto("/builder");
     await page.getByRole("tab", { name: "Accessories" }).click();
     const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
@@ -104,7 +104,7 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
   });
 
   test("N4: removing an item decreases the total", async ({ page }) => {
-    const monitor = firstWithIdPrefix("accessory-monitor-");
+    const monitor = firstWithSkuPrefix("MON");
     await page.goto("/builder");
     await page.getByRole("tab", { name: "Accessories" }).click();
     const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
@@ -115,9 +115,9 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     const chair = firstOfCategory("chair");
     const desk = firstOfCategory("desk");
     const expected = computeTotal([
-      { id: chair.id, quantity: 1 },
-      { id: desk.id, quantity: 1 },
-      { id: monitor.id, quantity: 1 },
+      { skuNo: chair.skuNo, quantity: 1 },
+      { skuNo: desk.skuNo, quantity: 1 },
+      { skuNo: monitor.skuNo, quantity: 1 },
     ]);
     await expect(page.getByText(`${idr(expected)}/mo`)).toBeVisible();
   });

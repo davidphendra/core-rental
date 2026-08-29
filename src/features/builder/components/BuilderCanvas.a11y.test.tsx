@@ -9,7 +9,7 @@ import { BuilderCanvas } from "./BuilderCanvas";
 
 const catalog: Product[] = [
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,
@@ -17,7 +17,7 @@ const catalog: Product[] = [
     image: "/m1.svg",
   },
   {
-    id: "accessory-lamp-l1",
+    skuNo: "LMPA1B2C3D4E",
     name: "Lamp 1",
     category: "accessory",
     pricePerMonth: 120_000,
@@ -90,7 +90,7 @@ describe("BuilderCanvas keyboard operability (decision #24)", () => {
   });
 
   it("ArrowUp respects the cap (no-op at max)", () => {
-    const monitor = "accessory-monitor-m1";
+    const monitor = "MONA1B2C3D4E";
     function AtCap() {
       const [state, dispatch] = useBuilderReducer({
         chairId: null,

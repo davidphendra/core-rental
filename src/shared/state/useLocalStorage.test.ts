@@ -5,7 +5,7 @@ import { readStoredSetup, writeStoredSetup, STORAGE_KEY } from "./useLocalStorag
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "A",
     category: "chair",
     pricePerMonth: 100,
@@ -13,7 +13,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "D",
     category: "desk",
     pricePerMonth: 200,

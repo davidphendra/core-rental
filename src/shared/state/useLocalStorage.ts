@@ -5,7 +5,7 @@ import { validateSetupState } from "../domain/validateSetupState";
 import type { Product } from "../types/product";
 import type { SetupState } from "../types/setup";
 
-export const STORAGE_KEY = "core-rental:setup:v1";
+export const STORAGE_KEY = "core-rental:setup:v2"; // e09: skuNo + monitorSlots shape; old v1 carts are dropped by design
 
 /**
  * G1 + E3 persistence layer. Reads are validate-and-fallback (corrupt or

@@ -52,14 +52,14 @@ export function useCartTotals(catalog: readonly Product[]) {
   return useMemo(() => {
     const items: { product: Product; quantity: number }[] = [];
 
-    const chair = state.chairId ? catalog.find((p) => p.id === state.chairId) : undefined;
-    const desk = state.deskId ? catalog.find((p) => p.id === state.deskId) : undefined;
+    const chair = state.chairId ? catalog.find((p) => p.skuNo === state.chairId) : undefined;
+    const desk = state.deskId ? catalog.find((p) => p.skuNo === state.deskId) : undefined;
 
     if (chair) items.push({ product: chair, quantity: 1 });
     if (desk) items.push({ product: desk, quantity: 1 });
 
     for (const [id, quantity] of Object.entries(state.quantities)) {
-      const product = catalog.find((p) => p.id === id);
+      const product = catalog.find((p) => p.skuNo === id);
       if (product) items.push({ product, quantity });
     }
 

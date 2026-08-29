@@ -8,7 +8,7 @@ import { ConfirmationScreen } from "./ConfirmationScreen";
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -16,7 +16,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,
@@ -24,7 +24,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "accessory-monitor-m1",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,

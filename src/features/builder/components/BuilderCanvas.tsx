@@ -18,8 +18,8 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
 
   const byCapKey = (key: CapKey) => catalog.filter((p) => capKeyForProduct(p) === key);
 
-  const chair = state.chairId ? catalog.find((p) => p.id === state.chairId) : undefined;
-  const desk = state.deskId ? catalog.find((p) => p.id === state.deskId) : undefined;
+  const chair = state.chairId ? catalog.find((p) => p.skuNo === state.chairId) : undefined;
+  const desk = state.deskId ? catalog.find((p) => p.skuNo === state.deskId) : undefined;
 
   return (
     <div className="border-surface-container-high bg-surface-bright shadow-ambient relative overflow-hidden rounded-[2rem] border p-8">

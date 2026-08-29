@@ -39,10 +39,10 @@ export function CanvasSlot({
   className = "",
 }: CanvasSlotProps) {
   const target = products[0];
-  const selected = products.find((p) => state.quantities[p.id] !== undefined);
-  const quantity = selected ? (state.quantities[selected.id] ?? 0) : 0;
+  const selected = products.find((p) => state.quantities[p.skuNo] !== undefined);
+  const quantity = selected ? (state.quantities[selected.skuNo] ?? 0) : 0;
 
-  const canAddMore = canAdd(state, selected ?? target ?? { id: "", category: "accessory" });
+  const canAddMore = canAdd(state, selected ?? target ?? { skuNo: "", category: "accessory" });
   const canStepDown = quantity > 1;
   const canRemove = quantity === 1;
 
@@ -63,7 +63,7 @@ export function CanvasSlot({
       if (canStepDown) {
         dispatch({ type: "setQuantity", product: selected, quantity: quantity - 1 });
       } else if (canRemove) {
-        dispatch({ type: "removeAccessory", productId: selected.id });
+        dispatch({ type: "removeAccessory", productId: selected.skuNo });
       }
     }
   };

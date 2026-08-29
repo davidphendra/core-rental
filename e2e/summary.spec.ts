@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import {
   computeTotal,
   firstOfCategory,
-  firstWithIdPrefix,
+  firstWithSkuPrefix,
   idr,
   resetStorage,
 } from "./fixtures/catalog-helpers";
@@ -18,7 +18,7 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
   }) => {
     const chair = firstOfCategory("chair");
     const desk = firstOfCategory("desk");
-    const monitor = firstWithIdPrefix("accessory-monitor-");
+    const monitor = firstWithSkuPrefix("MON");
     const delivery = "Villa Lotus, Canggu";
 
     // Build on /builder (D1 defaults select the first chair + desk).
@@ -49,9 +49,9 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
     await expect(page.getByText("Your request is in!")).toBeVisible();
     await expect(page.getByText(monitor.name)).toBeVisible();
     const expected = computeTotal([
-      { id: chair.id, quantity: 1 },
-      { id: desk.id, quantity: 1 },
-      { id: monitor.id, quantity: 2 },
+      { skuNo: chair.skuNo, quantity: 1 },
+      { skuNo: desk.skuNo, quantity: 1 },
+      { skuNo: monitor.skuNo, quantity: 2 },
     ]);
     await expect(page.getByText(`${idr(expected)}/mo`)).toBeVisible();
     await expect(page.getByText(delivery)).toBeVisible();
@@ -73,8 +73,8 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
         localStorage.setItem(key, setup);
       },
       {
-        key: "core-rental:setup:v1",
-        setup: JSON.stringify({ chairId: chair.id, deskId: desk.id, quantities: {} }),
+        key: "core-rental:setup:v2",
+        setup: JSON.stringify({ chairId: chair.skuNo, deskId: desk.skuNo, quantities: {} }),
       },
     );
 
@@ -119,8 +119,8 @@ test.describe("summary negative flows (N1, N11)", () => {
         localStorage.setItem(key, setup);
       },
       {
-        key: "core-rental:setup:v1",
-        setup: JSON.stringify({ chairId: chair.id, deskId: desk.id, quantities: {} }),
+        key: "core-rental:setup:v2",
+        setup: JSON.stringify({ chairId: chair.skuNo, deskId: desk.skuNo, quantities: {} }),
       },
     );
 

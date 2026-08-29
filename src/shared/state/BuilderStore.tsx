@@ -32,10 +32,10 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       return action.state;
 
     case "selectChair":
-      return { ...state, chairId: action.product.id };
+      return { ...state, chairId: action.product.skuNo };
 
     case "selectDesk":
-      return { ...state, deskId: action.product.id };
+      return { ...state, deskId: action.product.skuNo };
 
     case "deselectChair":
       return { ...state, chairId: null };
@@ -47,8 +47,8 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       if (!canAdd(state, action.product)) {
         return state; // over cap or partner — G2 quiet no-op
       }
-      const next = (state.quantities[action.product.id] ?? 0) + 1;
-      return { ...state, quantities: { ...state.quantities, [action.product.id]: next } };
+      const next = (state.quantities[action.product.skuNo] ?? 0) + 1;
+      return { ...state, quantities: { ...state.quantities, [action.product.skuNo]: next } };
     }
 
     case "removeAccessory": {
@@ -74,9 +74,9 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       }
       const next = { ...state.quantities };
       if (qty === 0) {
-        delete next[action.product.id];
+        delete next[action.product.skuNo];
       } else {
-        next[action.product.id] = qty;
+        next[action.product.skuNo] = qty;
       }
       return { ...state, quantities: next };
     }

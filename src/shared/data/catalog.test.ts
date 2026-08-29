@@ -52,7 +52,7 @@ describe("catalog integrity (decisions #19, #30, #31, #32; e09 SKU contract)", (
 
   it("no id field remains in the committed catalog (e09 rename)", () => {
     for (const p of committed) {
-      expect((p as Record<string, unknown>).id, `no id on ${p.name}`).toBeUndefined();
+      expect("id" in p, `no id on ${p.name}`).toBe(false);
     }
   });
 

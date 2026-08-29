@@ -5,16 +5,16 @@ import { EMPTY_SETUP, builderReducer } from "./BuilderStore";
 import type { BuilderAction } from "./BuilderStore";
 
 const chair = {
-  id: "chair-a",
+  skuNo: "chair-a",
   name: "A",
   category: "chair",
   pricePerMonth: 100,
   description: "d",
   image: "/c.svg",
 } satisfies Product;
-const chairB = { ...chair, id: "chair-b", name: "B" } satisfies Product;
+const chairB = { ...chair, skuNo: "chair-b", name: "B" } satisfies Product;
 const desk = {
-  id: "desk-a",
+  skuNo: "desk-a",
   name: "D",
   category: "desk",
   pricePerMonth: 200,
@@ -22,7 +22,7 @@ const desk = {
   image: "/d.svg",
 } satisfies Product;
 const monitor = {
-  id: "accessory-monitor-m1",
+  skuNo: "MONA1B2C3D4E",
   name: "M1",
   category: "accessory",
   pricePerMonth: 50,
@@ -30,7 +30,7 @@ const monitor = {
   image: "/m.svg",
 } satisfies Product;
 const plant = {
-  id: "accessory-plant-p1",
+  skuNo: "PLTA1B2C3D4E",
   name: "P1",
   category: "accessory",
   pricePerMonth: 30,
@@ -38,7 +38,7 @@ const plant = {
   image: "/p.svg",
 } satisfies Product;
 const partner = {
-  id: "partner-x",
+  skuNo: "partner-x",
   name: "X",
   category: "partner",
   pricePerMonth: 999,
@@ -70,7 +70,7 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
     const s1 = act(EMPTY_SETUP, { type: "addAccessory", product: monitor });
     const s2 = act(s1, { type: "addAccessory", product: monitor });
     const s3 = act(s2, { type: "addAccessory", product: monitor });
-    expect(s3.quantities["accessory-monitor-m1"]).toBe(3);
+    expect(s3.quantities["MONA1B2C3D4E"]).toBe(3);
     const s4 = act(s3, { type: "addAccessory", product: monitor });
     expect(s4).toBe(s3); // quiet no-op at cap (N3)
   });
@@ -83,21 +83,21 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
   it("removeAccessory decrements, then removes the key", () => {
     const s1 = act(EMPTY_SETUP, { type: "addAccessory", product: plant });
     const s2 = act(s1, { type: "addAccessory", product: plant });
-    const s3 = act(s2, { type: "removeAccessory", productId: plant.id });
-    expect(s3.quantities[plant.id]).toBe(1);
-    const s4 = act(s3, { type: "removeAccessory", productId: plant.id });
-    expect(s4.quantities[plant.id]).toBeUndefined();
+    const s3 = act(s2, { type: "removeAccessory", productId: plant.skuNo });
+    expect(s3.quantities[plant.skuNo]).toBe(1);
+    const s4 = act(s3, { type: "removeAccessory", productId: plant.skuNo });
+    expect(s4.quantities[plant.skuNo]).toBeUndefined();
   });
 
   it("setQuantity validates bounds (1..cap), 0 removes", () => {
     const s1 = act(EMPTY_SETUP, { type: "setQuantity", product: plant, quantity: 3 });
-    expect(s1.quantities[plant.id]).toBe(3);
+    expect(s1.quantities[plant.skuNo]).toBe(3);
     const s2 = act(s1, { type: "setQuantity", product: plant, quantity: 5 }); // cap 4
     expect(s2).toBe(s1); // no-op
     const s3 = act(s1, { type: "setQuantity", product: plant, quantity: -1 });
     expect(s3).toBe(s1);
     const s4 = act(s1, { type: "setQuantity", product: plant, quantity: 0 });
-    expect(s4.quantities[plant.id]).toBeUndefined();
+    expect(s4.quantities[plant.skuNo]).toBeUndefined();
   });
 
   it("setDeliveryLocation stores the raw value (validated at submit, G3)", () => {
@@ -108,7 +108,7 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
   it("hydrate replaces state; reset clears to empty", () => {
     const s = act(EMPTY_SETUP, {
       type: "hydrate",
-      state: { chairId: chair.id, deskId: desk.id, quantities: {} },
+      state: { chairId: chair.skuNo, deskId: desk.skuNo, quantities: {} },
     });
     expect(s.chairId).toBe("chair-a");
     expect(act(s, { type: "reset" })).toEqual(EMPTY_SETUP);

@@ -19,7 +19,7 @@ function wrapper({ children }: { children: ReactNode }) {
 
 const CATALOG: Product[] = [
   {
-    id: "chair-1",
+    skuNo: "CHAA1B2C3D4E",
     name: "Test Chair",
     category: "chair",
     pricePerMonth: 450_000,

@@ -43,7 +43,7 @@ export function SummaryView({ catalog, onRent }: SummaryViewProps) {
 
       <ul className="mt-4 flex flex-col gap-2">
         {lineItems.map(({ product, quantity }) => (
-          <li key={product.id} className="flex items-center justify-between py-1">
+          <li key={product.skuNo} className="flex items-center justify-between py-1">
             <div className="flex flex-col">
               <span className="text-label-md font-label-md text-on-surface">{product.name}</span>
               <span className="text-label-sm font-label-sm text-on-surface-variant">

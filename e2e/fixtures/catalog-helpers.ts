@@ -12,10 +12,10 @@ import catalogJson from "../../src/shared/data/products.json";
  */
 export const catalog = catalogJson as Product[];
 
-export function productById(id: string): Product {
-  const product = catalog.find((p) => p.id === id);
+export function productBySku(skuNo: string): Product {
+  const product = catalog.find((p) => p.skuNo === skuNo);
   if (product === undefined) {
-    throw new Error(`Unknown product id in test helper: ${id}`);
+    throw new Error(`Unknown product skuNo in test helper: ${id}`);
   }
   return product;
 }
@@ -36,10 +36,10 @@ export function nthOfCategory(category: Product["category"], index: number): Pro
   return product;
 }
 
-export function firstWithIdPrefix(prefix: string): Product {
-  const product = catalog.find((p) => p.id.startsWith(prefix));
+export function firstWithSkuPrefix(prefix: string): Product {
+  const product = catalog.find((p) => p.skuNo.startsWith(prefix));
   if (product === undefined) {
-    throw new Error(`No product with id prefix ${prefix}`);
+    throw new Error(`No product with skuNo prefix ${prefix}`);
   }
   return product;
 }
@@ -50,8 +50,11 @@ export function idr(amount: number): string {
 }
 
 /** Independent total computation from product ids + quantities (spec-local). */
-export function computeTotal(items: { id: string; quantity: number }[]): number {
-  return items.reduce((sum, { id, quantity }) => sum + productById(id).pricePerMonth * quantity, 0);
+export function computeTotal(items: { skuNo: string; quantity: number }[]): number {
+  return items.reduce(
+    (sum, { skuNo, quantity }) => sum + productBySku(skuNo).pricePerMonth * quantity,
+    0,
+  );
 }
 
 /** Fresh cart state per spec (N10 seeds corrupt data deliberately elsewhere). */

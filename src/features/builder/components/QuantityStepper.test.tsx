@@ -8,7 +8,7 @@ import { EMPTY_SETUP } from "@/shared/state/BuilderStore";
 import { QuantityStepper } from "./QuantityStepper";
 
 const monitor: Product = {
-  id: "accessory-monitor-m1",
+  skuNo: "MONA1B2C3D4E",
   name: "Monitor 1",
   category: "accessory",
   pricePerMonth: 300_000,
@@ -25,7 +25,7 @@ function AtCap({ children }: { children: ReactNode }) {
   const [state, dispatch] = useBuilderReducer({
     chairId: null,
     deskId: null,
-    quantities: { "accessory-monitor-m1": 3 },
+    quantities: { MONA1B2C3D4E: 3 },
   });
   return <BuilderStoreProvider value={{ state, dispatch }}>{children}</BuilderStoreProvider>;
 }

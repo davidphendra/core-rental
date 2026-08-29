@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+@layer base {
+  /*
+   * Clickable affordance (UX ruling): Tailwind v4's preflight no longer sets
+   * cursor: pointer on buttons, so every interactive element showed the arrow.
+   * Restore it globally for enabled buttons/links/tabs/etc. Text inputs keep
+   * the I-beam (typing affordance); disabled controls stay inert.
+   */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="radio"],
+  [role="checkbox"],
+  label[for],
+  select:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+}
+
 /*
  * Tropical Tech design tokens (docs/design/tropical_tech/DESIGN.md + the
  * mockups' tailwind.config blocks). Full port: colors, spacing, typography,

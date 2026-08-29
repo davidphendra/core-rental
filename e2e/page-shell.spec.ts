@@ -27,4 +27,23 @@ test.describe("page shell negative flows (N2, N9)", () => {
       expect(headers["x-content-type-options"], `nosniff on ${path}`).toBe("nosniff");
     }
   });
+
+  test("clickable elements show the pointer cursor on hover (UX ruling)", async ({ page }) => {
+    // Builder: an enabled button + the search input.
+    await page.goto("/builder");
+    await expect(page.getByRole("button", { name: "Add Monitor" }).first()).toHaveCSS(
+      "cursor",
+      "pointer",
+    );
+    await expect(page.getByRole("searchbox", { name: "Search chairs" })).toHaveCSS(
+      "cursor",
+      "text",
+    );
+    // Home: a nav link.
+    await page.goto("/");
+    await expect(page.getByRole("link", { name: "Builder" }).first()).toHaveCSS(
+      "cursor",
+      "pointer",
+    );
+  });
 });

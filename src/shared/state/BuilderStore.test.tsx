@@ -114,3 +114,57 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
     expect(act(s, { type: "reset" })).toEqual(EMPTY_SETUP);
   });
 });
+
+describe("monitor slots (e09s02)", () => {
+  const m1 = monitor; // MONA1B2C3D4E
+  const m2 = { ...monitor, skuNo: "MONA1B2C3D4F", name: "M2" } satisfies Product;
+  const m3 = { ...monitor, skuNo: "MONA1B2C3D4G", name: "M3" } satisfies Product;
+  const m4 = { ...monitor, skuNo: "MONA1B2C3D4H", name: "M4" } satisfies Product;
+
+  it("selectMonitor fills the first empty slot (append, insertion-ordered)", () => {
+    const s = act(EMPTY_SETUP, { type: "selectMonitor", product: m1 });
+    expect(s.monitorSlots).toEqual([m1.skuNo]);
+    const s2 = act(s, { type: "selectMonitor", product: m2 });
+    expect(s2.monitorSlots).toEqual([m1.skuNo, m2.skuNo]);
+  });
+
+  it("selectMonitor is a quiet no-op when the monitor is already placed", () => {
+    const s = act(EMPTY_SETUP, { type: "selectMonitor", product: m1 });
+    expect(act(s, { type: "selectMonitor", product: m1 })).toBe(s);
+  });
+
+  it("selectMonitor with 3 full replaces the most recently added (last)", () => {
+    let s = EMPTY_SETUP;
+    for (const m of [m1, m2, m3]) s = act(s, { type: "selectMonitor", product: m });
+    expect(s.monitorSlots).toEqual([m1.skuNo, m2.skuNo, m3.skuNo]);
+    const replaced = act(s, { type: "selectMonitor", product: m4 });
+    expect(replaced.monitorSlots).toEqual([m1.skuNo, m2.skuNo, m4.skuNo]);
+  });
+
+  it("selectMonitor with 3 full is still a no-op for an already-placed model", () => {
+    let s = EMPTY_SETUP;
+    for (const m of [m1, m2, m3]) s = act(s, { type: "selectMonitor", product: m });
+    expect(act(s, { type: "selectMonitor", product: m1 })).toBe(s);
+  });
+
+  it("removeMonitorSlot clears by index (later slots shift left)", () => {
+    let s = EMPTY_SETUP;
+    for (const m of [m1, m2, m3]) s = act(s, { type: "selectMonitor", product: m });
+    const s2 = act(s, { type: "removeMonitorSlot", index: 1 });
+    expect(s2.monitorSlots).toEqual([m1.skuNo, m3.skuNo]);
+  });
+
+  it("removeMonitorSlot with an out-of-range index is a quiet no-op", () => {
+    expect(act(EMPTY_SETUP, { type: "removeMonitorSlot", index: 0 })).toBe(EMPTY_SETUP);
+  });
+
+  it("supports duplicate models across slots (2A + 1B, 3C)", () => {
+    let s = EMPTY_SETUP;
+    for (const m of [m1, m1, m2]) s = act(s, { type: "selectMonitor", product: m });
+    expect(s.monitorSlots).toEqual([m1.skuNo, m1.skuNo, m2.skuNo]);
+  });
+
+  it("EMPTY_SETUP starts with no monitor slots", () => {
+    expect(EMPTY_SETUP.monitorSlots).toEqual([]);
+  });
+});

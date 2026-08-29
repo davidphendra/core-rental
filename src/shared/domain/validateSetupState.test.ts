@@ -33,6 +33,14 @@ const catalog: Product[] = [
     image: "/m.svg",
   },
   {
+    skuNo: "MONA1B2C3D4F",
+    name: "M2",
+    category: "accessory",
+    pricePerMonth: 120,
+    description: "d",
+    image: "/m2.svg",
+  },
+  {
     skuNo: "PLTA1B2C3D4E",
     name: "P1",
     category: "accessory",
@@ -53,7 +61,7 @@ const catalog: Product[] = [
 const valid = {
   chairId: "chair-a",
   deskId: "desk-a",
-  quantities: { MONA1B2C3D4E: 2 },
+  quantities: { PLTA1B2C3D4E: 2 },
   deliveryLocation: "Villa Lotus, Canggu",
 };
 
@@ -84,16 +92,19 @@ describe("validateSetupState — G1 trust boundary (threat model M1)", () => {
   });
 
   it("rejects over-cap, negative, non-integer, and unknown quantities", () => {
-    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 4 } }, catalog)).toBeNull(); // cap 3
-    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 0 } }, catalog)).toBeNull();
-    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: -1 } }, catalog)).toBeNull();
-    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 1.5 } }, catalog)).toBeNull();
     expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 5 } }, catalog)).toBeNull(); // cap 4
+    expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 0 } }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: -1 } }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 1.5 } }, catalog)).toBeNull();
     expect(validateSetupState({ ...valid, quantities: { ghost: 1 } }, catalog)).toBeNull();
   });
 
   it("rejects partner items in quantities", () => {
     expect(validateSetupState({ ...valid, quantities: { "partner-moto": 1 } }, catalog)).toBeNull();
+  });
+
+  it("rejects monitor keys in quantities (monitors live in slots now, e09s02)", () => {
+    expect(validateSetupState({ ...valid, quantities: { MONA1B2C3D4E: 1 } }, catalog)).toBeNull();
   });
 
   it("rejects invalid delivery locations", () => {
@@ -110,6 +121,34 @@ describe("validateSetupState — G1 trust boundary (threat model M1)", () => {
   it("trims a valid delivery location", () => {
     const result = validateSetupState({ ...valid, deliveryLocation: "  Canggu  " }, catalog);
     expect(result?.deliveryLocation).toBe("Canggu");
+  });
+});
+
+describe("monitorSlots (e09s02)", () => {
+  it("accepts valid monitorSlots (≤3 catalog monitor skus, duplicates allowed)", () => {
+    const result = validateSetupState(
+      { ...valid, monitorSlots: ["MONA1B2C3D4E", "MONA1B2C3D4F"] },
+      catalog,
+    );
+    expect(result?.monitorSlots).toEqual(["MONA1B2C3D4E", "MONA1B2C3D4F"]);
+  });
+
+  it("rejects malformed monitorSlots", () => {
+    expect(validateSetupState({ ...valid, monitorSlots: "x" }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, monitorSlots: [42] }, catalog)).toBeNull();
+    expect(validateSetupState({ ...valid, monitorSlots: ["not-a-sku"] }, catalog)).toBeNull();
+    expect(
+      validateSetupState({ ...valid, monitorSlots: ["MONA1B2C3D4E"] }, catalog),
+    ).not.toBeNull();
+    expect(
+      validateSetupState(
+        {
+          ...valid,
+          monitorSlots: ["MONA1B2C3D4E", "MONA1B2C3D4F", "MONA1B2C3D4E", "MONA1B2C3D4F"],
+        },
+        catalog,
+      ),
+    ).toBeNull(); // >3
   });
 });
 

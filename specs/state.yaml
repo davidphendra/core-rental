@@ -5,8 +5,9 @@ active_bug_id: null
 workflow_mode: solo-git
 release:
   target_version: "1.9.0"
-  last_tag: null
-  last_publish: null
+  last_tag: "v1.9.0"
+  last_publish: "pushed + tagged, CI green"
+  ci_verified: true
 metrics:
   story_start: "2026-08-29T05:15:04Z"
 epic_cycle:
@@ -31,9 +32,9 @@ bug_cycle:
   current_step: null
   completed_steps: []
 git:
-  branch: feat/e09-sku-monitor-slots
-  hash: null
-  note: "Kickoff complete — branch created off green main. Next: develop-tdd (e09s01)."
+  branch: main
+  hash: "400bec2"
+  note: "e09 released as v1.9.0 (merge + tag + CI green). All three stories done, capsule archived."
   change_log:
     - date: 2025
       summary: Store page converted to a display-only catalog gallery — Add to Setup and Request Rental buttons removed, partner request modal deleted (decision #20 superseded). Adding lives only in the Builder's Selection Panel.

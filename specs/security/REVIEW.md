@@ -30,3 +30,7 @@
 ## Verdict
 
 No HIGH findings (confidence >= 8). Diff strengthens the trust boundary. Blocking gate: PASS.
+
+## e09s02/s03 follow-up scan
+
+Re-scanned the s02/s03 diff (MonitorSlotRow, selectMonitor/removeMonitorSlot, monitorSlots validation, panel Select, hint buttons): no HIGH findings (confidence >= 8). S2 (corrupt monitorSlots) and S3 (selectMonitor bypass) are now IMPLEMENTED — strict monitorSlots validation and G2 reducer semantics. No eval/innerHTML/unsafe writes introduced. Gate: PASS.

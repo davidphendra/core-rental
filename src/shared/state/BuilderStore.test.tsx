@@ -142,10 +142,23 @@ describe("monitor slots (e09s02)", () => {
     expect(replaced.monitorSlots).toEqual([m1.skuNo, m2.skuNo, m4.skuNo]);
   });
 
-  it("selectMonitor with 3 full is still a no-op for an already-placed model", () => {
+  it("selectMonitor with 3 full replaces the last even with an already-placed model (2A reachable)", () => {
     let s = EMPTY_SETUP;
     for (const m of [m1, m2, m3]) s = act(s, { type: "selectMonitor", product: m });
-    expect(act(s, { type: "selectMonitor", product: m1 })).toBe(s);
+    const replaced = act(s, { type: "selectMonitor", product: m1 });
+    expect(replaced.monitorSlots).toEqual([m1.skuNo, m2.skuNo, m1.skuNo]);
+  });
+
+  it("selectMonitor with 3 full selecting the current last model is a quiet no-op", () => {
+    let s = EMPTY_SETUP;
+    for (const m of [m1, m2, m3]) s = act(s, { type: "selectMonitor", product: m });
+    expect(act(s, { type: "selectMonitor", product: m3 })).toBe(s);
+  });
+
+  it("selectMonitor appends an already-placed model while space remains (2A+1B)", () => {
+    const s1 = act(EMPTY_SETUP, { type: "selectMonitor", product: m1 });
+    const s2 = act(s1, { type: "selectMonitor", product: m1 });
+    expect(s2.monitorSlots).toEqual([m1.skuNo, m1.skuNo]);
   });
 
   it("removeMonitorSlot clears by index (later slots shift left)", () => {

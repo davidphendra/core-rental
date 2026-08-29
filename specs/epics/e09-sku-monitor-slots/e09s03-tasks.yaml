@@ -8,7 +8,7 @@ tasks:
       product image)"
     verify: pnpm test -- BuilderCanvas.test.tsx
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: low
       categories:
@@ -20,7 +20,7 @@ tasks:
       recognizable; E2E matchers updated for the div→button change"
     verify: pnpm test -- BuilderCanvas.test.tsx && pnpm test -- builder-wiring.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: medium
       categories:
@@ -31,7 +31,7 @@ tasks:
       chair/desk selected); icon present on Add Monitor"
     verify: pnpm build && pnpm test:e2e
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: medium
       categories:

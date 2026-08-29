@@ -70,11 +70,25 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
           <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
           {desk === undefined ? (
-            <div className="slot-empty absolute inset-0 flex items-center justify-center rounded-md">
-              <span className="text-label-sm font-label-sm text-outline">
+            <button
+              type="button"
+              aria-label="Add a desk from the panel"
+              onClick={() => {
+                const first = catalog.find((p) => p.category === "desk");
+                if (first !== undefined) dispatch({ type: "selectDesk", product: first });
+              }}
+              className="slot-empty hover:bg-surface-container-low focus-visible:outline-primary group absolute inset-0 flex items-center justify-center gap-1 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <span
+                className="material-symbols-outlined text-outline group-hover:text-primary"
+                aria-hidden="true"
+              >
+                desk
+              </span>
+              <span className="text-label-sm font-label-sm text-outline group-hover:text-primary">
                 Add a desk from the panel
               </span>
-            </div>
+            </button>
           ) : null}
         </div>
         {desk ? (
@@ -125,15 +139,25 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
             </button>
           </div>
         ) : (
-          <div
-            className="slot-empty flex h-24 w-32 items-center justify-center rounded-md"
-            role="img"
-            aria-label="No chair selected"
+          <button
+            type="button"
+            aria-label="Add a chair from the panel"
+            onClick={() => {
+              const first = catalog.find((p) => p.category === "chair");
+              if (first !== undefined) dispatch({ type: "selectChair", product: first });
+            }}
+            className="slot-empty hover:bg-surface-container-low focus-visible:outline-primary group flex h-24 w-32 flex-col items-center justify-center gap-1 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span className="text-label-sm font-label-sm text-outline text-center">
+            <span
+              className="material-symbols-outlined text-outline group-hover:text-primary"
+              aria-hidden="true"
+            >
+              chair
+            </span>
+            <span className="text-label-sm font-label-sm text-outline group-hover:text-primary text-center">
               Add a chair from the panel
             </span>
-          </div>
+          </button>
         )}
       </div>
 

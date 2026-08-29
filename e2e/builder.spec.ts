@@ -158,7 +158,7 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     const canvas = page.locator('div[class*="rounded-[2rem]"]');
     // Chair is selected by D1 defaults — remove it via its ×.
     await page.getByRole("button", { name: "Remove chair" }).click();
-    await expect(canvas.getByRole("img", { name: "No chair selected" })).toBeVisible();
+    await expect(canvas.getByRole("button", { name: "Add a chair from the panel" })).toBeVisible();
     // Desk too — the table layout stays, only the product image is removed.
     await page.getByRole("button", { name: "Remove desk" }).click();
     await expect(canvas.getByRole("img", { name: "Desk table" })).toBeVisible();

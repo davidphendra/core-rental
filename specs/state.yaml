@@ -10,19 +10,23 @@ release:
 metrics:
   story_start: "2026-08-29T05:15:04Z"
 epic_cycle:
-  current_step: 4
-  next_skill: develop-tdd
+  current_step: 8
+  next_skill: release-branch
   completed_steps:
     - 0
     - 1
     - 2
     - 3
+    - 4
+    - 5
+    - 6
+    - 7
   story_bcps: 19
   fast_mode: false
   audit_result: pass
-  notes: "e09s01 cycle steps 0-7 done (audit pass). release-branch HELD: one combined
-    v1.9.0 release once e09s02 + e09s03 land on this branch. Next: develop-tdd e09s02.
-    Bump driver: refactor/test/chore commits -> no release; e09s02 feat(builder) drives minor."
+  notes: "ALL THREE e09 stories built + verified + audited (e09s01/02/03 done in
+    execution-status). feat(builder) commits drive the minor bump. Next: release-branch
+    for the combined v1.9.0."
 bug_cycle:
   current_step: null
   completed_steps: []

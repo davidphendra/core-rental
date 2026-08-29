@@ -13,7 +13,7 @@ const catalog: Product[] = [
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
-    description: "d",
+    description: "Ergonomic mesh office chair for deep work.",
     image: "/c1.svg",
   },
   {
@@ -21,7 +21,7 @@ const catalog: Product[] = [
     name: "Canggu Task",
     category: "chair",
     pricePerMonth: 600_000,
-    description: "d",
+    description: "Premium task chair with headrest.",
     image: "/c2.svg",
   },
   {
@@ -168,5 +168,77 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     // Clicking Select dispatches selectMonitor without crashing; button persists.
     fireEvent.click(select!);
     expect(screen.getAllByRole("button", { name: "Select" })[0]).toBeInTheDocument();
+  });
+});
+
+describe("SelectionPanel search filter (keyword by name/description)", () => {
+  function SearchHarness() {
+    const [state, dispatch] = useBuilderReducer(EMPTY_SETUP);
+    return (
+      <BuilderStoreProvider value={{ state, dispatch }}>
+        <SelectionPanel catalog={catalog} />
+      </BuilderStoreProvider>
+    );
+  }
+
+  it("filters chairs by name (case-insensitive substring)", () => {
+    render(<SearchHarness />);
+    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "CANGGU" } });
+    expect(screen.getByText("Canggu Task")).toBeInTheDocument();
+    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
+  });
+
+  it("matches against the description too", () => {
+    render(<SearchHarness />);
+    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "mesh" } });
+    expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
+    expect(screen.queryByText("Canggu Task")).not.toBeInTheDocument();
+  });
+
+  it("shows 'No products match' when nothing matches", () => {
+    render(<SearchHarness />);
+    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "zzz" } });
+    expect(screen.getByText(/no products match/i)).toBeInTheDocument();
+    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
+  });
+
+  it("accessories: keyword filters each subcategory group; empty groups show a message", () => {
+    render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
+    fireEvent.change(screen.getByLabel("Search accessories"), { target: { value: "desk" } });
+    const lampGroup = screen.getByText("lamp").closest("div") as HTMLElement;
+    expect(within(lampGroup).getByText("Desk Lamp")).toBeInTheDocument();
+    const monitorGroup = screen.getByText("monitor").closest("div") as HTMLElement;
+    expect(within(monitorGroup).getByText(/no monitor match/i)).toBeInTheDocument();
+    expect(within(monitorGroup).queryByText("Monitor 1")).not.toBeInTheDocument();
+  });
+
+  it("the clear button resets the filter", () => {
+    render(<SearchHarness />);
+    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "canggu" } });
+    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
+    expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
+    expect(screen.getByText("Canggu Task")).toBeInTheDocument();
+  });
+
+  it("Escape clears the keyword", () => {
+    render(<SearchHarness />);
+    const input = screen.getByLabel("Search chairs");
+    fireEvent.change(input, { target: { value: "canggu" } });
+    fireEvent.keyDown(input, { key: "Escape" });
+    expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
+  });
+
+  it("each tab keeps its own keyword (per-tab search)", () => {
+    render(<SearchHarness />);
+    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "canggu" } });
+    fireEvent.click(screen.getByRole("tab", { name: "Desks" }));
+    expect(screen.getByText("Seminyak Desk")).toBeInTheDocument();
+    expect((screen.getByLabel("Search desks") as HTMLInputElement).value).toBe("");
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
+    expect((screen.getByLabel("Search chairs") as HTMLInputElement).value).toBe("canggu");
+    expect(screen.getByText("Canggu Task")).toBeInTheDocument();
+    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
   });
 });

@@ -5,13 +5,17 @@
 # lives in specs/execution-status.yaml, never here.
 
 release:
-  version: "1.0.0"        # mirror of expected tag — semantic-release decides at merge
-  codename: "Bali Office"
-  status: planning        # planning | in_progress | released
+  version: "1.9.0" # mirror of expected tag — semantic-release decides at merge
+  codename: "SKU & Monitor Slots"
+  status: planning # planning | in_progress | released
   semantic_release: true
-  bump_hint: minor        # CI decides at merge
+  bump_hint: minor # CI decides at merge
 
 epics:
+  - id: e09
+    title: SKU System & Monitor Slots
+    wsjf: 5.0
+    capsule_dir: epics/e09-sku-monitor-slots
   - id: e01
     title: Project Scaffold & Tooling
     wsjf: 6.0

@@ -1,94 +1,97 @@
-# Scope — Core Rental (SCOPE_LATEST)
+# Scope — Core Rental v1.9.0 initiative (SCOPE_LATEST)
 
 core_value: >
-  Design your dream workspace on a visual canvas and rent it month-to-month —
-  Core Rental delivers fully-equipped office setups to Bali digital nomads,
-  no furniture to buy, no long-term commitment.
+  Give every product a real, stable system identity (a 12-character SKU) and
+  make the workspace builder more direct — three discrete monitor slots with
+  any model mix, one-click chair/desk selection, and clear icons — so
+  designing and renting a Bali office stays a three-minute, visual experience.
 
 summary: >
-  Core Rental is a Next.js single-page application (four routes) that lets a
-  user visually build a workspace — pick a chair and desk, stack accessories
-  (monitors, lamps, plants, coffee machine, bean bag), add a surfboard extra,
-  and optionally request the partner motorcycle — then review the setup with a
-  live IDR monthly total and "rent" it via a mock confirmation flow.
+  v1.9.0 is one combined release that hardens the catalog identity and the
+  builder UX. Products trade their readable slug ids (chair-uluwatu-chair,
+  accessory-monitor-…) for a 12-character alphanumeric SKU built from a
+  3-letter category code plus a 9-character deterministic hash of the product
+  name. The SKU is the system identifier used by the cart, validation,
+  persistence, tests, and E2E. The builder gains three discrete monitor slots
+  (exactly one monitor each, any combination of models up to 3 total), a
+  monitor icon on the Add Monitor button, and clickable Add-chair / Add-desk
+  hints that select the first product of that category.
 
-  The MVP is a frontend demo: data comes from a committed unified JSON catalog
-  served by one read-only route handler and fetched with TanStack Query; the
-  cart persists in localStorage with strict validate-and-fallback hydration;
-  the Rent flow ends in a demo-honest confirmation screen (no payment). It
-  ships on Vercel with Vercel-native observability, a full Vitest + Playwright
-  test suite, and security headers.
+  The four changes ship together because they touch the same code: the cart
+  state shape, the catalog schema, the validation trust boundary, the
+  localStorage key, and the E2E fixtures all move at once, avoiding
+  intermediate broken states and a single storage-key bump. Old persisted
+  carts are intentionally dropped (fresh defaults) — mapping old ids to new
+  SKUs is infeasible with opaque, regenerated identifiers.
 
 in_scope:
-  - id: e01
-    title: "Project scaffold & tooling"
-    detail: Next.js 16 (Turbopack) + pnpm + Node 20, TS strict, ESLint/Prettier/husky, next.config headers + remotePatterns, layout/fonts, metadata + OG.
-  - id: e02
-    title: "Catalog & seed generation"
-    detail: Unified products.json (~55 products, IDR, 4 categories + partner), generator script + curated hero overlay, SVG placeholder assets, integrity tests.
-  - id: e03
-    title: "Shared layers"
-    detail: data (products.ts, useProducts), domain (pricing, setupRules, validateSetupState), state (BuilderStore + useLocalStorage + quota guard), ui primitives, types, config, observability logger.
-  - id: e04
-    title: "Home feature"
-    detail: Hero ("Your Bali Office, Delivered."), How-it-Works (3 steps, step-2 copy rewritten), floating product cards from catalog, anchor nav. No avatar.
-  - id: e05
-    title: "Builder feature"
-    detail: Canvas + slots + secondary zones, selection panel (chair/desk single-select, accessory steppers with caps), sticky monthly total, pre-selected defaults, keyboard-operable.
-  - id: e06
-    title: "Store feature"
-    detail: Grid + category filter tabs, Add-to-Setup actions, partner modal request flow (motorcycle), image fallback.
-  - id: e07
-    title: "Summary feature & page shell"
-    detail: Line items + Qty + Monthly Total, delivery-location input (validated), zone tiles (Coffee/Relax), mock confirmation; not-found/error/global-error/loading.
-  - id: e08
-    title: "E2E suite & CI"
-    detail: Playwright positive + N1-N11 negative flows against production build; CI workflow (lint → typecheck → unit → coverage gate → build → e2e); belt-and-braces bundle-content assertion.
+  - id: e09s01
+    title: "Product SKU system"
+    detail: >
+      Replace the product id with a 12-character alphanumeric SKU (3-letter
+      category/subtype code + 9-char deterministic hash of the product name).
+      Codes: CHA chair, DSK desk, MON monitor, LMP lamp, PLT plant, CFE coffee,
+      BBG beanbag, EXT extra, PTN partner. Cap identity (monitor/lamp/plant/
+      coffee/beanbag) is preserved and enforced via the new scheme. The
+      catalog generator and curated hero overlay emit SKUs deterministically
+      (byte-stable across regenerations). Image assets are decoupled from the
+      SKU so product URLs stay stable. Catalog validation checks the 12-char
+      format, a known code, and uniqueness.
+  - id: e09s02
+    title: "Three monitor slots"
+    detail: >
+      The builder holds up to 3 monitors, one per discrete slot. Selecting a
+      monitor fills the first empty slot; when all three are full, selecting
+      again replaces the most-recently-added slot with a brief visual
+      highlight; selecting a monitor already placed is a no-op. Any model
+      combination is allowed (1A+1B+1C, 2A+1B, 3C, …). Each slot can be
+      cleared individually with ×. Fresh carts start with all three slots
+      empty; the total monitor cap stays 3.
+  - id: e09s03
+    title: "Builder direct-selection polish"
+    detail: >
+      The Add Monitor empty button uses a monitor icon. The empty chair and
+      desk hints become clickable buttons with chair/desk icons that select
+      the first chair / first desk in the catalog — the same one-click
+      shortcut the accessory slots already provide.
+
 out_of_scope:
-  - item: Payment / real checkout / Stripe
-    why: "Decision #5 + C2 — demo-honest mock confirmation only."
-  - item: Backend, database, accounts, auth
-    why: "Decision #4 — static JSON, no server-side persistence; C5 drops the avatar affordance."
-  - item: Real product photography
-    why: "Decision #31 — hybrid placeholders; real photos later via image-path swap."
-  - item: Indonesian language / i18n
-    why: "Decision #2 — English MVP; routes kept retrofit-friendly for [locale] group."
-  - item: Dark mode
-    why: "Decision #8 — light only; tokens retained for future."
-  - item: '"Garage space" category'
-    why: "Decision #6 — appears in no design; C3 drops its summary tile."
-  - item: Delivery fees, minimum term, rental duration selector
-    why: "Decision #7 + C1/C6 — flat monthly, no fees, no commitment."
-  - item: OpenTelemetry / external tracing vendors
-    why: "Decision O4 — lightweight log-based tracing suffices for a one-function app."
-  - item: Full WCAG AA certification
-    why: "Decision #24 — baseline a11y only for the MVP."
-  - item: Analytics/SEO beyond Vercel-native + OG
-    why: "Decisions O1/D2 — Speed Insights + Analytics + basic metadata + OG."
+  - item: Migrating old persisted carts (old-id → new-SKU mapping)
+    why: "Storage key is bumped; old carts reset to fresh defaults. Opaque regenerated SKUs make id mapping infeasible; demo-verify already clears carts on rent."
+  - item: Monitor quantity steppers or per-slot multiple monitors
+    why: "Replaced by the discrete 1-monitor-per-slot model (grilled decision)."
+  - item: More than 3 monitor slots / variable slot count
+    why: "User fixed the design at exactly 3 slots."
+  - item: SKUs exposed in URLs or routing
+    why: "No route depends on product ids today; the SKU stays an internal system id."
+  - item: Icon changes for the other slots (lamp/plant/coffee/beanbag)
+    why: "Only the monitor and the chair/desk hints were requested; rest untouched to limit churn."
+  - item: Payment / real checkout / backend / accounts (unchanged from v1.0)
+    why: "Decision #4/#5 — demo-honest mock confirmation, static JSON."
+  - item: i18n, dark mode, real product photography (unchanged from v1.0)
+    why: "Decisions #2/#8/#31 — deferred, tokens retained."
+
 constraints:
-  - Next.js 16 (Turbopack), React 19, TypeScript strict (+noUncheckedIndexedAccess, zero any)
-  - Tailwind CSS v4 with tropical-tech tokens (light mode only)
-  - TanStack Query v5, @vercel/analytics + @vercel/speed-insights
-  - pnpm, Node 20 LTS
-  - Vitest + RTL (unit/integration, 80% branch on shared/domain), Playwright (E2E, root e2e/)
-  - Vercel deployment (zero-config), no vercel.json
-  - English-only copy
-  - One unit per file; feature barrels; no cross-feature deep imports
+  - One combined release; semantic version bumps 1.8.0 → 1.9.0.
+  - SKUs: exactly 12 characters, letters and digits only, unique per product.
+  - SKU generation is deterministic — regenerating the catalog is byte-stable.
+  - LocalStorage key is bumped; old carts hydrate to D1 defaults, never crash.
+  - "All gates must pass: preflight (unit + lint + typecheck + build), full E2E, and the 80% branch coverage gate on shared/domain."
+  - Records updated: DECISION_RECORD change log + specs/state.yaml.
+  - "Existing conventions hold: Tailwind v4 CSS-first, strict input validation, PII-free logging, error boundaries."
+
 success_criteria:
-  - "A visitor can build a setup (chair, desk, 2 monitors, bean bag), see the live IDR total, rent it, and see the mock confirmation with matching items and total."
-  - "The setup survives refresh (localStorage) and corrupt storage cannot break the app (validate-and-fallback)."
-  - "All 11 E2E negative flows + positive flows pass against the production build in CI; 80% branch coverage on shared/domain."
-  - "Security headers + CSP present on all routes; no raw errors, no PII, no secrets in client or logs."
-  - "Structured logs + Web Vitals + analytics flow to Vercel dashboards."
-  - "The four designed pages match the mockups with the C1-C6 rulings applied."
+  - products.json contains only skuNo (12 alnum, known-code prefixes, unique); no id field remains.
+  - Caps (monitor 3, lamp 2, plant 4, coffee 1, beanbag 2) hold under the SKU scheme; the previous hero-plant cap quirk is gone.
+  - The builder renders 3 monitor slots; (1A+1B+1C), (2A+1B), (3C) are all buildable; full-slots + Select replaces the most-recently-added card with a visible highlight; selecting an already-placed monitor is a no-op; × clears a slot.
+  - Add Monitor shows the monitor icon; empty chair/desk hints are clickable buttons (chair/desk icons) that select the first chair/desk.
+  - Old localStorage carts reset to defaults cleanly (no crash, no invalid state).
+  - Full unit + E2E suites pass with updated skuNo/monitorSlots/button matchers; preflight exit 0.
+
 references:
-  - specs/DECISION_RECORD.md
+  - specs/product/VISION_LATEST.yaml (north star)
   - specs/tech-architecture/tech-stack.md
-  - specs/tech-architecture/TEST_PLAN_LATEST.md
-  - specs/tech-architecture/SECURITY_PLAN_LATEST.md
-  - specs/tech-architecture/DESIGN_PLAN_LATEST.md
-  - docs/design/interactive_builder/code.html
-  - docs/design/bali_essentials_store/code.html
-  - docs/design/review_rent/code.html
-  - docs/design/moni_s_workspace_home/code.html
-  - docs/design/tropical_tech/DESIGN.md
+  - specs/adr/0003-unified-catalog-seed-generator.md
+  - specs/adr/0004-validation-trust-boundary.md
+  - specs/adr/0006-vercel-native-observability.md
+  - specs/DECISION_RECORD.md (grilled decisions this session)

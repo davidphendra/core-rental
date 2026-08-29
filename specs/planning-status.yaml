@@ -5,13 +5,13 @@
 # pending the user's go signal — implementation is held.
 
 discover_phase:
-  survey_context: done          # docs/design mockups + DESIGN.md consumed
-  map_codebase: not_applicable  # no code exists yet (greenfield)
-  scope_work: done              # specs/product/SCOPE_LATEST.yaml written
-  research_first: pending       # stack grounded in docs during grilling; prior-art sweep not run
-  elaborate_spec: done          # 65 decisions via grill-with-docs
-  plan_release: pending         # release-plan.yaml is a skeleton
-  slice_tasks: pending          # next spine step (state.yaml handoff.next_skill)
-  plan_work: pending
+  survey_context: done # docs/design mockups + DESIGN.md consumed
+  map_codebase: not_applicable # no code exists yet (greenfield)
+  scope_work: done # specs/product/SCOPE_LATEST.yaml written (v1.9.0 initiative)
+  research_first: pending # stack grounded in docs during grilling; prior-art sweep not run
+  elaborate_spec: done # 65 decisions via grill-with-docs
+  plan_release: pending # e09 registered in release-plan.yaml (wsjf 5.0); full sequencing next
+  slice_tasks: done # e09 capsule: 3 vertical slices (19 BCP)
+  plan_work: done # 3 countable-story specs + tasks.yaml (status failing), consistency 0/0
 build_phase:
-  status: not_started           # implementation explicitly held by user
+  status: not_started # implementation explicitly held by user

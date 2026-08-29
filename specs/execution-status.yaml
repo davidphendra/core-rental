@@ -69,3 +69,10 @@ stories:
     status: done
     started_at: null
     completed_at: "2026-08-27T12:17:46.379761Z"
+stories:
+  e09s01:
+    status: todo
+  e09s02:
+    status: todo
+  e09s03:
+    status: todo

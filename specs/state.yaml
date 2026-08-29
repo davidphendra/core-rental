@@ -1,33 +1,26 @@
 active_flow: build_epic
-active_epic_id: e09
+active_epic_id: e10
 active_story_id: null
 active_bug_id: null
 workflow_mode: solo-git
 release:
-  target_version: "1.11.7"
+  target_version: "1.12.0"
   last_tag: "v1.11.7"
   last_publish: "cleanup refactor + qty-badge fix released (v1.11.6, v1.11.7), CI green"
   ci_verified: true
 metrics:
-  story_start: "2026-08-29T05:15:04Z"
+  story_start: null
 epic_cycle:
-  current_step: 8
-  next_skill: release-branch
-  completed_steps:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
+  current_step: 0
+  next_skill: security-review
+  completed_steps: []
   story_bcps: 19
   fast_mode: false
-  audit_result: pass
-  notes: "ALL THREE e09 stories built + verified + audited (e09s01/02/03 done in
-    execution-status). feat(builder) commits drive the minor bump. Next: release-branch
-    for the combined v1.9.0."
+  audit_result: null
+  notes: "e10 AI Workspace Designer build — planning spine complete (scope/slice/
+    plan/release-plan, consistency clean, ADR 0007 + THREAT_MODEL tasks added).
+    Step 0: threat model in progress. Constraints: TDD w/ mocked LLM, E2E stubbed
+    route, NOT pushed until the user's release signal."
 bug_cycle:
   current_step: null
   completed_steps: []

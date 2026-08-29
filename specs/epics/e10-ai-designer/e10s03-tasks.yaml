@@ -1,0 +1,90 @@
+story_id: e10s03
+title: AI guardrails, observability & verification
+status: todo
+bcps: 5
+tasks:
+  - id: 1
+    description: >-
+      Env gate: /api/ai-design returns 503 { error: "ai_disabled" } unless a
+      provider is configured (OPENAI_API_KEY present OR AI_BASE_URL set) AND
+      AI_MODEL is set. Env vars documented in README (dev section).
+    verify: pnpm test -- src/app/api/ai-design && pnpm lint
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - api
+        - security
+  - id: 2
+    description: >-
+      Best-effort in-memory rate limit: sliding window per client IP (~10 req /
+      10 min) → 429. Honest limitation documented (per-instance, not bulletproof
+      across serverless) in a code comment and README.
+    verify: pnpm test -- src/app/api/ai-design
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - api
+        - security
+  - id: 3
+    description: >-
+      Output caps: maxTokens (~1000) on the model call + design sanity cap
+      (totalPerMonth ≤ 1,000,000,000 and item counts within builder caps)
+      enforced server-side.
+    verify: pnpm test -- src/app/api/ai-design
+    risk: P2
+    status: failing
+    allure:
+      severity: normal
+      categories:
+        - api
+        - security
+  - id: 4
+    description: >-
+      ai.request {model, durationMs, toolCalls, ok} emitted by the route on
+      completion through the unified logger emit() (console + track() best-effort).
+      No prompt text in any field. Payload schema unit-tested against the logger
+      mock (assert absence of prompt).
+    verify: pnpm test && pnpm lint
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - observability
+        - security
+  - id: 5
+    description: >-
+      Epic verification: full unit suite, full E2E suite (stubbed route), pnpm
+      preflight, CI green. Gates run by name: build-epic step 6 audit-code
+      --gate (CONVENTIONS compliance, SOLID, test coverage, no dead code, Boy
+      Scout, supply chain) and verify-work phase-5 security-review (data flow,
+      injection, secrets, OWASP spot-check). AUDIT-e10 written recording both.
+      Version bumped minor → v1.12.0 via the version.ts flow. NOT pushed to
+      origin until the user's explicit release signal.
+    verify: pnpm preflight && pnpm test:e2e
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - verify
+        - release
+  - id: 6
+    description: >-
+      Architecture records: ADR 0007 (AI design route — provider-switchable LLM,
+      tool-based discovery, validation trust boundary: only catalog-validated
+      designs may touch builder state) and specs/security/epics/e10/THREAT_MODEL.md
+      (prompt injection, budget abuse, rate-limit bypass, cost exposure, PII —
+      each with mitigation mapping to e10s01/e10s03).
+    verify: "test -f specs/adr/0007-ai-design-route.md && test -f specs/security/epics/e10/THREAT_MODEL.md"
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - architecture
+        - security

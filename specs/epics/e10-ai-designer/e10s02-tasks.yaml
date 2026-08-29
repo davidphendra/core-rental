@@ -1,0 +1,75 @@
+story_id: e10s02
+title: Builder "Design with AI" panel
+status: todo
+bcps: 6
+tasks:
+  - id: 1
+    description: >-
+      Panel shell on the builder page: labelled free-text input (≤500 chars,
+      placeholder examples), Generate button, idle/loading/result/error/refusal
+      states, AbortController with 60s timeout + cancel button, double-submit
+      guard. Status announced via a live region.
+    verify: pnpm test -- src/features/builder && pnpm lint
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - ui
+        - unit
+  - id: 2
+    description: >-
+      Reasoning trail reveal + preview card: client-side steps ("searching
+      catalog…", "checking budget…", "finalizing…"), then the proposed items
+      grouped by slot, monthly total, and the AI note. Refusal and error states
+      rendered with actionable messages.
+    verify: pnpm test -- src/features/builder && pnpm lint
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - ui
+        - unit
+  - id: 3
+    description: >-
+      Apply: map the validated design JSON onto existing builder reducers (chair/
+      desk select, selectMonitor/removeMonitorSlot, replaceExclusiveAccessory);
+      confirm dialog when the cart is non-empty; emit ai.design_applied
+      {chairSku, deskSku, monitorCount, total} (no prompt text) via the logger.
+    verify: pnpm test -- src/features/builder && pnpm lint
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - ui
+        - state
+        - observability
+  - id: 4
+    description: >-
+      Accessibility: labelled input + aria-describedby examples, keyboard-
+      operable controls, focus management on open/close, live region for
+      generation status, aria states on Apply/confirm, contrast per design tokens.
+    verify: pnpm test -- src/features/builder
+    risk: P2
+    status: failing
+    allure:
+      severity: normal
+      categories:
+        - ui
+        - a11y
+  - id: 5
+    description: >-
+      Component tests: panel states, trail, preview, apply mapping, replace-
+      confirm, refusal, disabled (503), rate-limited (429), provider error,
+      timeout/cancel, double-submit. E2E with a stubbed /api/ai-design route in
+      the builder spec: happy path, replace-confirm, refusal, disabled, cancel.
+    verify: pnpm test && pnpm build && pnpm test:e2e
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - unit
+        - e2e

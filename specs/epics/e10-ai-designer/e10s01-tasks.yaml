@@ -1,0 +1,89 @@
+story_id: e10s01
+title: AI design API route
+status: todo
+bcps: 8
+tasks:
+  - id: 1
+    description: >-
+      Add deps: ai (^7), @ai-sdk/openai (^4), zod (peer-compatible ^3.25 || ^4).
+      pnpm-workspace unaffected; @vercel/analytics mock in src/test/setup.ts stays.
+      (AI SDK docs: LM Studio is an officially listed OpenAI-compatible provider.)
+    verify: pnpm install && pnpm typecheck
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - build
+        - deps
+  - id: 2
+    description: >-
+      Provider factory: AI_BASE_URL set → createOpenAICompatible({ name, apiKey:
+      "lm-studio", baseURL: AI_BASE_URL }) (LM Studio localhost:1234/v1); else →
+      createOpenAI({ apiKey: OPENAI_API_KEY }) (OpenAI API). AI_MODEL selects the
+      model id. Injectable for tests (default = AI SDK generateText).
+    verify: pnpm test -- src/app/api/ai-design
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - api
+        - unit
+  - id: 3
+    description: >-
+      Tools with zod parameters: searchCatalog({ query?, category?, maxPrice? })
+      reading the committed catalog (name/description/category/price match, returns
+      skuNo/name/category/pricePerMonth/description); getSetupTotal(skus[]) →
+      {total, count}; finalizeDesign(design) re-validates against catalog + caps +
+      budget and returns the validated design or refusal info.
+    verify: pnpm test -- src/app/api/ai-design
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - api
+        - unit
+  - id: 4
+    description: >-
+      Design zod schema + server-side validation: every SKU exists in the catalog;
+      category matches its slot (chair/desk/monitor/coffee/beanbag/lamp/plant);
+      caps (≤3 monitors, ≤1 each exclusive accessory); totalPerMonth equals the
+      recomputed sum; stated budget not exceeded. All slots optional.
+    verify: pnpm test -- src/app/api/ai-design
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - api
+        - validation
+        - security
+  - id: 5
+    description: >-
+      Route handler POST /api/ai-design: prompt trim + ≤500 chars bound; run the
+      tool loop; retry once on failed validation; honest-refusal payload for
+      impossible budgets (refusal, message, cheapestTotal); error mapping 400/422/
+      429/503/500; no prompt text in any response or log.
+    verify: pnpm test -- src/app/api/ai-design && pnpm lint
+    risk: P0
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - api
+        - unit
+        - security
+  - id: 6
+    description: >-
+      Route tests with a mocked LLM (scripted tool calls): valid full design,
+      partial design (empty slots), budget refusal, bogus-SKU rejection + retry,
+      prompt bounds, provider failure, disabled state.
+    verify: pnpm test
+    risk: P1
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - unit

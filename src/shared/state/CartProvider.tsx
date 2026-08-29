@@ -71,10 +71,15 @@ export function CartProvider({
     }
   }, [catalog, dispatch]);
 
-  // Write-through on every change (quota-guarded, E3).
+  // Write-through on every change (quota-guarded, E3). Gated on the catalog
+  // being loaded: before that, the hydration read can't validate a seeded
+  // cart yet — writing the empty state would clobber it.
   useEffect(() => {
+    if (catalog.length === 0) {
+      return;
+    }
     writeStoredSetup(state);
-  }, [state]);
+  }, [state, catalog]);
 
   // cart.updated (Q2/Q5): emitted when the cart CONTENT changes (not delivery
   // typing, not the initial mount). Payload: item count + monthly total.

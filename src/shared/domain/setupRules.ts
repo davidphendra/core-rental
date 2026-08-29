@@ -52,6 +52,14 @@ export function isCartEligible(product: Pick<Product, "category">): boolean {
 }
 
 /**
+ * Cart validity (UX ruling): a cart is rentable only when BOTH a chair and a
+ * desk are selected. Used to disable the bag icon and the summary CTA.
+ */
+export function hasSeating(state: Pick<SetupState, "chairId" | "deskId">): boolean {
+  return state.chairId !== null && state.deskId !== null;
+}
+
+/**
  * D1 defaults, applied when the cart has no chair AND no desk (fresh cart).
  * Returns the state to hydrate or null when defaults are not needed/possible.
  */

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useProducts } from "@/shared/data/useProducts";
 import { logger, logDeliverySubmitted } from "@/shared/observability/logger";
 import { useBuilderStore } from "@/shared/state/BuilderStore";
-import { CartProvider, useCartTotals } from "@/shared/state/CartProvider";
+import { useCartTotals } from "@/shared/state/CartProvider";
 import { STORAGE_KEY } from "@/shared/state/useLocalStorage";
 import { BottomNav } from "@/shared/ui/BottomNav";
 import { ErrorState } from "@/shared/ui/ErrorState";
@@ -87,11 +87,7 @@ function SummaryPageInner() {
     return <ErrorState message="We couldn't load the summary." onRetry={() => void refetch()} />;
   }
 
-  return (
-    <CartProvider catalog={data ?? []}>
-      <SummaryContent catalog={data ?? []} />
-    </CartProvider>
-  );
+  return <SummaryContent catalog={data ?? []} />;
 }
 
 export default function SummaryPage() {

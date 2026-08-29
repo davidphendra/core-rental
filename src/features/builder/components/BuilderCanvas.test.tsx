@@ -113,7 +113,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.getByRole("button", { name: "Place a Plant" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add Machine" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add Bean Bag" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Add a chair from the panel" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add Chair" })).toBeInTheDocument();
   });
 
   it("renders desk and chair from the cart", () => {
@@ -125,10 +125,8 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Desk table" })).toBeInTheDocument();
-    expect(screen.queryByText("Add a desk from the panel")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Add a chair from the panel" }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Add Desk")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add Chair" })).not.toBeInTheDocument();
   });
 
   it("clicking an empty monitor slot adds the first catalog monitor (e09s02)", () => {
@@ -190,12 +188,12 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Remove chair" }));
     expect(screen.queryByRole("img", { name: "Uluwatu Chair" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Add a chair from the panel" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add Chair" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Remove desk" }));
     // The table stays; only the product image + hint change.
     expect(screen.getByRole("img", { name: "Desk table" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Add a desk from the panel" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add Desk" })).toBeInTheDocument();
     expect(screen.queryByRole("img", { name: "Seminyak Desk" })).not.toBeInTheDocument();
   });
 
@@ -205,7 +203,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Add a chair from the panel" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add Chair" }));
     expect(screen.getByRole("img", { name: "Uluwatu Chair" })).toBeInTheDocument();
   });
 
@@ -215,7 +213,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Add a desk from the panel" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add Desk" }));
     expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
   });
 

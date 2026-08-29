@@ -72,7 +72,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           {desk === undefined ? (
             <button
               type="button"
-              aria-label="Add a desk from the panel"
+              aria-label="Add Desk"
               onClick={() => {
                 const first = catalog.find((p) => p.category === "desk");
                 if (first !== undefined) dispatch({ type: "selectDesk", product: first });
@@ -86,7 +86,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
                 desk
               </span>
               <span className="text-label-sm font-label-sm text-outline group-hover:text-primary">
-                Add a desk from the panel
+                Add Desk <span className="text-error">*</span>
               </span>
             </button>
           ) : null}
@@ -141,7 +141,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
         ) : (
           <button
             type="button"
-            aria-label="Add a chair from the panel"
+            aria-label="Add Chair"
             onClick={() => {
               const first = catalog.find((p) => p.category === "chair");
               if (first !== undefined) dispatch({ type: "selectChair", product: first });
@@ -155,7 +155,7 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
               chair
             </span>
             <span className="text-label-sm font-label-sm text-outline group-hover:text-primary text-center">
-              Add a chair from the panel
+              Add Chair <span className="text-error">*</span>
             </span>
           </button>
         )}

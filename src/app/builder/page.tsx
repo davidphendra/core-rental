@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { defaultsIfEmpty } from "@/shared/domain/setupRules";
 import { useProducts } from "@/shared/data/useProducts";
 import { useBuilderStore } from "@/shared/state/BuilderStore";
-import { CartProvider, useCartTotals } from "@/shared/state/CartProvider";
+import { useCartTotals } from "@/shared/state/CartProvider";
 import { BottomNav } from "@/shared/ui/BottomNav";
 import { ErrorState } from "@/shared/ui/ErrorState";
 import { LoadingSkeleton } from "@/shared/ui/LoadingSkeleton";
@@ -75,11 +75,7 @@ function BuilderPageInner() {
     return <ErrorState message="We couldn't load the catalog." onRetry={() => void refetch()} />;
   }
 
-  return (
-    <CartProvider catalog={data ?? []}>
-      <BuilderContent catalog={data ?? []} />
-    </CartProvider>
-  );
+  return <BuilderContent catalog={data ?? []} />;
 }
 
 export default function BuilderPage() {

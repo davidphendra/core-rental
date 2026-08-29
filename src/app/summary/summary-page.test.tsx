@@ -110,7 +110,12 @@ describe("Rent flow (decisions #5, C2, O2)", () => {
   });
 
   it("the /summary page shell renders", () => {
-    render(<SummaryPage />);
+    // The CartProvider is global now (providers.tsx) — provide it here.
+    render(
+      <CartProvider catalog={catalog}>
+        <SummaryPage />
+      </CartProvider>,
+    );
     expect(screen.getByRole("heading", { name: "Review Your Workspace" })).toBeInTheDocument();
   });
 });

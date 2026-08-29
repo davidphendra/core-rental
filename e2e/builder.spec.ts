@@ -214,10 +214,17 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     const canvas = page.locator('div[class*="rounded-[2rem]"]');
     // Chair is selected by D1 defaults — remove it via its ×.
     await page.getByRole("button", { name: "Remove chair" }).click();
-    await expect(canvas.getByRole("button", { name: "Add a chair from the panel" })).toBeVisible();
+    await expect(canvas.getByRole("button", { name: "Add Chair" })).toBeVisible();
     // Desk too — the table layout stays, only the product image is removed.
     await page.getByRole("button", { name: "Remove desk" }).click();
     await expect(canvas.getByRole("img", { name: "Desk table" })).toBeVisible();
-    await expect(canvas.getByText("Add a desk from the panel")).toBeVisible();
+    await expect(canvas.getByText("Add Desk")).toBeVisible();
+
+    // UX ruling: with no chair+desk the summary CTA disables and the header
+    // bag is inert (aria-disabled, not a link).
+    const cta = page.getByRole("button", { name: "View Setup Summary" });
+    await expect(cta).toBeDisabled();
+    await expect(page.getByLabel("View your setup")).toHaveAttribute("aria-disabled", "true");
+    await expect(page.getByRole("link", { name: "View your setup" })).toHaveCount(0);
   });
 });

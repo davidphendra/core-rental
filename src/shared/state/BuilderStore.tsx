@@ -174,6 +174,15 @@ export function useBuilderState(): SetupState {
   return useBuilderStore().state;
 }
 
+/**
+ * Safe read for OUTSIDE-the-provider components (e.g. the global SiteHeader):
+ * returns null when no CartProvider is mounted (home/store pages), so they can
+ * fall back to an enabled bag while builder/summary pages get real validity.
+ */
+export function useBuilderStoreOptional(): StoreValue | null {
+  return useContext(StoreContext);
+}
+
 /** Convenience for components that only dispatch. */
 export function useBuilderDispatch(): Dispatch<BuilderAction> {
   return useBuilderStore().dispatch;

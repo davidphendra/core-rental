@@ -69,15 +69,15 @@ stories:
     status: done
     started_at: null
     completed_at: "2026-08-27T12:17:46.379761Z"
-stories:
   e09s01:
-    status: todo
+    status: done
+    started_at: "2026-08-29T05:15:04Z"
+    completed_at: "2026-08-29T05:54:51Z"
   e09s02:
     status: done
+    started_at: "2026-08-29T05:54:00Z"
     completed_at: "2026-08-29T05:54:51Z"
   e09s03:
     status: done
+    started_at: "2026-08-29T05:54:30Z"
     completed_at: "2026-08-29T05:54:51Z"
-  e09s01:
-    status: in_progress
-    started_at: "2026-08-29T05:15:04Z"

@@ -211,17 +211,17 @@ export function buildCatalog(): Product[] {
     throw new Error("sku collision in generated catalog — computeSku must be unique per name");
   }
 
-  const CATEGORY_ORDER: Record<ProductCategory, number> = {
+  const CATEGORY_ORDER: Partial<Record<ProductCategory, number>> = {
     chair: 0,
     desk: 1,
     accessory: 2,
-    extra: 3,
     partner: 4,
   };
 
   return [...bySku.values()].sort(
     (a, b) =>
-      CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category] || a.skuNo.localeCompare(b.skuNo),
+      (CATEGORY_ORDER[a.category] ?? 3) - (CATEGORY_ORDER[b.category] ?? 3) ||
+      a.skuNo.localeCompare(b.skuNo),
   );
 }
 
@@ -229,11 +229,10 @@ export function buildCatalog(): Product[] {
 // SVG placeholder tiles (decision #31) — on-brand, deterministic, alt-safe text.
 // ---------------------------------------------------------------------------
 
-const CATEGORY_COLORS: Record<ProductCategory, string> = {
+const CATEGORY_COLORS: Partial<Record<ProductCategory, string>> = {
   chair: "#006767",
   desk: "#376757",
   accessory: "#bb580d",
-  extra: "#974400",
   partner: "#2e3132",
 };
 

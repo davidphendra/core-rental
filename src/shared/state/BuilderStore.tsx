@@ -169,11 +169,6 @@ export function useBuilderStore(): StoreValue {
   return ctx;
 }
 
-/** Convenience for components that only read state. */
-export function useBuilderState(): SetupState {
-  return useBuilderStore().state;
-}
-
 /**
  * Safe read for OUTSIDE-the-provider components (e.g. the global SiteHeader):
  * returns null when no CartProvider is mounted (home/store pages), so they can

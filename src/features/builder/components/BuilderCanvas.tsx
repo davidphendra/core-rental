@@ -40,7 +40,6 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
 
         {/* Lamp + plant slots (bottom-left/right of the desk, mockup) */}
         <CanvasSlot
-          capKey="lamp"
           className="absolute bottom-2 left-12"
           dispatch={dispatch}
           emptyHint="Add Lamp"
@@ -50,7 +49,6 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           state={state}
         />
         <CanvasSlot
-          capKey="plant"
           className="absolute bottom-2 right-12"
           dispatch={dispatch}
           emptyHint="Place a Plant"
@@ -164,7 +162,6 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
       {/* Secondary zones (mockup: "Secondary Zones (Extras)") */}
       <div className="relative mt-8 grid grid-cols-2 gap-4">
         <CanvasSlot
-          capKey="coffee"
           dispatch={dispatch}
           emptyHint="Add Machine"
           icon="coffee_maker"
@@ -174,7 +171,6 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           variant="zone"
         />
         <CanvasSlot
-          capKey="beanbag"
           dispatch={dispatch}
           emptyHint="Add Bean Bag"
           icon="chair_alt"

@@ -3,7 +3,6 @@
 import type { Dispatch, KeyboardEvent } from "react";
 
 import { canAdd } from "@/shared/domain/setupRules";
-import type { CapKey } from "@/shared/domain/setupRules";
 import type { BuilderAction } from "@/shared/state/BuilderStore";
 import type { Product } from "@/shared/types/product";
 import type { SetupState } from "@/shared/types/setup";
@@ -12,8 +11,7 @@ interface CanvasSlotProps {
   label: string;
   emptyHint: string;
   icon: string;
-  capKey: CapKey;
-  /** Catalog products of this capKey (the add target is the first). */
+  /** Catalog products of this cap group (the add target is the first). */
   products: readonly Product[];
   state: SetupState;
   dispatch: Dispatch<BuilderAction>;
@@ -31,7 +29,6 @@ export function CanvasSlot({
   label,
   emptyHint,
   icon,
-  capKey,
   products,
   state,
   dispatch,
@@ -87,7 +84,6 @@ export function CanvasSlot({
   };
 
   const isZone = variant === "zone";
-  const labelForSlot = capKey === "extra" ? "Surfboard" : label;
 
   if (selected === undefined) {
     return (
@@ -117,7 +113,7 @@ export function CanvasSlot({
     >
       <button
         type="button"
-        aria-label={`${labelForSlot}: ${quantity}`}
+        aria-label={`${label}: ${quantity}`}
         aria-pressed="true"
         className="border-primary bg-surface-container-low focus-visible:outline-primary group flex h-full w-full items-center justify-center overflow-hidden rounded-xl border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={onAdd}
@@ -137,7 +133,7 @@ export function CanvasSlot({
       {/* Direct removal from the card (grilled): decrements one, empties at 1 */}
       <button
         type="button"
-        aria-label={`Remove ${labelForSlot}`}
+        aria-label={`Remove ${label}`}
         onClick={() => onStep(-1)}
         className="bg-on-surface/70 text-inverse-on-surface focus-visible:outline-primary hover:bg-on-surface absolute left-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
       >

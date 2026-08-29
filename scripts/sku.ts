@@ -11,7 +11,6 @@ import type { ProductCategory } from "../src/shared/types/product";
 export const CATEGORY_CODES: Partial<Record<ProductCategory, string>> = {
   chair: "CHA",
   desk: "DSK",
-  extra: "EXT",
   partner: "PTN",
 };
 

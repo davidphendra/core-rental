@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from "react";
 
 type Variant = "primary" | "secondary" | "tertiary";
 
-type Size = "md" | "sm" | "circle";
+type Size = "md" | "sm";
 
 const VARIANTS: Record<Variant, string> = {
   primary: "bg-primary text-on-primary hover:bg-surface-tint",
@@ -13,8 +13,6 @@ const VARIANTS: Record<Variant, string> = {
 const SIZES: Record<Size, string> = {
   md: "rounded-xl px-6 py-3",
   sm: "rounded-xl px-2 py-1",
-  // Circular icon button (matches the home page's add-to-setup circle).
-  circle: "h-8 w-8 rounded-full p-0",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

@@ -12,7 +12,7 @@ import catalogJson from "../../src/shared/data/products.json";
  */
 export const catalog = catalogJson as Product[];
 
-export function productBySku(skuNo: string): Product {
+function productBySku(skuNo: string): Product {
   const product = catalog.find((p) => p.skuNo === skuNo);
   if (product === undefined) {
     throw new Error(`Unknown product skuNo in test helper: ${id}`);

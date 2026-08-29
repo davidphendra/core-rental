@@ -10,7 +10,6 @@ export const QUANTITY_CAPS = {
   lamp: 1,
   coffee: 1,
   beanbag: 1,
-  extra: 1,
 } as const;
 
 export type CapKey = keyof typeof QUANTITY_CAPS;
@@ -25,20 +24,12 @@ export const SKU_CODE_TO_CAP: Record<string, CapKey> = {
   PLT: "plant",
   CFE: "coffee",
   BBG: "beanbag",
-  EXT: "extra",
-};
-
-/** e09: 3-letter sku code → single-select category (no cap). */
-export const SKU_CODE_TO_CATEGORY: Record<string, Product["category"]> = {
-  CHA: "chair",
-  DSK: "desk",
-  PTN: "partner",
 };
 
 /**
  * The cap key for a product, or null when the product is single-select
  * (chair/desk — exclusivity, #10) or excluded (partner, #20). e09: derived
- * from the 3-letter sku code prefix (MON→monitor … EXT→extra; the old
+ * from the 3-letter sku code prefix (MON→monitor …; the old
  * `id.split("-")[1]` parser is gone — the hero monstera quirk is resolved).
  */
 export function capKeyForProduct(product: Pick<Product, "skuNo" | "category">): CapKey | null {
@@ -95,19 +86,4 @@ export function canAdd(
     return true;
   }
   return (setup.quantities[product.skuNo] ?? 0) < QUANTITY_CAPS[cap];
-}
-
-/**
- * D1 defaults: the first chair and first desk in the catalog, used when the
- * cart is empty or hydration fails (G1).
- */
-export function defaultSelection(
-  catalog: readonly Product[],
-): Pick<SetupState, "chairId" | "deskId"> {
-  const chair = catalog.find((p) => p.category === "chair");
-  const desk = catalog.find((p) => p.category === "desk");
-  return {
-    chairId: chair?.skuNo ?? null,
-    deskId: desk?.skuNo ?? null,
-  };
 }

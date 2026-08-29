@@ -1,17 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import type { Product } from "../types/product";
-import {
-  QUANTITY_CAPS,
-  canAdd,
-  capKeyForProduct,
-  defaultSelection,
-  isCartEligible,
-} from "./setupRules";
+import { QUANTITY_CAPS, canAdd, capKeyForProduct, isCartEligible } from "./setupRules";
 
 /**
  * e09: products are identified by 12-char skuNo (3-letter code + 9 alnum).
- * Codes: CHA/DSK single-select, MON/LMP/PLT/CFE/BBG accessory caps, EXT extra,
+ * Codes: CHA/DSK single-select, MON/LMP/PLT/CFE/BBG accessory caps,
  * PTN partner (excluded).
  */
 const prod = (skuNo: string, category: Product["category"]): Product => ({
@@ -40,10 +34,6 @@ describe("capKeyForProduct (decision #22; e09 sku-prefix derivation)", () => {
     expect(capKeyForProduct(prod("LMPA1B2C3D4E", "accessory"))).toBe("lamp");
   });
 
-  it("maps extra to the extra cap", () => {
-    expect(capKeyForProduct(prod("EXTA1B2C3D4E", "extra"))).toBe("extra");
-  });
-
   it("returns null for single-select and excluded categories", () => {
     expect(capKeyForProduct(prod(CHA, "chair"))).toBeNull();
     expect(capKeyForProduct(prod(DSK, "desk"))).toBeNull();
@@ -57,7 +47,6 @@ describe("capKeyForProduct (decision #22; e09 sku-prefix derivation)", () => {
       lamp: 1,
       coffee: 1,
       beanbag: 1,
-      extra: 1,
     });
   });
 });
@@ -66,7 +55,6 @@ describe("isCartEligible (decision #20)", () => {
   it("excludes partner products from the cart", () => {
     expect(isCartEligible(prod(PTN, "partner"))).toBe(false);
     expect(isCartEligible(prod(CHA, "chair"))).toBe(true);
-    expect(isCartEligible(prod("EXTA1B2C3D4E", "extra"))).toBe(true);
   });
 });
 
@@ -83,22 +71,5 @@ describe("canAdd (G2, N3)", () => {
 
   it("allows single-select categories", () => {
     expect(canAdd({ quantities: {} }, prod(CHA, "chair"))).toBe(true);
-  });
-});
-
-describe("defaultSelection (D1)", () => {
-  it("returns the first chair and first desk", () => {
-    const catalog = [
-      prod(DSK, "desk"),
-      prod(CHA, "chair"),
-      prod("CHAA1B2C3D4F", "chair"),
-      prod("DSKA1B2C3D4F", "desk"),
-    ];
-    expect(defaultSelection(catalog)).toEqual({ chairId: CHA, deskId: DSK });
-  });
-
-  it("returns nulls when a category is missing", () => {
-    expect(defaultSelection([prod(CHA, "chair")])).toEqual({ chairId: CHA, deskId: null });
-    expect(defaultSelection([])).toEqual({ chairId: null, deskId: null });
   });
 });

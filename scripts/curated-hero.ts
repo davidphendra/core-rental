@@ -1,3 +1,4 @@
+import { computeSku } from "./sku";
 import type { Product } from "../src/shared/types/product";
 
 /**
@@ -8,7 +9,7 @@ import type { Product } from "../src/shared/types/product";
  */
 export const HERO_PRODUCTS: Product[] = [
   {
-    id: "chair-uluwatu-chair",
+    skuNo: computeSku("CHA", "Uluwatu Chair"),
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -17,7 +18,7 @@ export const HERO_PRODUCTS: Product[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBBwHPiawlGW3969dKW5o0XTGnhWLB7SwZJ1dya2tRUgjUU4aJ57EsoC07NsBbECvVj-A89woj0Z4N4KP6MsUv6P_tniwCxhkludiVF1furDdZHeHwnPAj6ThoyWccd5LnFpPNYQH-ECtHmwM9bZDxSJ0KRfTOEiCKql5T_MUOfhh7MvV2neUNSSqUjZTPBbdHNldnhg5bJNETbvOcBADObdhNzdVWWPkDGp7Y60N8A28SLf_WwO-rMZg",
   },
   {
-    id: "chair-canggu-task",
+    skuNo: computeSku("CHA", "Canggu Task"),
     name: "Canggu Task",
     category: "chair",
     pricePerMonth: 600_000,
@@ -28,7 +29,7 @@ export const HERO_PRODUCTS: Product[] = [
     badge: "popular",
   },
   {
-    id: "accessory-monstera",
+    skuNo: computeSku("PLT", "Monstera Plant"),
     name: "Monstera Plant",
     category: "accessory",
     pricePerMonth: 200_000,
@@ -38,7 +39,7 @@ export const HERO_PRODUCTS: Product[] = [
     badge: "popular",
   },
   {
-    id: "accessory-espresso-machine",
+    skuNo: computeSku("CFE", "Espresso Machine"),
     name: "Espresso Machine",
     category: "accessory",
     pricePerMonth: 750_000,
@@ -47,7 +48,7 @@ export const HERO_PRODUCTS: Product[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuATDymSt-AcHwZo3PpW0B2MasVp31eN2xETL6HE47QwVmUWSdXfr-qebhbti1geNj2S4aMEcJMq27UHmxy529UDQVfz-wvP1qG47iXhoRJ6JE94YTqOytJXeiNu-RpHVidaOks0Rqec_ZG3bxs_cCkz1LHDRGPAbPPeM5S-gX5Pn2iRmP6ALD028fqVXigofgft6xjAXAJH1dkI1xqBho3iv1Yh5a72Xhq1BLbi-2Nrx9Miaguq30crjA",
   },
   {
-    id: "accessory-bean-bag-lounge",
+    skuNo: computeSku("BBG", "Bean Bag Lounge"),
     name: "Bean Bag Lounge",
     category: "accessory",
     pricePerMonth: 350_000,
@@ -56,7 +57,7 @@ export const HERO_PRODUCTS: Product[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDTzT4Tf58tkbo6X7I2a_aF5XrHlXm7pV5GAMydtstbloGCCC5_LoXb0tmuXW4wxWFYp-K9r_DSFRd1FhGZfwlTIYs9u_Sjj1mFpCjduawANJZfqSIyG6At13g6nueBMlme0wHSmw-E-EfohvvNKC2bxhS5hjAytlxV74b3eU4-sS57APj0jGatARBLneuXhfgqykyMcCtzQkWzlSZRG8qSUB5-oQ8bepiLtS2v0uGGLiAqRSWf3aYV7A",
   },
   {
-    id: "partner-motorcycle-rental",
+    skuNo: computeSku("PTN", "Motorcycle Rental"),
     name: "Motorcycle Rental",
     category: "partner",
     pricePerMonth: 1_500_000,

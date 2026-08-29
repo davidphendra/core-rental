@@ -24,14 +24,14 @@ function isValidId(value: unknown): value is string {
 }
 
 function isSelectedProduct(
-  id: unknown,
+  skuNo: unknown,
   category: Product["category"],
   catalog: readonly Product[],
-): id is string {
-  if (!isValidId(id)) {
+): skuNo is string {
+  if (!isValidId(skuNo)) {
     return false;
   }
-  const product = catalog.find((p) => p.id === id);
+  const product = catalog.find((p) => p.skuNo === skuNo);
   return product?.category === category;
 }
 
@@ -47,7 +47,7 @@ function isValidQuantities(
     return true; // empty quantities are valid
   }
   return entries.every(([id, quantity]) => {
-    const product = catalog.find((p) => p.id === id);
+    const product = catalog.find((p) => p.skuNo === id);
     if (!product || !isCartEligible(product)) {
       return false; // unknown or partner id
     }
@@ -55,10 +55,30 @@ function isValidQuantities(
       return false;
     }
     const cap = capKeyForProduct(product);
+    if (cap === "monitor") {
+      return false; // e09s02: monitors live in monitorSlots, not quantities
+    }
     if (cap !== null && quantity > QUANTITY_CAPS[cap]) {
       return false; // over cap (M1)
     }
     return true;
+  });
+}
+
+/**
+ * e09s02: monitorSlots — array of ≤ 3 catalog monitor skuNos (duplicates
+ * allowed: 2A+1B, 3C). Any other shape → invalid (S2 trust boundary).
+ */
+function isValidMonitorSlots(value: unknown, catalog: readonly Product[]): value is string[] {
+  if (!Array.isArray(value) || value.length > 3) {
+    return false;
+  }
+  return value.every((sku) => {
+    if (typeof sku !== "string" || sku.length === 0) {
+      return false;
+    }
+    const product = catalog.find((p) => p.skuNo === sku);
+    return product !== undefined && capKeyForProduct(product) === "monitor";
   });
 }
 
@@ -92,6 +112,10 @@ export function validateSetupState(
   if (!isValidQuantities(candidate.quantities, catalog)) {
     return null;
   }
+  const monitorSlots: unknown = candidate.monitorSlots ?? [];
+  if (!isValidMonitorSlots(monitorSlots, catalog)) {
+    return null;
+  }
 
   let deliveryLocation: string | undefined;
   if (candidate.deliveryLocation === undefined) {
@@ -104,5 +128,11 @@ export function validateSetupState(
     deliveryLocation = validated;
   }
 
-  return { chairId, deskId, quantities: candidate.quantities, deliveryLocation };
+  return {
+    chairId,
+    deskId,
+    quantities: candidate.quantities,
+    monitorSlots,
+    deliveryLocation,
+  };
 }

@@ -9,7 +9,12 @@ import { readStoredSetup, writeStoredSetup } from "../state/useLocalStorage";
 import type { Product } from "../types/product";
 import type { SetupState } from "../types/setup";
 
-const SSR_SAFE_EMPTY: SetupState = { chairId: null, deskId: null, quantities: {} };
+const SSR_SAFE_EMPTY: SetupState = {
+  chairId: null,
+  deskId: null,
+  quantities: {},
+  monitorSlots: [],
+};
 
 /**
  * The cross-feature cart wiring (decisions #11, D1, G1, E3):
@@ -52,14 +57,24 @@ export function useCartTotals(catalog: readonly Product[]) {
   return useMemo(() => {
     const items: { product: Product; quantity: number }[] = [];
 
-    const chair = state.chairId ? catalog.find((p) => p.id === state.chairId) : undefined;
-    const desk = state.deskId ? catalog.find((p) => p.id === state.deskId) : undefined;
+    const chair = state.chairId ? catalog.find((p) => p.skuNo === state.chairId) : undefined;
+    const desk = state.deskId ? catalog.find((p) => p.skuNo === state.deskId) : undefined;
 
     if (chair) items.push({ product: chair, quantity: 1 });
     if (desk) items.push({ product: desk, quantity: 1 });
 
     for (const [id, quantity] of Object.entries(state.quantities)) {
-      const product = catalog.find((p) => p.id === id);
+      const product = catalog.find((p) => p.skuNo === id);
+      if (product) items.push({ product, quantity });
+    }
+
+    // e09s02: monitor slots → line items grouped by skuNo (duplicates allowed).
+    const monitorCounts = new Map<string, number>();
+    for (const sku of state.monitorSlots ?? []) {
+      monitorCounts.set(sku, (monitorCounts.get(sku) ?? 0) + 1);
+    }
+    for (const [sku, quantity] of monitorCounts) {
+      const product = catalog.find((p) => p.skuNo === sku);
       if (product) items.push({ product, quantity });
     }
 

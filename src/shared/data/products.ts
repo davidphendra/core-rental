@@ -1,4 +1,5 @@
 import type { Product } from "../types/product";
+import { SKU_PATTERN } from "../types/product";
 import catalogJson from "./products.json";
 
 /** TanStack Query key for the catalog (single source, cached across navigation). */
@@ -27,7 +28,8 @@ export function isProduct(value: unknown): value is Product {
   }
   const p = value as Record<string, unknown>;
   return (
-    typeof p.id === "string" &&
+    typeof p.skuNo === "string" &&
+    SKU_PATTERN.test(p.skuNo) &&
     typeof p.name === "string" &&
     typeof p.pricePerMonth === "number" &&
     Number.isInteger(p.pricePerMonth) &&
@@ -38,12 +40,16 @@ export function isProduct(value: unknown): value is Product {
 }
 
 /**
- * Contract guard for the committed catalog (E2). Rejects empty, non-array, or
- * malformed payloads so the API never serves a broken 200.
+ * Contract guard for the committed catalog (E2). Rejects empty, non-array,
+ * malformed payloads, or duplicate skus so the API never serves a broken 200.
  */
 export function isValidCatalog(value: unknown): value is Product[] {
   if (!Array.isArray(value) || value.length === 0) {
     return false;
   }
-  return value.every(isProduct);
+  if (!value.every(isProduct)) {
+    return false;
+  }
+  const skus = new Set(value.map((p) => p.skuNo));
+  return skus.size === value.length; // skus unique (e09 contract)
 }

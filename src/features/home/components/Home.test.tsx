@@ -15,7 +15,7 @@ vi.mock("next/link", () => ({
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -23,7 +23,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,

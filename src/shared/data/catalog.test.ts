@@ -11,7 +11,11 @@ const committed = JSON.parse(
   readFileSync(join(process.cwd(), "src/shared/data/products.json"), "utf8"),
 ) as Product[];
 
-describe("catalog integrity (decisions #19, #30, #31, #32)", () => {
+/** e09 contract: 3-letter code + 9 alnum chars, uppercase. */
+const SKU_PATTERN = /^[A-Z]{3}[A-Z0-9]{9}$/;
+const KNOWN_CODES = new Set(["CHA", "DSK", "MON", "LMP", "PLT", "CFE", "BBG", "EXT", "PTN"]);
+
+describe("catalog integrity (decisions #19, #30, #31, #32; e09 SKU contract)", () => {
   it("matches the tiered volume per category (decision #30)", () => {
     const counts = committed.reduce<Record<string, number>>((acc, p) => {
       acc[p.category] = (acc[p.category] ?? 0) + 1;
@@ -24,19 +28,32 @@ describe("catalog integrity (decisions #19, #30, #31, #32)", () => {
 
   it("every product is complete and typed", () => {
     for (const p of committed) {
-      expect(p.id, `id for ${p.name}`).toBeTruthy();
-      expect(p.name, `name for ${p.id}`).toBeTruthy();
-      expect(p.category, `category for ${p.id}`).toBeOneOf([...PRODUCT_CATEGORIES] as string[]);
-      expect(p.pricePerMonth, `price for ${p.id}`).toBeGreaterThan(0);
-      expect(Number.isInteger(p.pricePerMonth), `integer price for ${p.id}`).toBe(true);
-      expect(p.description, `description for ${p.id}`).toBeTruthy();
-      expect(p.image, `image for ${p.id}`).toBeTruthy();
+      expect(p.skuNo, `skuNo for ${p.name}`).toBeTruthy();
+      expect(p.name, `name for ${p.skuNo}`).toBeTruthy();
+      expect(p.category, `category for ${p.skuNo}`).toBeOneOf([...PRODUCT_CATEGORIES] as string[]);
+      expect(p.pricePerMonth, `price for ${p.skuNo}`).toBeGreaterThan(0);
+      expect(Number.isInteger(p.pricePerMonth), `integer price for ${p.skuNo}`).toBe(true);
+      expect(p.description, `description for ${p.skuNo}`).toBeTruthy();
+      expect(p.image, `image for ${p.skuNo}`).toBeTruthy();
     }
   });
 
-  it("ids are unique", () => {
-    const ids = committed.map((p) => p.id);
-    expect(new Set(ids).size).toBe(ids.length);
+  it("skus are exactly 12 chars, alphanumeric, with a known code prefix", () => {
+    for (const p of committed) {
+      expect(p.skuNo, `sku format for ${p.name}`).toMatch(SKU_PATTERN);
+      expect(KNOWN_CODES.has(p.skuNo.slice(0, 3)), `known code for ${p.name}`).toBe(true);
+    }
+  });
+
+  it("skus are unique", () => {
+    const skus = committed.map((p) => p.skuNo);
+    expect(new Set(skus).size).toBe(skus.length);
+  });
+
+  it("no id field remains in the committed catalog (e09 rename)", () => {
+    for (const p of committed) {
+      expect("id" in p, `no id on ${p.name}`).toBe(false);
+    }
   });
 
   it("image paths are safe slugs (no traversal or control chars)", () => {
@@ -51,20 +68,25 @@ describe("catalog integrity (decisions #19, #30, #31, #32)", () => {
 
   it("hero products win with mockup-exact names and Google image URLs (decision #31)", () => {
     for (const hero of HERO_PRODUCTS) {
-      const found = committed.find((p) => p.id === hero.id);
-      expect(found, `hero ${hero.id} present`).toBeDefined();
+      const found = committed.find((p) => p.skuNo === hero.skuNo);
+      expect(found, `hero ${hero.skuNo} present`).toBeDefined();
       expect(found?.name).toBe(hero.name);
       expect(found?.pricePerMonth).toBe(hero.pricePerMonth);
       expect(found?.image).toMatch(/^https:\/\/lh3\.googleusercontent\.com\//);
     }
   });
 
-  it("hero ids referenced by the generator resolve in the committed catalog", () => {
-    const heroIds = new Set(HERO_PRODUCTS.map((p) => p.id));
-    const committedIds = new Set(committed.map((p) => p.id));
-    for (const id of heroIds) {
-      expect(committedIds.has(id), `hero id ${id} in committed catalog`).toBe(true);
+  it("hero skus referenced by the generator resolve in the committed catalog", () => {
+    const heroSkus = new Set(HERO_PRODUCTS.map((p) => p.skuNo));
+    const committedSkus = new Set(committed.map((p) => p.skuNo));
+    for (const sku of heroSkus) {
+      expect(committedSkus.has(sku), `hero sku ${sku} in committed catalog`).toBe(true);
     }
+  });
+
+  it("accessory heroes carry a valid cap-key code (monstera → PLT — quirk gone)", () => {
+    const monstera = committed.find((p) => p.name === "Monstera Plant");
+    expect(monstera?.skuNo.slice(0, 3)).toBe("PLT");
   });
 
   it("generation is deterministic (decision #32)", () => {

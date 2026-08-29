@@ -8,7 +8,7 @@ import { ConfirmationScreen } from "./ConfirmationScreen";
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -16,7 +16,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,
@@ -24,7 +24,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,
@@ -37,7 +37,8 @@ function Harness({ children }: { children: ReactNode }) {
   const [state, dispatch] = useBuilderReducer({
     chairId: "chair-a",
     deskId: "desk-a",
-    quantities: { "accessory-monitor-m1": 2 },
+    quantities: {},
+    monitorSlots: ["MONA1B2C3D4E", "MONA1B2C3D4E"],
     deliveryLocation: "Villa Lotus, Canggu",
   });
   return <BuilderStoreProvider value={{ state, dispatch }}>{children}</BuilderStoreProvider>;

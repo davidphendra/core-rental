@@ -16,10 +16,17 @@ export type BuilderAction =
   | { type: "addAccessory"; product: Product }
   | { type: "removeAccessory"; productId: string }
   | { type: "setQuantity"; product: Product; quantity: number }
+  | { type: "selectMonitor"; product: Product }
+  | { type: "removeMonitorSlot"; index: number }
   | { type: "setDeliveryLocation"; value: string }
   | { type: "reset" };
 
-export const EMPTY_SETUP: SetupState = { chairId: null, deskId: null, quantities: {} };
+export const EMPTY_SETUP: SetupState = {
+  chairId: null,
+  deskId: null,
+  quantities: {},
+  monitorSlots: [],
+};
 
 /**
  * The single mutation path for the cart (ADR 0002). Every action is validated
@@ -32,10 +39,10 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       return action.state;
 
     case "selectChair":
-      return { ...state, chairId: action.product.id };
+      return { ...state, chairId: action.product.skuNo };
 
     case "selectDesk":
-      return { ...state, deskId: action.product.id };
+      return { ...state, deskId: action.product.skuNo };
 
     case "deselectChair":
       return { ...state, chairId: null };
@@ -47,8 +54,8 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       if (!canAdd(state, action.product)) {
         return state; // over cap or partner — G2 quiet no-op
       }
-      const next = (state.quantities[action.product.id] ?? 0) + 1;
-      return { ...state, quantities: { ...state.quantities, [action.product.id]: next } };
+      const next = (state.quantities[action.product.skuNo] ?? 0) + 1;
+      return { ...state, quantities: { ...state.quantities, [action.product.skuNo]: next } };
     }
 
     case "removeAccessory": {
@@ -74,11 +81,38 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       }
       const next = { ...state.quantities };
       if (qty === 0) {
-        delete next[action.product.id];
+        delete next[action.product.skuNo];
       } else {
-        next[action.product.id] = qty;
+        next[action.product.skuNo] = qty;
       }
       return { ...state, quantities: next };
+    }
+
+    /** e09s02 monitor slots (Q1/Q3 rulings): space → append (duplicates build
+     * 2A+1B, 3C); full → replace most recently added (last); full + already
+     * placed → no-op. */
+    case "selectMonitor": {
+      const sku = action.product.skuNo;
+      if (state.monitorSlots.length >= 3) {
+        if (state.monitorSlots.includes(sku)) {
+          return state; // full + already placed — no-op (Q3)
+        }
+        const next = [...state.monitorSlots];
+        next[next.length - 1] = sku; // replace most recently added (Q1)
+        return { ...state, monitorSlots: next };
+      }
+      // Space available: append — first empty slot; duplicates allowed.
+      return { ...state, monitorSlots: [...state.monitorSlots, sku] };
+    }
+
+    case "removeMonitorSlot": {
+      const { index } = action;
+      if (!Number.isInteger(index) || index < 0 || index >= state.monitorSlots.length) {
+        return state; // invalid index — quiet no-op
+      }
+      const next = [...state.monitorSlots];
+      next.splice(index, 1);
+      return { ...state, monitorSlots: next };
     }
 
     case "setDeliveryLocation":

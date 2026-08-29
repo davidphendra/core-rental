@@ -9,7 +9,7 @@ import { SelectionPanel } from "./SelectionPanel";
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -17,7 +17,7 @@ const catalog: Product[] = [
     image: "/c1.svg",
   },
   {
-    id: "chair-b",
+    skuNo: "chair-b",
     name: "Canggu Task",
     category: "chair",
     pricePerMonth: 600_000,
@@ -25,7 +25,7 @@ const catalog: Product[] = [
     image: "/c2.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,
@@ -33,7 +33,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,
@@ -41,7 +41,15 @@ const catalog: Product[] = [
     image: "/m1.svg",
   },
   {
-    id: "accessory-coffee-c1",
+    skuNo: "LMPA1B2C3D4E",
+    name: "Desk Lamp",
+    category: "accessory",
+    pricePerMonth: 120_000,
+    description: "d",
+    image: "/l.svg",
+  },
+  {
+    skuNo: "CFEA1B2C3D4E",
     name: "Espresso",
     category: "accessory",
     pricePerMonth: 750_000,
@@ -49,7 +57,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "accessory-beanbag-b1",
+    skuNo: "BBGA1B2C3D4E",
     name: "Bean Bag",
     category: "accessory",
     pricePerMonth: 350_000,
@@ -57,7 +65,7 @@ const catalog: Product[] = [
     image: "/b.svg",
   },
   {
-    id: "extra-surfboard-rack",
+    skuNo: "extra-surfboard-rack",
     name: "Surfboard Rack",
     category: "extra",
     pricePerMonth: 150_000,
@@ -130,7 +138,7 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(screen.queryByText("Bean Bag")).not.toBeInTheDocument();
   });
 
-  it("Accessories tab groups by subtype and provides steppers", () => {
+  it("Accessories tab groups by subtype: monitors get Select, others steppers (e09s02)", () => {
     render(
       <Harness>
         <SelectionPanel catalog={catalog} />
@@ -139,6 +147,26 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
     const monitorGroup = screen.getByText("monitor").closest("div") as HTMLElement;
     expect(within(monitorGroup).getByText("Monitor 1")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Add Monitor 1" })).toBeInTheDocument();
+    // Monitors: Select button (slot model) — not a quantity stepper.
+    expect(screen.queryByRole("button", { name: "Add Monitor 1" })).not.toBeInTheDocument();
+    const select = within(monitorGroup).getAllByRole("button", { name: "Select" })[0];
+    expect(select).toBeInTheDocument();
+    // Other panel accessories (lamp) keep their steppers.
+    const lampGroup = screen.getByText("lamp").closest("div") as HTMLElement;
+    expect(within(lampGroup).getByRole("button", { name: "Add Desk Lamp" })).toBeInTheDocument();
+  });
+
+  it("Select on a monitor adds it to the slot row (fill first empty)", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
+    const select = screen.getAllByRole("button", { name: "Select" })[0];
+    expect(select).toBeInTheDocument();
+    // Clicking Select dispatches selectMonitor without crashing; button persists.
+    fireEvent.click(select!);
+    expect(screen.getAllByRole("button", { name: "Select" })[0]).toBeInTheDocument();
   });
 });

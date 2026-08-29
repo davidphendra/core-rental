@@ -1,26 +1,36 @@
-# Security Review — e08 (diff main..HEAD on feat/e08-e2e)
+# Security Review — e09s01 (SKU system)
 
-> verify-work step 5. Threat model: specs/security/epics/e08/THREAT_MODEL.md.
+> verify-work Phase 5 scan of the e09s01 diff (merge-base vs HEAD).
 
 ## Scope scanned
 
-- e2e/ suite (positive + N1–N11) + playwright.config.ts (root)
-- .github/workflows/ci.yml
-- next.config.ts CSP change (unsafe-inline for scripts)
-
-## Automated checks
-
-- C1: no secrets/tokens in the CI workflow ✓
-- C2: webServer runs a LOCAL production build (`next build && next start`) — tests never touch a deployed site ✓
-- C3: @playwright/test pinned via lockfile (14 refs); CI uses `playwright install --with-deps` ✓
-- CSP: `'unsafe-inline'` for scripts is a **documented deviation** (F1) — required for Next.js hydration, proven by E2E; accepted because the app has zero injection sinks and CSP still blocks arbitrary hosts + `'unsafe-eval'`
-- Belt-and-braces: no `*.test.*` in `.next`, no `toBeInTheDocument` in `.next/static` — test code provably never ships ✓
-- N9 asserts the full header posture on all routes + API ✓
+- scripts/sku.ts, generate-catalog.ts, curated-hero.ts (deterministic sku generation)
+- src/shared/types/product.ts, data/products.ts (validation strengthening)
+- src/shared/domain/{setupRules,validateSetupState}.ts (sku-prefix caps, trust boundary)
+- src/shared/state/{BuilderStore,useLocalStorage}.tsx (sku keys, storage v2)
+- 65 .id -> .skuNo renames (src + e2e)
 
 ## Findings
 
-None new. All C1–C3 LOW and mitigated; the CSP deviation is documented in F1 + SECURITY_PLAN_LATEST.
+| ID  | Finding                               | Severity | Verdict                                                               |
+| --- | ------------------------------------- | -------- | --------------------------------------------------------------------- |
+| S1  | Malformed skuNo in catalog            | LOW      | Implemented: format/code/uniqueness guard in isProduct/isValidCatalog |
+| S2  | Corrupt monitorSlots (trust boundary) | LOW      | Pending e09s02 (validateSetupState extension lands with monitorSlots) |
+| S3  | selectMonitor semantics bypass        | LOW      | Pending e09s02 (G2 reducer semantics)                                 |
+| S4  | SKU hash collision                    | LOW      | Implemented: generator throws on collision; uniqueness gate           |
+| S5  | Old-cart silent reset                 | LOW      | Implemented: storage v2; v1 carts -> D1 defaults, no crash            |
+
+## Path/injection audit
+
+- Only path op in diff: join(publicDir, image.replace(/^\/placeholders\//, "")) — the remainder is a
+  slugified name (category-{slug}.svg) built from trusted committed templates; no traversal possible.
+- No eval/innerHTML/dangerouslySetInnerHTML/localStorage writes introduced.
+- SVG placeholder escaping (XML-safe name) unchanged and still tested.
 
 ## Verdict
 
-**PASS** — no HIGH/CRITICAL. No exceptions requested.
+No HIGH findings (confidence >= 8). Diff strengthens the trust boundary. Blocking gate: PASS.
+
+## e09s02/s03 follow-up scan
+
+Re-scanned the s02/s03 diff (MonitorSlotRow, selectMonitor/removeMonitorSlot, monitorSlots validation, panel Select, hint buttons): no HIGH findings (confidence >= 8). S2 (corrupt monitorSlots) and S3 (selectMonitor bypass) are now IMPLEMENTED — strict monitorSlots validation and G2 reducer semantics. No eval/innerHTML/unsafe writes introduced. Gate: PASS.

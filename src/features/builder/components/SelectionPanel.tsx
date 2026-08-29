@@ -102,8 +102,20 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 {items.map((product) => (
-                  <ProductCard key={product.id} product={product} variant="compact">
-                    <QuantityStepper product={product} />
+                  <ProductCard key={product.skuNo} product={product} variant="compact">
+                    {capKeyForProduct(product) === "monitor" ? (
+                      // e09s02: monitors are slot-selected (fill/replace), not steppered
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => dispatch({ type: "selectMonitor", product })}
+                      >
+                        Select
+                      </Button>
+                    ) : (
+                      <QuantityStepper product={product} />
+                    )}
                   </ProductCard>
                 ))}
               </div>
@@ -115,10 +127,10 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
           <div className="grid grid-cols-2 gap-3">
             {filtered.map((product) => {
               const selected =
-                tab === "chair" ? state.chairId === product.id : state.deskId === product.id;
+                tab === "chair" ? state.chairId === product.skuNo : state.deskId === product.skuNo;
               return (
                 <ProductCard
-                  key={product.id}
+                  key={product.skuNo}
                   product={product}
                   selected={selected}
                   variant="compact"

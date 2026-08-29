@@ -8,7 +8,7 @@ import { SummaryView } from "./SummaryView";
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "Uluwatu Chair",
     category: "chair",
     pricePerMonth: 450_000,
@@ -16,7 +16,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "Seminyak Desk",
     category: "desk",
     pricePerMonth: 800_000,
@@ -24,7 +24,7 @@ const catalog: Product[] = [
     image: "/d.svg",
   },
   {
-    id: "accessory-monitor-m1",
+    skuNo: "MONA1B2C3D4E",
     name: "Monitor 1",
     category: "accessory",
     pricePerMonth: 300_000,
@@ -32,7 +32,7 @@ const catalog: Product[] = [
     image: "/m.svg",
   },
   {
-    id: "accessory-coffee-c1",
+    skuNo: "accessory-coffee-c1",
     name: "Espresso",
     category: "accessory",
     pricePerMonth: 750_000,
@@ -49,7 +49,7 @@ function Harness({
   initial?: ReturnType<typeof useBuilderReducer>[0];
 }) {
   const [state, dispatch] = useBuilderReducer(
-    initial ?? { chairId: "chair-a", deskId: "desk-a", quantities: {} },
+    initial ?? { chairId: "chair-a", deskId: "desk-a", quantities: {}, monitorSlots: [] },
   );
   return <BuilderStoreProvider value={{ state, dispatch }}>{children}</BuilderStoreProvider>;
 }
@@ -61,7 +61,8 @@ describe("SummaryView (decisions C1, C3, #7, N1)", () => {
         initial={{
           chairId: "chair-a",
           deskId: "desk-a",
-          quantities: { "accessory-monitor-m1": 2 },
+          quantities: {},
+          monitorSlots: ["MONA1B2C3D4E", "MONA1B2C3D4E"],
         }}
       >
         <SummaryView catalog={catalog} />
@@ -77,7 +78,7 @@ describe("SummaryView (decisions C1, C3, #7, N1)", () => {
 
   it("shows the empty state when the cart has nothing (N1)", () => {
     render(
-      <Harness initial={{ chairId: null, deskId: null, quantities: {} }}>
+      <Harness initial={{ chairId: null, deskId: null, quantities: {}, monitorSlots: [] }}>
         <SummaryView catalog={catalog} />
       </Harness>,
     );

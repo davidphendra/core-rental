@@ -49,7 +49,7 @@ export function ConfirmationScreen({
       <ul className="border-surface-variant bg-surface mt-8 rounded-xl border p-4 text-left">
         {items.map(({ product, quantity }) => (
           <li
-            key={product.id}
+            key={product.skuNo}
             className="border-surface-variant flex items-center justify-between border-b py-2 last:border-b-0"
           >
             <span className="text-label-md font-label-md text-on-surface">

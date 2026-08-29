@@ -5,7 +5,7 @@ import type { Product } from "@/shared/types/product";
 import { StoreCard } from "./StoreCard";
 
 const chair: Product = {
-  id: "chair-a",
+  skuNo: "chair-a",
   name: "Uluwatu Chair",
   category: "chair",
   pricePerMonth: 450_000,
@@ -13,7 +13,7 @@ const chair: Product = {
   image: "/c.svg",
 };
 const monitor: Product = {
-  id: "accessory-monitor-m1",
+  skuNo: "accessory-monitor-m1",
   name: "Monitor 1",
   category: "accessory",
   pricePerMonth: 300_000,
@@ -21,7 +21,7 @@ const monitor: Product = {
   image: "/m.svg",
 };
 const motorcycle: Product = {
-  id: "partner-moto",
+  skuNo: "partner-moto",
   name: "Motorcycle Rental",
   category: "partner",
   pricePerMonth: 1_500_000,

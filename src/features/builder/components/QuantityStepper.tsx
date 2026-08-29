@@ -15,7 +15,7 @@ interface QuantityStepperProps {
  */
 export function QuantityStepper({ product }: QuantityStepperProps) {
   const { state, dispatch } = useBuilderStore();
-  const quantity = state.quantities[product.id] ?? 0;
+  const quantity = state.quantities[product.skuNo] ?? 0;
 
   const cap = capKeyForProduct(product);
   const max = cap === null ? null : QUANTITY_CAPS[cap];
@@ -28,7 +28,7 @@ export function QuantityStepper({ product }: QuantityStepperProps) {
         size="circle"
         aria-label={`Remove ${product.name}`}
         disabled={quantity === 0}
-        onClick={() => dispatch({ type: "removeAccessory", productId: product.id })}
+        onClick={() => dispatch({ type: "removeAccessory", productId: product.skuNo })}
       >
         <span aria-hidden="true">−</span>
       </Button>

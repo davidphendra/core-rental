@@ -5,7 +5,7 @@ import { readStoredSetup, writeStoredSetup, STORAGE_KEY } from "./useLocalStorag
 
 const catalog: Product[] = [
   {
-    id: "chair-a",
+    skuNo: "chair-a",
     name: "A",
     category: "chair",
     pricePerMonth: 100,
@@ -13,7 +13,7 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
-    id: "desk-a",
+    skuNo: "desk-a",
     name: "D",
     category: "desk",
     pricePerMonth: 200,
@@ -22,7 +22,7 @@ const catalog: Product[] = [
   },
 ];
 
-const validSetup = { chairId: "chair-a", deskId: "desk-a", quantities: {} };
+const validSetup = { chairId: "chair-a", deskId: "desk-a", quantities: {}, monitorSlots: [] };
 
 describe("readStoredSetup (G1 validate-and-fallback)", () => {
   beforeEach(() => {
@@ -49,12 +49,17 @@ describe("readStoredSetup (G1 validate-and-fallback)", () => {
   it("returns null for invalid shapes (tampered storage)", () => {
     window.localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ chairId: "ghost", deskId: null, quantities: {} }),
+      JSON.stringify({ chairId: "ghost", deskId: null, quantities: {}, monitorSlots: [] }),
     );
     expect(readStoredSetup(catalog)).toBeNull();
     window.localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ chairId: "chair-a", deskId: "desk-a", quantities: { nope: 99 } }),
+      JSON.stringify({
+        chairId: "chair-a",
+        deskId: "desk-a",
+        quantities: { nope: 99 },
+        monitorSlots: [],
+      }),
     );
     expect(readStoredSetup(catalog)).toBeNull();
   });

@@ -5,7 +5,7 @@ import type { Product } from "../types/product";
 import { FALLBACK_IMAGE, ProductCard } from "./ProductCard";
 
 const product: Product = {
-  id: "chair-1",
+  skuNo: "chair-1",
   name: "Uluwatu Chair",
   category: "chair",
   pricePerMonth: 450_000,

@@ -1,0 +1,40 @@
+story_id: e09s02
+title: Three monitor slots
+verified_at: "2026-08-29T05:54:50Z"
+verifier: verify-work
+risk: P0
+phases:
+  smoke:
+    passed: true
+    note: "Cold start: /builder 200; /api/products 53 products, all skuNo valid"
+  build:
+    passed: true
+    command: "pnpm preflight (test + lint + typecheck + build chained)"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+    note: "0 warnings"
+  tests:
+    passed: true
+    coverage: "96%+ stmts (gate: 80% branch on shared/domain)"
+  terminal_verdict:
+    command: "pnpm test"
+    exit_code: 0
+    captured_at: "2026-08-29T05:54:50Z"
+    note: "Single contiguous run — 31 files, 153 tests, 0 failures (e09s02+s03 combined)"
+  security:
+    passed: true
+    note: "Diff scan: no HIGH; no eval/innerHTML/unsafe writes (S2/S3 mitigated by validation + G2 reducer)"
+  manual:
+    steps:
+      - step: "Builder: 3 Add Monitor buttons -> fill combos (2A+1B), full-row replace, × removal"
+        expected: "slot model per Q1/Q3/Q7 rulings"
+        actual: "unit (BuilderStore/Canvas/Panel) + E2E (builder.spec N3/N4, summary journey) green"
+        passed: true
+      - step: "Empty chair/desk hints are clickable buttons with icons"
+        expected: "select first chair/desk"
+        actual: "BuilderCanvas.test hint-click tests + E2E green"
+        passed: true
+  gaps:
+    closed: true

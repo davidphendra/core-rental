@@ -12,7 +12,7 @@ tasks:
       quantities
     verify: pnpm test -- BuilderStore.test.tsx
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -24,7 +24,7 @@ tasks:
       quantities can no longer contain monitor keys; hydration path handles both"
     verify: pnpm test -- validateSetupState.test.ts
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -35,7 +35,7 @@ tasks:
       items from slots (grouped by skuNo, duplicates allowed); Summary renders them"
     verify: pnpm test -- summary-page.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -47,7 +47,7 @@ tasks:
       clear; replace-most-recent shows a brief highlight on the swapped card"
     verify: pnpm test -- BuilderCanvas.test.tsx BuilderCanvas.a11y.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -59,7 +59,7 @@ tasks:
       accessories keep steppers"
     verify: pnpm test -- SelectionPanel.test.tsx
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -70,7 +70,7 @@ tasks:
       replace-most-recent, no-op on already-placed, × removal, line items"
     verify: pnpm build && pnpm test:e2e
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:

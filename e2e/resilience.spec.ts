@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { firstOfCategory } from "./fixtures/catalog-helpers";
 
-const STORAGE_KEY = "core-rental:setup:v1";
+const STORAGE_KEY = "core-rental:setup:v2";
 
 test.describe("resilience negative flows (N7, N8, N10)", () => {
   test("N7: a broken product image falls back to the local SVG", async ({ page }) => {

@@ -15,23 +15,35 @@ export const QUANTITY_CAPS = {
 
 export type CapKey = keyof typeof QUANTITY_CAPS;
 
-function isCapKey(value: string): value is CapKey {
-  return Object.prototype.hasOwnProperty.call(QUANTITY_CAPS, value);
-}
+/**
+ * e09: 3-letter sku code → cap key for cap-bound accessories/extras.
+ * Single source of truth for sku-prefix derivation (scripts/sku.ts mirrors).
+ */
+export const SKU_CODE_TO_CAP: Record<string, CapKey> = {
+  MON: "monitor",
+  LMP: "lamp",
+  PLT: "plant",
+  CFE: "coffee",
+  BBG: "beanbag",
+  EXT: "extra",
+};
+
+/** e09: 3-letter sku code → single-select category (no cap). */
+export const SKU_CODE_TO_CATEGORY: Record<string, Product["category"]> = {
+  CHA: "chair",
+  DSK: "desk",
+  PTN: "partner",
+};
 
 /**
  * The cap key for a product, or null when the product is single-select
- * (chair/desk — exclusivity, #10) or excluded (partner, #20).
+ * (chair/desk — exclusivity, #10) or excluded (partner, #20). e09: derived
+ * from the 3-letter sku code prefix (MON→monitor … EXT→extra; the old
+ * `id.split("-")[1]` parser is gone — the hero monstera quirk is resolved).
  */
-export function capKeyForProduct(product: Pick<Product, "id" | "category">): CapKey | null {
-  if (product.category === "extra") {
-    return "extra";
-  }
-  if (product.category !== "accessory") {
-    return null; // chair/desk single-select; partner excluded
-  }
-  const key = product.id.split("-")[1] ?? "";
-  return isCapKey(key) ? key : null;
+export function capKeyForProduct(product: Pick<Product, "skuNo" | "category">): CapKey | null {
+  const code = product.skuNo.slice(0, 3);
+  return SKU_CODE_TO_CAP[code] ?? null;
 }
 
 /** Whether a product may ever enter the cart (partner excluded, #20). */
@@ -55,7 +67,7 @@ export function defaultsIfEmpty(
   if (chair === undefined || desk === undefined) {
     return null;
   }
-  return { chairId: chair.id, deskId: desk.id };
+  return { chairId: chair.skuNo, deskId: desk.skuNo };
 }
 
 /**
@@ -65,7 +77,7 @@ export function defaultsIfEmpty(
  */
 export function canAdd(
   setup: Pick<SetupState, "quantities">,
-  product: Pick<Product, "id" | "category">,
+  product: Pick<Product, "skuNo" | "category">,
 ): boolean {
   if (!isCartEligible(product)) {
     return false;
@@ -74,7 +86,7 @@ export function canAdd(
   if (cap === null) {
     return true;
   }
-  return (setup.quantities[product.id] ?? 0) < QUANTITY_CAPS[cap];
+  return (setup.quantities[product.skuNo] ?? 0) < QUANTITY_CAPS[cap];
 }
 
 /**
@@ -87,7 +99,7 @@ export function defaultSelection(
   const chair = catalog.find((p) => p.category === "chair");
   const desk = catalog.find((p) => p.category === "desk");
   return {
-    chairId: chair?.id ?? null,
-    deskId: desk?.id ?? null,
+    chairId: chair?.skuNo ?? null,
+    deskId: desk?.skuNo ?? null,
   };
 }

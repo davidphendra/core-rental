@@ -6,6 +6,7 @@ import { useBuilderStore } from "@/shared/state/BuilderStore";
 import type { Product } from "@/shared/types/product";
 
 import { CanvasSlot } from "./CanvasSlot";
+import { MonitorSlotRow } from "./MonitorSlotRow";
 
 /**
  * The visual workspace canvas (interactive_builder mockup): desk + chair,
@@ -18,8 +19,8 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
 
   const byCapKey = (key: CapKey) => catalog.filter((p) => capKeyForProduct(p) === key);
 
-  const chair = state.chairId ? catalog.find((p) => p.id === state.chairId) : undefined;
-  const desk = state.deskId ? catalog.find((p) => p.id === state.deskId) : undefined;
+  const chair = state.chairId ? catalog.find((p) => p.skuNo === state.chairId) : undefined;
+  const desk = state.deskId ? catalog.find((p) => p.skuNo === state.deskId) : undefined;
 
   return (
     <div className="border-surface-container-high bg-surface-bright shadow-ambient relative overflow-hidden rounded-[2rem] border p-8">
@@ -34,17 +35,8 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
       />
 
       <div className="relative flex h-[300px] w-full max-w-2xl flex-col items-center justify-end gap-6">
-        {/* Monitor slot (centered above the desk, mockup) */}
-        <CanvasSlot
-          capKey="monitor"
-          className="absolute bottom-36 left-1/2 -translate-x-1/2"
-          dispatch={dispatch}
-          emptyHint="Add Monitor"
-          icon="add"
-          label="Monitor"
-          products={byCapKey("monitor")}
-          state={state}
-        />
+        {/* Three monitor slots (e09s02) — row centered above the desk */}
+        <MonitorSlotRow monitors={byCapKey("monitor")} />
 
         {/* Lamp + plant slots (bottom-left/right of the desk, mockup) */}
         <CanvasSlot
@@ -78,11 +70,25 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
           <div className="absolute left-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
           <div className="absolute right-4 top-full h-24 w-4 rounded-b-sm bg-[#c49a6c]" />
           {desk === undefined ? (
-            <div className="slot-empty absolute inset-0 flex items-center justify-center rounded-md">
-              <span className="text-label-sm font-label-sm text-outline">
+            <button
+              type="button"
+              aria-label="Add a desk from the panel"
+              onClick={() => {
+                const first = catalog.find((p) => p.category === "desk");
+                if (first !== undefined) dispatch({ type: "selectDesk", product: first });
+              }}
+              className="slot-empty hover:bg-surface-container-low focus-visible:outline-primary group absolute inset-0 flex items-center justify-center gap-1 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <span
+                className="material-symbols-outlined text-outline group-hover:text-primary"
+                aria-hidden="true"
+              >
+                desk
+              </span>
+              <span className="text-label-sm font-label-sm text-outline group-hover:text-primary">
                 Add a desk from the panel
               </span>
-            </div>
+            </button>
           ) : null}
         </div>
         {desk ? (
@@ -133,15 +139,25 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
             </button>
           </div>
         ) : (
-          <div
-            className="slot-empty flex h-24 w-32 items-center justify-center rounded-md"
-            role="img"
-            aria-label="No chair selected"
+          <button
+            type="button"
+            aria-label="Add a chair from the panel"
+            onClick={() => {
+              const first = catalog.find((p) => p.category === "chair");
+              if (first !== undefined) dispatch({ type: "selectChair", product: first });
+            }}
+            className="slot-empty hover:bg-surface-container-low focus-visible:outline-primary group flex h-24 w-32 flex-col items-center justify-center gap-1 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span className="text-label-sm font-label-sm text-outline text-center">
+            <span
+              className="material-symbols-outlined text-outline group-hover:text-primary"
+              aria-hidden="true"
+            >
+              chair
+            </span>
+            <span className="text-label-sm font-label-sm text-outline group-hover:text-primary text-center">
               Add a chair from the panel
             </span>
-          </div>
+          </button>
         )}
       </div>
 

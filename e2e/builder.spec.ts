@@ -39,7 +39,7 @@ test.describe("builder happy path (decision #35)", () => {
     const espressoCard = page.locator("article").filter({ hasText: espresso.name });
     await espressoCard.getByRole("button", { name: "Select", exact: true }).click();
     await expect(page.getByRole("button", { name: "Coffee Station", exact: true })).toBeVisible();
-    await expect(page.getByText("Max")).toBeVisible();
+    await expect(page.getByText("Max", { exact: true })).toBeVisible();
     // Clicking the filled zone must NOT swap to another coffee — stays at 1.
     await page.getByRole("button", { name: "Coffee Station", exact: true }).click();
     await expect(page.getByRole("button", { name: "Coffee Station", exact: true })).toBeVisible();
@@ -226,5 +226,103 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     await expect(cta).toBeDisabled();
     await expect(page.getByLabel("View your setup")).toHaveAttribute("aria-disabled", "true");
     await expect(page.getByRole("link", { name: "View your setup" })).toHaveCount(0);
+  });
+});
+
+test.describe("Design with AI (e10s02)", () => {
+  const chair = firstWithSkuPrefix("CHA");
+  const desk = firstWithSkuPrefix("DSK");
+  const monitor = firstWithSkuPrefix("MON");
+
+  const design = {
+    chairSku: chair.skuNo,
+    deskSku: desk.skuNo,
+    monitorSkus: [monitor.skuNo],
+    coffeeSku: null,
+    beanbagSku: null,
+    lampSku: null,
+    plantSku: null,
+    totalPerMonth: chair.pricePerMonth + desk.pricePerMonth + monitor.pricePerMonth,
+    note: "Picked the best-value combo for you.",
+  };
+
+  const stubAi = (page: import("@playwright/test").Page, payload: unknown, status = 200) =>
+    page.route("**/api/ai-design", (route) =>
+      route.fulfill({ status, contentType: "application/json", body: JSON.stringify(payload) }),
+    );
+
+  test.beforeEach(async ({ page }) => {
+    await resetStorage(page);
+  });
+
+  test("happy path: generate → preview → apply populates the builder (and emits ai.design_applied)", async ({
+    page,
+  }) => {
+    await stubAi(page, { design });
+    const consoleLines: string[] = [];
+    page.on("console", (msg) => consoleLines.push(msg.text()));
+
+    await page.goto("/builder");
+    await page.getByLabel("Describe your workspace").fill("gaming setup");
+    await page.getByRole("button", { name: "Generate" }).click();
+
+    await expect(page.getByText("Monthly total", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Design with AI").getByText(desk.name)).toBeVisible();
+    await expect(page.getByLabel("Design with AI").getByText(design.note)).toBeVisible();
+
+    // D1 defaults seeded a chair + desk, so Apply asks for confirmation first.
+    await page.getByRole("button", { name: "Apply this design" }).click();
+    await page.getByRole("button", { name: "Replace setup" }).click();
+
+    // Canvas rendering (main) — the desk/chair images also appear in panel cards.
+    await expect(page.getByRole("main").getByAltText(desk.name).first()).toBeVisible();
+    await expect(page.getByRole("main").getByAltText(chair.name).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "View Setup Summary" })).toBeVisible();
+    await expect
+      .poll(() => consoleLines.some((l) => l.includes('"event":"ai.design_applied"')))
+      .toBe(true);
+  });
+
+  test("applying over a non-empty cart requires confirmation", async ({ page }) => {
+    await stubAi(page, { design });
+    await page.goto("/builder");
+    // D1 defaults already seeded a chair + desk → cart is non-empty.
+    await page.getByLabel("Describe your workspace").fill("upgrade my setup");
+    await page.getByRole("button", { name: "Generate" }).click();
+    await expect(page.getByText("Monthly total", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Apply this design" }).click();
+    await expect(page.getByRole("button", { name: "Replace setup" })).toBeVisible();
+    await page.getByRole("button", { name: "Replace setup" }).click();
+    await expect(page.getByRole("main").getByAltText(desk.name).first()).toBeVisible();
+  });
+
+  test("an impossible budget shows an honest refusal", async ({ page }) => {
+    await stubAi(page, {
+      refusal: { message: "The cheapest rentable setup is Rp1.000.000 per month — no valid design fits." },
+    });
+    await page.goto("/builder");
+    await page.getByLabel("Describe your workspace").fill("cheap setup");
+    await page.getByRole("button", { name: "Generate" }).click();
+    await expect(page.getByText(/cheapest rentable setup/)).toBeVisible();
+  });
+
+  test("a disabled deployment surfaces an actionable message", async ({ page }) => {
+    await stubAi(page, { error: "ai_disabled" }, 503);
+    await page.goto("/builder");
+    await page.getByLabel("Describe your workspace").fill("anything");
+    await page.getByRole("button", { name: "Generate" }).click();
+    await expect(page.getByText(/isn't configured/)).toBeVisible();
+  });
+
+  test("cancel aborts a slow generation and returns to idle", async ({ page }) => {
+    await page.route("**/api/ai-design", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await route.fulfill({ status: 200, contentType: "application/json", body: "{}" });
+    });
+    await page.goto("/builder");
+    await page.getByLabel("Describe your workspace").fill("slow request");
+    await page.getByRole("button", { name: "Generate" }).click();
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(page.getByRole("button", { name: "Generate" })).toBeVisible();
   });
 });

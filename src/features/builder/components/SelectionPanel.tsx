@@ -148,7 +148,9 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
                 {key}
               </h3>
               {items.length === 0 ? (
-                <p className="text-body-md text-on-surface-variant">No {key} match.</p>
+                <p className="text-label-sm font-label-sm text-on-surface-variant">
+                  No {key} match.
+                </p>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {items.map((product) => (

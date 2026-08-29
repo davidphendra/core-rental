@@ -161,6 +161,14 @@
     "image": "/placeholders/desk-seminyak-standing.svg"
   },
   {
+    "skuNo": "BBG26TT9WKQD",
+    "name": "Seminyak Floor Seat",
+    "category": "accessory",
+    "pricePerMonth": 350000,
+    "description": "Seminyak Floor Seat: the relax-zone essential.",
+    "image": "/placeholders/accessory-seminyak-floor-seat.svg"
+  },
+  {
     "skuNo": "BBG3FDN4UP6Y",
     "name": "Zero-Gravity Lounger",
     "category": "accessory",
@@ -175,6 +183,38 @@
     "pricePerMonth": 250000,
     "description": "Pouf Ottoman: the relax-zone essential.",
     "image": "/placeholders/accessory-pouf-ottoman.svg"
+  },
+  {
+    "skuNo": "BBGAWADNDZ8F",
+    "name": "Pererenan Lounger",
+    "category": "accessory",
+    "pricePerMonth": 425000,
+    "description": "Pererenan Lounger: the relax-zone essential.",
+    "image": "/placeholders/accessory-pererenan-lounger.svg"
+  },
+  {
+    "skuNo": "BBGD41M3CEEF",
+    "name": "Canggu Bean Pod",
+    "category": "accessory",
+    "pricePerMonth": 400000,
+    "description": "Canggu Bean Pod: the relax-zone essential.",
+    "image": "/placeholders/accessory-canggu-bean-pod.svg"
+  },
+  {
+    "skuNo": "BBGJ0QGYQC5K",
+    "name": "Berawa Sofa Sack",
+    "category": "accessory",
+    "pricePerMonth": 450000,
+    "description": "Berawa Sofa Sack: the relax-zone essential.",
+    "image": "/placeholders/accessory-berawa-sofa-sack.svg"
+  },
+  {
+    "skuNo": "BBGM2P366F2Q",
+    "name": "Ubud Cushion Lounge",
+    "category": "accessory",
+    "pricePerMonth": 375000,
+    "description": "Ubud Cushion Lounge: the relax-zone essential.",
+    "image": "/placeholders/accessory-ubud-cushion-lounge.svg"
   },
   {
     "skuNo": "BBGQ9TM1HXUL",
@@ -201,12 +241,36 @@
     "image": "/placeholders/accessory-floor-cushion-set.svg"
   },
   {
+    "skuNo": "CFE2LPSBMNRB",
+    "name": "Berawa Espresso Duo",
+    "category": "accessory",
+    "pricePerMonth": 800000,
+    "description": "Berawa Espresso Duo: keep the caffeine pipeline flowing.",
+    "image": "/placeholders/accessory-berawa-espresso-duo.svg"
+  },
+  {
+    "skuNo": "CFE6KEPZP8LF",
+    "name": "Seminyak Cold Drip",
+    "category": "accessory",
+    "pricePerMonth": 600000,
+    "description": "Seminyak Cold Drip: keep the caffeine pipeline flowing.",
+    "image": "/placeholders/accessory-seminyak-cold-drip.svg"
+  },
+  {
     "skuNo": "CFE6UP8CUECI",
     "name": "Espresso Machine",
     "category": "accessory",
     "pricePerMonth": 750000,
     "description": "Premium bean-to-cup machine. Keep your energy up for those long coding sessions.",
     "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuATDymSt-AcHwZo3PpW0B2MasVp31eN2xETL6HE47QwVmUWSdXfr-qebhbti1geNj2S4aMEcJMq27UHmxy529UDQVfz-wvP1qG47iXhoRJ6JE94YTqOytJXeiNu-RpHVidaOks0Rqec_ZG3bxs_cCkz1LHDRGPAbPPeM5S-gX5Pn2iRmP6ALD028fqVXigofgft6xjAXAJH1dkI1xqBho3iv1Yh5a72Xhq1BLbi-2Nrx9Miaguq30crjA"
+  },
+  {
+    "skuNo": "CFE8GP1YC67Q",
+    "name": "Ubud French Press",
+    "category": "accessory",
+    "pricePerMonth": 650000,
+    "description": "Ubud French Press: keep the caffeine pipeline flowing.",
+    "image": "/placeholders/accessory-ubud-french-press.svg"
   },
   {
     "skuNo": "CFEBT0A8IIHK",
@@ -231,6 +295,22 @@
     "pricePerMonth": 450000,
     "description": "Moka Pot Set: keep the caffeine pipeline flowing.",
     "image": "/placeholders/accessory-moka-pot-set.svg"
+  },
+  {
+    "skuNo": "CFER19IR6FWF",
+    "name": "Canggu Siphon",
+    "category": "accessory",
+    "pricePerMonth": 700000,
+    "description": "Canggu Siphon: keep the caffeine pipeline flowing.",
+    "image": "/placeholders/accessory-canggu-siphon.svg"
+  },
+  {
+    "skuNo": "CFEXJN350XWL",
+    "name": "Kerobokan Drip Bar",
+    "category": "accessory",
+    "pricePerMonth": 750000,
+    "description": "Kerobokan Drip Bar: keep the caffeine pipeline flowing.",
+    "image": "/placeholders/accessory-kerobokan-drip-bar.svg"
   },
   {
     "skuNo": "CFEZ6NVZXEKB",

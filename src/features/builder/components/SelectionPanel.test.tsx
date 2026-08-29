@@ -156,6 +156,20 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(within(lampGroup).getByRole("button", { name: "Add Desk Lamp" })).toBeInTheDocument();
   });
 
+  it("Accessories tab shows the Misc group (coffee + beanbag) with steppers", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
+    const miscGroup = screen.getByText("misc").closest("div") as HTMLElement;
+    expect(within(miscGroup).getByText("Espresso")).toBeInTheDocument(); // coffee
+    expect(within(miscGroup).getByText("Bean Bag")).toBeInTheDocument(); // beanbag
+    expect(within(miscGroup).getByRole("button", { name: "Add Espresso" })).toBeInTheDocument();
+    expect(within(miscGroup).getByRole("button", { name: "Add Bean Bag" })).toBeInTheDocument();
+  });
+
   it("Select on a monitor adds it to the slot row (fill first empty)", () => {
     render(
       <Harness>

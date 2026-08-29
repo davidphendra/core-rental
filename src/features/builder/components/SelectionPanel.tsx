@@ -19,8 +19,10 @@ const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: "accessory", label: "Accessories", icon: "keyboard" },
 ];
 
-/** Accessory subtype group headers keep the 32-item tab navigable. */
-const SUBTYPE_ORDER: CapKey[] = ["monitor", "lamp", "plant"];
+/** Accessory subtype group headers keep the 42-item tab navigable. "misc"
+ * groups coffee + beanbag (canvas zones also surface them). */
+type PanelGroup = CapKey | "misc";
+const SUBTYPE_ORDER: PanelGroup[] = ["monitor", "lamp", "plant", "misc"];
 
 /**
  * Builder selection panel (interactive_builder mockup): tabs filter the unified
@@ -57,7 +59,11 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
     tab === "accessory"
       ? SUBTYPE_ORDER.map((key) => ({
           key,
-          items: filteredByQuery.filter((p) => capKeyForProduct(p) === key),
+          items: filteredByQuery.filter((p) =>
+            key === "misc"
+              ? capKeyForProduct(p) === "coffee" || capKeyForProduct(p) === "beanbag"
+              : capKeyForProduct(p) === key,
+          ),
         }))
       : [];
 

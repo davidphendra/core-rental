@@ -102,14 +102,34 @@ const PLANT_TEMPLATE: Template = {
 };
 
 const COFFEE_TEMPLATE: Template = {
-  names: ["Pour-Over Kit", "Moka Pot Set", "Cold Brew Tower", "Barista Bundle"],
+  names: [
+    "Pour-Over Kit",
+    "Moka Pot Set",
+    "Cold Brew Tower",
+    "Barista Bundle",
+    "Seminyak Cold Drip",
+    "Ubud French Press",
+    "Canggu Siphon",
+    "Kerobokan Drip Bar",
+    "Berawa Espresso Duo",
+  ],
   priceMin: 400_000,
   priceStep: 50_000,
   description: (name) => `${name}: keep the caffeine pipeline flowing.`,
 };
 
 const BEANBAG_TEMPLATE: Template = {
-  names: ["Pouf Ottoman", "Hammock Seat", "Floor Cushion Set", "Zero-Gravity Lounger"],
+  names: [
+    "Pouf Ottoman",
+    "Hammock Seat",
+    "Floor Cushion Set",
+    "Zero-Gravity Lounger",
+    "Seminyak Floor Seat",
+    "Ubud Cushion Lounge",
+    "Canggu Bean Pod",
+    "Pererenan Lounger",
+    "Berawa Sofa Sack",
+  ],
   priceMin: 250_000,
   priceStep: 25_000,
   description: (name) => `${name}: the relax-zone essential.`,

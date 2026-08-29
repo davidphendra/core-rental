@@ -22,8 +22,8 @@ describe("catalog integrity (decisions #19, #30, #31, #32; e09 SKU contract)", (
       return acc;
     }, {});
 
-    expect(counts).toEqual({ chair: 10, desk: 10, accessory: 32, partner: 1 });
-    expect(committed).toHaveLength(53);
+    expect(counts).toEqual({ chair: 10, desk: 10, accessory: 42, partner: 1 });
+    expect(committed).toHaveLength(63);
   });
 
   it("every product is complete and typed", () => {

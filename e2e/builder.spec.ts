@@ -15,6 +15,20 @@ test.describe("builder happy path (decision #35)", () => {
     await resetStorage(page);
   });
 
+  test("the Accessories tab shows the Misc group with coffee + beanbag (misc products)", async ({
+    page,
+  }) => {
+    await page.goto("/builder");
+    await page.getByRole("tab", { name: "Accessories" }).click();
+    await expect(page.getByText("misc")).toBeVisible();
+    const coffee = firstWithSkuPrefix("CFE");
+    const beanbag = firstWithSkuPrefix("BBG");
+    await expect(page.getByRole("heading", { name: coffee.name })).toBeVisible();
+    await expect(page.getByRole("heading", { name: beanbag.name })).toBeVisible();
+    // Steppers present (caps coffee=1, beanbag<=2).
+    await expect(page.getByRole("button", { name: `Add ${coffee.name}` })).toBeVisible();
+  });
+
   test("the panel search filters products by keyword (name/description)", async ({ page }) => {
     await page.goto("/builder");
     const meshChair = firstOfCategory("chair"); // first chair; its description contains "mesh"

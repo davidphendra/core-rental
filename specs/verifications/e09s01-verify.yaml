@@ -1,0 +1,48 @@
+story_id: e09s01
+title: Product SKU system
+verified_at: "2026-08-29T05:27:21Z"
+verifier: verify-work
+risk: P0
+phases:
+  smoke:
+    passed: true
+    note: "Cold start from scratch: /, /builder, /summary -> 200; /api/products -> 53 products with skuNo (CHA449AGLBB0 first)"
+  build:
+    passed: true
+    command: "pnpm preflight (test + lint + typecheck + build chained)"
+  typecheck:
+    passed: true
+  lint:
+    passed: true
+    note: "0 warnings (--max-warnings=0)"
+  tests:
+    passed: true
+    coverage: "96.2% stmts (gate: 80% branch on shared/domain)"
+  terminal_verdict:
+    command: "pnpm test"
+    exit_code: 0
+    captured_at: "2026-08-29T05:27:21Z"
+    note: "Single contiguous run — 31 files, 142 tests, 0 failures"
+  security:
+    passed: true
+    note: "Diff scan vs merge-base: no HIGH findings (S1-S5 all design-mitigated); only path op builds from slugified trusted names"
+  manual:
+    steps:
+      - step: "GET /api/products"
+        expected: "200 with 53 products, each carrying a 12-char skuNo, no id field"
+        actual: "53 products, skuNo [A-Z]{3}[A-Z0-9]{9}, no id — verified via node check + curl"
+        passed: true
+      - step: "Regenerate catalog"
+        expected: "byte-stable products.json; slug-named placeholder tiles"
+        actual: "pnpm generate:catalog -> 53 products; 32 orphans pruned; deterministic"
+        passed: true
+      - step: "Old v1 localStorage cart"
+        expected: "rejected by validation -> D1 defaults (fresh chair+desk), no crash"
+        actual: "E2E N10/N11 seed v2 key; v1 carts fall back (storage key bump)"
+        passed: true
+      - step: "Cap derivation from sku prefix"
+        expected: "MON->monitor cap 3, PLT->plant cap 4, etc.; hero monstera PLT"
+        actual: "setupRules.test.ts green"
+        passed: true
+  gaps:
+    closed: true

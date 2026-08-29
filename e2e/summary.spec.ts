@@ -25,9 +25,10 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
     await page.goto("/builder");
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
     await page.getByRole("tab", { name: "Accessories" }).click();
-    const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
-    await addMonitor.click();
-    await addMonitor.click();
+    const monitorCard = page.locator("article").filter({ hasText: monitor.name });
+    const selectMonitor = monitorCard.getByRole("button", { name: "Select", exact: true });
+    await selectMonitor.click();
+    await selectMonitor.click();
 
     await page.getByRole("link", { name: "View Setup Summary" }).click();
     await expect(page).toHaveURL(/\/summary$/);

@@ -62,6 +62,7 @@ const valid = {
   chairId: "chair-a",
   deskId: "desk-a",
   quantities: { PLTA1B2C3D4E: 2 },
+  monitorSlots: [],
   deliveryLocation: "Villa Lotus, Canggu",
 };
 
@@ -75,6 +76,7 @@ describe("validateSetupState — G1 trust boundary (threat model M1)", () => {
       chairId: null,
       deskId: null,
       quantities: {},
+      monitorSlots: [],
     });
   });
 

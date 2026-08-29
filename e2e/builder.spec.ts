@@ -4,6 +4,7 @@ import {
   computeTotal,
   firstOfCategory,
   firstWithSkuPrefix,
+  nthWithSkuPrefix,
   idr,
   nthOfCategory,
   resetStorage,
@@ -35,11 +36,12 @@ test.describe("builder happy path (decision #35)", () => {
     const deskCard = page.locator("article").filter({ hasText: desk.name });
     await expect(deskCard.getByRole("button", { name: "Deselect", exact: true })).toBeVisible();
 
-    // Accessories tab → add 2 monitors via the stepper.
+    // Accessories tab → add 2 monitors via the slot Select (e09s02).
     await page.getByRole("tab", { name: "Accessories" }).click();
-    const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
-    await addMonitor.click();
-    await addMonitor.click();
+    const monitorCard = page.locator("article").filter({ hasText: monitor.name });
+    const selectMonitor = monitorCard.getByRole("button", { name: "Select", exact: true });
+    await selectMonitor.click();
+    await selectMonitor.click();
 
     // Sticky bar shows the live total (displayed-value verification).
     const expected = computeTotal([
@@ -58,9 +60,10 @@ test.describe("builder happy path (decision #35)", () => {
     await page.goto("/builder");
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
     await page.getByRole("tab", { name: "Accessories" }).click();
-    const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
-    await addMonitor.click();
-    await addMonitor.click();
+    const monitorCard = page.locator("article").filter({ hasText: monitor.name });
+    const selectMonitor = monitorCard.getByRole("button", { name: "Select", exact: true });
+    await selectMonitor.click();
+    await selectMonitor.click();
 
     await page.getByRole("link", { name: "View Setup Summary" }).click();
     await expect(page).toHaveURL(/\/summary$/);
@@ -82,35 +85,45 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     await resetStorage(page);
   });
 
-  test("a canvas slot can be removed directly via its × button", async ({ page }) => {
+  test("a monitor slot can be removed directly via its × button (e09s02)", async ({ page }) => {
     await page.goto("/builder");
-    await expect(page.getByRole("button", { name: "Add Monitor" })).toBeVisible();
-    await page.getByRole("button", { name: "Add Monitor" }).click();
-    await expect(page.getByRole("button", { name: "Monitor: 1" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Add Monitor" })).toHaveCount(3);
+    await page.getByRole("button", { name: "Add Monitor" }).first().click();
+    await expect(page.getByRole("button", { name: "Remove Monitor" })).toHaveCount(1);
     await page.getByRole("button", { name: "Remove Monitor" }).click();
-    await expect(page.getByRole("button", { name: "Add Monitor" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Remove Monitor/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Remove Monitor" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Add Monitor" })).toHaveCount(3);
   });
 
-  test("N3: the stepper disables at cap", async ({ page }) => {
+  test("N3: the monitor row caps at 3 slots (e09s02)", async ({ page }) => {
+    const monitor = firstWithSkuPrefix("MON");
+    const monitor2 = nthWithSkuPrefix("MON", 1);
+    await page.goto("/builder");
+    await page.getByRole("tab", { name: "Accessories" }).click();
+    const selectCard = (m: typeof monitor) =>
+      page
+        .locator("article")
+        .filter({ hasText: m.name })
+        .getByRole("button", { name: "Select", exact: true });
+    // Fill all 3 slots with the same model (3C).
+    for (let i = 0; i < 3; i++) await selectCard(monitor).click();
+    await expect(page.getByRole("button", { name: "Add Monitor" })).toHaveCount(0);
+    // A 4th select on a different model REPLACES the most recently added (Q1)
+    // — the row stays at 3 cards, never grows past the cap.
+    await selectCard(monitor2).click();
+    await expect(page.getByRole("button", { name: "Remove Monitor" })).toHaveCount(3);
+    await expect(page.getByRole("button", { name: "Add Monitor" })).toHaveCount(0);
+  });
+
+  test("N4: removing a monitor decreases the total", async ({ page }) => {
     const monitor = firstWithSkuPrefix("MON");
     await page.goto("/builder");
     await page.getByRole("tab", { name: "Accessories" }).click();
-    const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
-    await addMonitor.click();
-    await addMonitor.click();
-    await addMonitor.click();
-    await expect(addMonitor).toBeDisabled(); // cap 3 (decision #22)
-  });
-
-  test("N4: removing an item decreases the total", async ({ page }) => {
-    const monitor = firstWithSkuPrefix("MON");
-    await page.goto("/builder");
-    await page.getByRole("tab", { name: "Accessories" }).click();
-    const addMonitor = page.getByRole("button", { name: `Add ${monitor.name}` });
-    await addMonitor.click();
-    await addMonitor.click();
-    await page.getByRole("button", { name: `Remove ${monitor.name}` }).click();
+    const monitorCard = page.locator("article").filter({ hasText: monitor.name });
+    const selectMonitor = monitorCard.getByRole("button", { name: "Select", exact: true });
+    await selectMonitor.click();
+    await selectMonitor.click();
+    await page.getByRole("button", { name: "Remove Monitor" }).first().click();
 
     const chair = firstOfCategory("chair");
     const desk = firstOfCategory("desk");

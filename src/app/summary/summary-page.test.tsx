@@ -69,7 +69,12 @@ describe("Rent flow (decisions #5, C2, O2)", () => {
     // setup (the write-through persistence effect rewrites the reset state).
     const stored = window.localStorage.getItem(STORAGE_KEY);
     expect(stored).not.toBeNull();
-    expect(JSON.parse(stored as string)).toEqual({ chairId: null, deskId: null, quantities: {} });
+    expect(JSON.parse(stored as string)).toEqual({
+      chairId: null,
+      deskId: null,
+      quantities: {},
+      monitorSlots: [],
+    });
 
     const lines = infoSpy.mock.calls.map(
       (call) => JSON.parse(call[0] as string) as { event: string },

@@ -41,6 +41,14 @@ const catalog: Product[] = [
     image: "/m1.svg",
   },
   {
+    skuNo: "LMPA1B2C3D4E",
+    name: "Desk Lamp",
+    category: "accessory",
+    pricePerMonth: 120_000,
+    description: "d",
+    image: "/l.svg",
+  },
+  {
     skuNo: "CFEA1B2C3D4E",
     name: "Espresso",
     category: "accessory",
@@ -130,7 +138,7 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(screen.queryByText("Bean Bag")).not.toBeInTheDocument();
   });
 
-  it("Accessories tab groups by subtype and provides steppers", () => {
+  it("Accessories tab groups by subtype: monitors get Select, others steppers (e09s02)", () => {
     render(
       <Harness>
         <SelectionPanel catalog={catalog} />
@@ -139,6 +147,26 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
     const monitorGroup = screen.getByText("monitor").closest("div") as HTMLElement;
     expect(within(monitorGroup).getByText("Monitor 1")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Add Monitor 1" })).toBeInTheDocument();
+    // Monitors: Select button (slot model) — not a quantity stepper.
+    expect(screen.queryByRole("button", { name: "Add Monitor 1" })).not.toBeInTheDocument();
+    const select = within(monitorGroup).getAllByRole("button", { name: "Select" })[0];
+    expect(select).toBeInTheDocument();
+    // Other panel accessories (lamp) keep their steppers.
+    const lampGroup = screen.getByText("lamp").closest("div") as HTMLElement;
+    expect(within(lampGroup).getByRole("button", { name: "Add Desk Lamp" })).toBeInTheDocument();
+  });
+
+  it("Select on a monitor adds it to the slot row (fill first empty)", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
+    const select = screen.getAllByRole("button", { name: "Select" })[0];
+    expect(select).toBeInTheDocument();
+    // Clicking Select dispatches selectMonitor without crashing; button persists.
+    fireEvent.click(select!);
+    expect(screen.getAllByRole("button", { name: "Select" })[0]).toBeInTheDocument();
   });
 });

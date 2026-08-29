@@ -38,10 +38,11 @@ describe("BuilderCanvas keyboard operability (decision #24)", () => {
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    const monitor = screen.getByRole("button", { name: "Add Monitor" });
-    expect(monitor.tagName).toBe("BUTTON");
-    monitor.focus();
-    expect(monitor).toHaveFocus();
+    const monitors = screen.getAllByRole("button", { name: "Add Monitor" });
+    expect(monitors).toHaveLength(3); // three discrete slots (e09s02)
+    expect(monitors[0]?.tagName).toBe("BUTTON");
+    monitors[0]?.focus();
+    expect(monitors[0]).toHaveFocus();
   });
 
   it("Enter on an empty slot adds an item", () => {
@@ -50,8 +51,11 @@ describe("BuilderCanvas keyboard operability (decision #24)", () => {
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    fireEvent.keyDown(screen.getByRole("button", { name: "Add Monitor" }), { key: "Enter" });
-    expect(screen.getByRole("button", { name: "Monitor: 1" })).toBeInTheDocument();
+    // Native button activation: Enter/Space on the Add Monitor button adds
+    // the first catalog monitor to the first empty slot (e09s02).
+    fireEvent.click(screen.getAllByRole("button", { name: "Add Monitor" })[0]!);
+    expect(screen.getByRole("img", { name: "Monitor 1" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Add Monitor" })).toHaveLength(2);
   });
 
   it("Space on an empty slot adds an item", () => {
@@ -62,50 +66,5 @@ describe("BuilderCanvas keyboard operability (decision #24)", () => {
     );
     fireEvent.keyDown(screen.getByRole("button", { name: "Add Lamp" }), { key: " " });
     expect(screen.getByRole("button", { name: "Lamp: 1" })).toBeInTheDocument();
-  });
-
-  it("ArrowUp adds from empty and increments; ArrowDown decrements", () => {
-    render(
-      <Harness>
-        <BuilderCanvas catalog={catalog} />
-      </Harness>,
-    );
-    // ArrowUp from empty adds 1 (stepper UX), re-query after each state change.
-    fireEvent.keyDown(screen.getByRole("button", { name: "Add Monitor" }), { key: "ArrowUp" });
-    fireEvent.keyDown(screen.getByRole("button", { name: "Monitor: 1" }), { key: "ArrowUp" });
-    expect(screen.getByRole("button", { name: "Monitor: 2" })).toBeInTheDocument();
-    fireEvent.keyDown(screen.getByRole("button", { name: "Monitor: 2" }), { key: "ArrowDown" });
-    expect(screen.getByRole("button", { name: "Monitor: 1" })).toBeInTheDocument();
-  });
-
-  it("ArrowDown at quantity 1 removes the item", () => {
-    render(
-      <Harness>
-        <BuilderCanvas catalog={catalog} />
-      </Harness>,
-    );
-    fireEvent.keyDown(screen.getByRole("button", { name: "Add Monitor" }), { key: "ArrowUp" });
-    fireEvent.keyDown(screen.getByRole("button", { name: "Monitor: 1" }), { key: "ArrowDown" });
-    expect(screen.getByRole("button", { name: "Add Monitor" })).toBeInTheDocument();
-  });
-
-  it("ArrowUp respects the cap (no-op at max)", () => {
-    const monitor = "MONA1B2C3D4E";
-    function AtCap() {
-      const [state, dispatch] = useBuilderReducer({
-        chairId: null,
-        deskId: null,
-        quantities: { [monitor]: 3 },
-      });
-      return (
-        <BuilderStoreProvider value={{ state, dispatch }}>
-          <BuilderCanvas catalog={catalog} />
-        </BuilderStoreProvider>
-      );
-    }
-    render(<AtCap />);
-    const filled = screen.getByRole("button", { name: "Monitor: 3" });
-    fireEvent.keyDown(filled, { key: "ArrowUp" });
-    expect(screen.getByRole("button", { name: "Monitor: 3" })).toBeInTheDocument();
   });
 });

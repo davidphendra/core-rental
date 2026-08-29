@@ -6,6 +6,7 @@ import { useBuilderStore } from "@/shared/state/BuilderStore";
 import type { Product } from "@/shared/types/product";
 
 import { CanvasSlot } from "./CanvasSlot";
+import { MonitorSlotRow } from "./MonitorSlotRow";
 
 /**
  * The visual workspace canvas (interactive_builder mockup): desk + chair,
@@ -34,17 +35,8 @@ export function BuilderCanvas({ catalog }: { catalog: readonly Product[] }) {
       />
 
       <div className="relative flex h-[300px] w-full max-w-2xl flex-col items-center justify-end gap-6">
-        {/* Monitor slot (centered above the desk, mockup) */}
-        <CanvasSlot
-          capKey="monitor"
-          className="absolute bottom-36 left-1/2 -translate-x-1/2"
-          dispatch={dispatch}
-          emptyHint="Add Monitor"
-          icon="add"
-          label="Monitor"
-          products={byCapKey("monitor")}
-          state={state}
-        />
+        {/* Three monitor slots (e09s02) — row centered above the desk */}
+        <MonitorSlotRow monitors={byCapKey("monitor")} />
 
         {/* Lamp + plant slots (bottom-left/right of the desk, mockup) */}
         <CanvasSlot

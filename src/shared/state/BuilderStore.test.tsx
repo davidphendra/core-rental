@@ -108,7 +108,7 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
   it("hydrate replaces state; reset clears to empty", () => {
     const s = act(EMPTY_SETUP, {
       type: "hydrate",
-      state: { chairId: chair.skuNo, deskId: desk.skuNo, quantities: {} },
+      state: { chairId: chair.skuNo, deskId: desk.skuNo, quantities: {}, monitorSlots: [] },
     });
     expect(s.chairId).toBe("chair-a");
     expect(act(s, { type: "reset" })).toEqual(EMPTY_SETUP);
@@ -128,9 +128,10 @@ describe("monitor slots (e09s02)", () => {
     expect(s2.monitorSlots).toEqual([m1.skuNo, m2.skuNo]);
   });
 
-  it("selectMonitor is a quiet no-op when the monitor is already placed", () => {
-    const s = act(EMPTY_SETUP, { type: "selectMonitor", product: m1 });
-    expect(act(s, { type: "selectMonitor", product: m1 })).toBe(s);
+  it("selectMonitor appends duplicates while space remains (builds 2A+1B)", () => {
+    const s1 = act(EMPTY_SETUP, { type: "selectMonitor", product: m1 });
+    const s2 = act(s1, { type: "selectMonitor", product: m1 });
+    expect(s2.monitorSlots).toEqual([m1.skuNo, m1.skuNo]);
   });
 
   it("selectMonitor with 3 full replaces the most recently added (last)", () => {

@@ -26,6 +26,7 @@ function AtCap({ children }: { children: ReactNode }) {
     chairId: null,
     deskId: null,
     quantities: { MONA1B2C3D4E: 3 },
+    monitorSlots: [],
   });
   return <BuilderStoreProvider value={{ state, dispatch }}>{children}</BuilderStoreProvider>;
 }

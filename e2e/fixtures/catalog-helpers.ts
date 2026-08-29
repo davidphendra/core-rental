@@ -44,6 +44,14 @@ export function firstWithSkuPrefix(prefix: string): Product {
   return product;
 }
 
+export function nthWithSkuPrefix(prefix: string, index: number): Product {
+  const product = catalog.filter((p) => p.skuNo.startsWith(prefix))[index];
+  if (product === undefined) {
+    throw new Error(`No product with skuNo prefix ${prefix} at index ${index}`);
+  }
+  return product;
+}
+
 /** Matches the app's formatIdr (NBSP normalized to a regular space, #3). */
 export function idr(amount: number): string {
   return `Rp ${amount.toLocaleString("id-ID")}`;

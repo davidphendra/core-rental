@@ -33,6 +33,14 @@ const catalog: Product[] = [
     image: "/m1.svg",
   },
   {
+    skuNo: "MONA1B2C3D4F",
+    name: "Monitor 2",
+    category: "accessory",
+    pricePerMonth: 310_000,
+    description: "d",
+    image: "/m2.svg",
+  },
+  {
     skuNo: "LMPA1B2C3D4E",
     name: "Lamp 1",
     category: "accessory",
@@ -84,7 +92,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    expect(screen.getByRole("button", { name: "Add Monitor" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Add Monitor" })).toHaveLength(3);
     expect(screen.getByRole("button", { name: "Add Lamp" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Place a Plant" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add Machine" })).toBeInTheDocument();
@@ -94,7 +102,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
 
   it("renders desk and chair from the cart", () => {
     render(
-      <Harness initial={{ chairId: "chair-a", deskId: "desk-a", quantities: {} }}>
+      <Harness initial={{ chairId: "chair-a", deskId: "desk-a", quantities: {}, monitorSlots: [] }}>
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
@@ -105,47 +113,57 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.queryByText("No chair selected")).not.toBeInTheDocument();
   });
 
-  it("clicking an empty slot adds the first product of its cap key", () => {
+  it("clicking an empty monitor slot adds the first catalog monitor (e09s02)", () => {
     render(
       <Harness>
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Add Monitor" }));
-    expect(screen.getByRole("button", { name: "Monitor: 1" })).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: "Add Monitor" })[0]!);
+    expect(screen.getByRole("img", { name: "Monitor 1" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Add Monitor" })).toHaveLength(2);
   });
 
-  it("shows the quantity badge and respects caps (N3)", () => {
-    const monitor = "MONA1B2C3D4E";
+  it("fills three monitor slots; a full row has no Add buttons left (cap 3)", () => {
     render(
-      <Harness initial={{ chairId: null, deskId: null, quantities: { [monitor]: 3 } }}>
+      <Harness
+        initial={{
+          chairId: null,
+          deskId: null,
+          quantities: {},
+          monitorSlots: ["MONA1B2C3D4E", "MONA1B2C3D4E", "MONA1B2C3D4F"],
+        }}
+      >
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    expect(screen.getByRole("button", { name: "Monitor: 3" })).toBeInTheDocument();
-    // At cap: clicking must not exceed 3 (reducer rejects too — G2).
-    fireEvent.click(screen.getByRole("button", { name: "Monitor: 3" }));
-    expect(screen.getByRole("button", { name: "Monitor: 3" })).toBeInTheDocument();
+    expect(screen.getAllByRole("img", { name: "Monitor 1" })).toHaveLength(2);
+    expect(screen.getByRole("img", { name: "Monitor 2" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add Monitor" })).not.toBeInTheDocument();
   });
 
-  it("removes a filled slot directly via its × button (decrements, then empties)", () => {
+  it("removes a monitor slot directly via its × button (e09s02)", () => {
     render(
-      <Harness initial={{ chairId: null, deskId: null, quantities: { MONA1B2C3D4E: 2 } }}>
+      <Harness
+        initial={{
+          chairId: null,
+          deskId: null,
+          quantities: {},
+          monitorSlots: ["MONA1B2C3D4E", "MONA1B2C3D4F"],
+        }}
+      >
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    // Decrement: 2 -> 1
-    fireEvent.click(screen.getByRole("button", { name: "Remove Monitor" }));
-    expect(screen.getByRole("button", { name: "Monitor: 1" })).toBeInTheDocument();
-    // Remove: 1 -> dashed empty slot
-    fireEvent.click(screen.getByRole("button", { name: "Remove Monitor" }));
-    expect(screen.getByRole("button", { name: "Add Monitor" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /Remove Monitor/ })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Remove Monitor" })).toHaveLength(2);
+    fireEvent.click(screen.getAllByRole("button", { name: "Remove Monitor" })[0]!);
+    expect(screen.getAllByRole("button", { name: "Remove Monitor" })).toHaveLength(1);
+    expect(screen.getAllByRole("button", { name: "Add Monitor" })).toHaveLength(2);
   });
 
   it("removes the selected chair and desk directly via their × buttons", () => {
     render(
-      <Harness initial={{ chairId: "chair-a", deskId: "desk-a", quantities: {} }}>
+      <Harness initial={{ chairId: "chair-a", deskId: "desk-a", quantities: {}, monitorSlots: [] }}>
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
@@ -165,7 +183,9 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
 
   it("fills zone tiles when the zone item is in the cart", () => {
     render(
-      <Harness initial={{ chairId: null, deskId: null, quantities: { CFEA1B2C3D4E: 1 } }}>
+      <Harness
+        initial={{ chairId: null, deskId: null, quantities: { CFEA1B2C3D4E: 1 }, monitorSlots: [] }}
+      >
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );

@@ -10,7 +10,7 @@ tasks:
       AI_MODEL is set. Env vars documented in README (dev section).
     verify: pnpm test -- src/app/api/ai-design && pnpm lint
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -23,7 +23,7 @@ tasks:
       across serverless) in a code comment and README.
     verify: pnpm test -- src/app/api/ai-design
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -36,7 +36,7 @@ tasks:
       enforced server-side.
     verify: pnpm test -- src/app/api/ai-design
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
       categories:
@@ -50,7 +50,7 @@ tasks:
       mock (assert absence of prompt).
     verify: pnpm test && pnpm lint
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -67,7 +67,7 @@ tasks:
       origin until the user's explicit release signal.
     verify: pnpm preflight && pnpm test:e2e
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -82,7 +82,7 @@ tasks:
       each with mitigation mapping to e10s01/e10s03).
     verify: "test -f specs/adr/0007-ai-design-route.md && test -f specs/security/epics/e10/THREAT_MODEL.md"
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:

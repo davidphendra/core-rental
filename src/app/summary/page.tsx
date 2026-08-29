@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { track } from "@vercel/analytics";
-
 import { useProducts } from "@/shared/data/useProducts";
 import { logger, logDeliverySubmitted } from "@/shared/observability/logger";
 import { useBuilderStore } from "@/shared/state/BuilderStore";
@@ -44,11 +42,8 @@ export function SummaryContent({ catalog }: { catalog: readonly Product[] }) {
       (state.chairId !== null ? 1 : 0) +
       Object.values(state.quantities).reduce((a, b) => a + b, 0);
     logger.info("rent.clicked", { items: itemCount });
-    // Vercel Web Analytics custom event (visible under Web Analytics > Events).
-    track("rent_clicked", { items: itemCount });
     const delivery = state.deliveryLocation ?? "";
     logDeliverySubmitted(delivery.trim().length > 0, delivery.trim().length);
-    track("delivery_submitted", { hasAddress: delivery.trim().length > 0 });
     // Order removed: reset in-memory + drop the persisted cart (E3-guarded).
     dispatch({ type: "reset" });
     try {

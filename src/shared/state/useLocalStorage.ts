@@ -24,8 +24,13 @@ export function readStoredSetup(catalog: readonly Product[]): SetupState | null 
   }
   try {
     const payload: unknown = JSON.parse(raw);
-    return validateSetupState(payload, catalog);
+    const validated = validateSetupState(payload, catalog);
+    if (validated === null) {
+      logger.warn("validation.rejected", { reason: "invalid_setup" });
+    }
+    return validated;
   } catch {
+    logger.warn("validation.rejected", { reason: "unparseable" });
     return null; // unparseable → defaults (G1)
   }
 }

@@ -1,3 +1,5 @@
+import { track } from "@vercel/analytics";
+
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 /**
@@ -45,14 +47,30 @@ function sinkFor(level: LogLevel): (...args: unknown[]) => void {
   }
 }
 
+/**
+ * Q4 ruling: the dotted taxonomy normalizes to Vercel-friendly event names
+ * (rent.clicked -> rent_clicked, catalog.loaded -> catalog_loaded, …).
+ */
+function trackEventName(event: LogEventName): string {
+  return event.replaceAll(".", "_");
+}
+
 function emit(level: LogLevel, event: LogEventName, fields: LogFields = {}): void {
+  const safe = sanitize(fields);
   const line = JSON.stringify({
     level,
     event,
     ts: new Date().toISOString(),
-    ...sanitize(fields),
+    ...safe,
   });
   sinkFor(level)(line);
+  // Vercel Web Analytics custom event (Q1 ruling): normalized name + the SAME
+  // sanitized payload (Q3). Best-effort — analytics must never break the app.
+  try {
+    track(trackEventName(event), safe);
+  } catch {
+    // fire-and-forget: offline/ad-blocked/script-not-loaded — drop silently
+  }
 }
 
 /** Structured JSON logger (decisions O1–O4). PII-free by construction + guard. */

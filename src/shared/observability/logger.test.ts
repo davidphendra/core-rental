@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { track } from "@vercel/analytics";
+
 import { logDeliverySubmitted, logger } from "./logger";
 
 function capture(fn: () => void): string {
@@ -48,5 +50,33 @@ describe("logger (decisions O1–O4)", () => {
     expect(parsed.hasAddress).toBe(true);
     expect(parsed.addressLength).toBe(24);
     expect(parsed.event).toBe("delivery.submitted");
+  });
+});
+
+describe("Vercel Web Analytics forwarding (Q1/Q3/Q4 rulings)", () => {
+  it("forwards every event with the underscore-normalized name", () => {
+    logger.info("rent.clicked", { items: 3 });
+    expect(track).toHaveBeenCalledWith("rent_clicked", { items: 3 });
+
+    logger.debug("cart.updated", { items: 4, total: 1_500_000 });
+    expect(track).toHaveBeenCalledWith("cart_updated", { items: 4, total: 1_500_000 });
+
+    logger.warn("validation.rejected", { reason: "invalid_setup" });
+    expect(track).toHaveBeenCalledWith("validation_rejected", { reason: "invalid_setup" });
+  });
+
+  it("strips PII keys before track too (Q3)", () => {
+    logger.warn("storage.degraded", {
+      address: "Villa Lotus, Canggu",
+      reason: "QuotaExceededError",
+    });
+    expect(track).toHaveBeenCalledWith("storage_degraded", { reason: "QuotaExceededError" });
+  });
+
+  it("is best-effort: a track failure never throws", () => {
+    vi.mocked(track).mockImplementation(() => {
+      throw new Error("blocked by ad-blocker");
+    });
+    expect(() => logger.info("rent.clicked", { items: 1 })).not.toThrow();
   });
 });

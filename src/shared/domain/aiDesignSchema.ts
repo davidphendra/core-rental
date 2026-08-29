@@ -137,6 +137,9 @@ export function validateDesign(
   if (budget != null && total > budget) {
     errors.push(`total ${total} exceeds budget ${budget}`);
   }
+  if (total > MAX_DESIGN_TOTAL) {
+    errors.push(`total ${total} exceeds the sanity cap ${MAX_DESIGN_TOTAL}`);
+  }
   if (errors.length > 0) {
     return { ok: false, errors, overBudget: budget != null && total > budget };
   }
@@ -156,6 +159,9 @@ export function validateDesign(
     },
   };
 }
+
+/** Output-cap sanity bound (e10s03-3): no design may claim a monthly total above this. */
+export const MAX_DESIGN_TOTAL = 1_000_000_000;
 
 /** The cheapest rentable setup (one chair + one desk), for honest refusals. */
 export function cheapestRentableTotal(catalog: readonly Product[]): number {

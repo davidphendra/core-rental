@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import catalog from "../../../shared/data/products.json";
 
@@ -103,5 +103,33 @@ describe("POST /api/ai-design", () => {
     const res = await post("anything", mockLlm([{ kind: "design", design: bogus }, { kind: "design", design: bogus }]));
     expect(res.status).toBe(422);
     expect((await res.json()).error).toBe("invalid_output");
+  });
+
+  it("emits ai.request with facts only — never the prompt (e10s03-4)", async () => {
+    const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+    try {
+      const res = await post("secret prompt text here", mockLlm([{ kind: "design", design: FULL }]));
+      expect(res.status).toBe(200);
+      const lines = infoSpy.mock.calls.map((c) => String(c[0]));
+      const requestLine = lines.find((l) => l.includes('"event":"ai.request"'));
+      expect(requestLine).toBeDefined();
+      expect(requestLine).toContain('"model":"mock"');
+      expect(requestLine).toContain('"ok":true');
+      expect(requestLine).not.toContain("secret prompt text");
+    } finally {
+      infoSpy.mockRestore();
+    }
+  });
+
+  it("marks ai.request ok:false on provider failure", async () => {
+    const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+    try {
+      await post("anything", mockLlm([{ kind: "llm_error", message: "down" }]));
+      const lines = infoSpy.mock.calls.map((c) => String(c[0]));
+      const requestLine = lines.find((l) => l.includes('"event":"ai.request"'));
+      expect(requestLine).toContain('"ok":false');
+    } finally {
+      infoSpy.mockRestore();
+    }
   });
 });

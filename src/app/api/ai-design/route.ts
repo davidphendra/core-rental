@@ -1,6 +1,7 @@
 import type { LanguageModel } from "ai";
 
 import { extractBudgetIdr } from "@/shared/domain/aiDesign";
+import { logger } from "@/shared/observability/logger";
 import type { Product } from "@/shared/types/product";
 
 import catalogJson from "../../../shared/data/products.json";
@@ -73,7 +74,23 @@ export function createAiDesignHandler(deps: AiDesignHandlerDeps = {}) {
 
     const budget = extractBudgetIdr(prompt);
     const llm = deps.llm ?? createLlmAdapter(model as LanguageModel, catalog);
-    const outcome = await runAiDesign({ prompt, catalog, budget, llm });
+
+    // Observability (e10s03-4): ai.request with facts only — never the prompt.
+    let toolCalls = 0;
+    const countingLlm: LlmAdapter = {
+      run: async (request) => {
+        toolCalls += 1;
+        return llm.run(request);
+      },
+    };
+    const startedAt = Date.now();
+    const outcome = await runAiDesign({ prompt, catalog, budget, llm: countingLlm });
+    logger.info("ai.request", {
+      model: deps.llm ? "mock" : ((model as { modelId?: string }).modelId ?? "unknown"),
+      durationMs: Date.now() - startedAt,
+      toolCalls,
+      ok: outcome.kind !== "error",
+    });
 
     switch (outcome.kind) {
       case "design":

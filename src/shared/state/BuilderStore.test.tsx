@@ -182,3 +182,43 @@ describe("monitor slots (e09s02)", () => {
     expect(EMPTY_SETUP.monitorSlots).toEqual([]);
   });
 });
+
+describe("exclusive accessories (coffee/beanbag single-select, replace on click)", () => {
+  const coffeeA = { ...monitor, skuNo: "CFEA1B2C3D4E", name: "Espresso" } satisfies Product;
+  const coffeeB = { ...monitor, skuNo: "CFEA1B2C3D4F", name: "Pour-Over" } satisfies Product;
+
+  it("replaceExclusiveAccessory clears same-key siblings and sets the target to 1", () => {
+    const s1 = act(EMPTY_SETUP, {
+      type: "replaceExclusiveAccessory",
+      target: coffeeA,
+      clearSkus: [],
+    });
+    expect(s1.quantities).toEqual({ [coffeeA.skuNo]: 1 });
+    const s2 = act(s1, {
+      type: "replaceExclusiveAccessory",
+      target: coffeeB,
+      clearSkus: [coffeeA.skuNo],
+    });
+    expect(s2.quantities).toEqual({ [coffeeB.skuNo]: 1 });
+    expect(s2.quantities[coffeeA.skuNo]).toBeUndefined();
+  });
+
+  it("replaceExclusiveAccessory never clears the target itself", () => {
+    const s = act(EMPTY_SETUP, {
+      type: "replaceExclusiveAccessory",
+      target: coffeeA,
+      clearSkus: [coffeeA.skuNo],
+    });
+    expect(s.quantities[coffeeA.skuNo]).toBe(1);
+  });
+
+  it("removing the selected exclusive accessory empties it (deselect)", () => {
+    const s1 = act(EMPTY_SETUP, {
+      type: "replaceExclusiveAccessory",
+      target: coffeeA,
+      clearSkus: [],
+    });
+    const s2 = act(s1, { type: "removeAccessory", productId: coffeeA.skuNo });
+    expect(s2.quantities[coffeeA.skuNo]).toBeUndefined();
+  });
+});

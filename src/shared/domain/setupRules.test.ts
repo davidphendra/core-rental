@@ -53,8 +53,8 @@ describe("capKeyForProduct (decision #22; e09 sku-prefix derivation)", () => {
   it("caps table matches decision #22", () => {
     expect(QUANTITY_CAPS).toEqual({
       monitor: 3,
-      plant: 4,
-      lamp: 2,
+      plant: 1,
+      lamp: 1,
       coffee: 1,
       beanbag: 1,
       extra: 1,

@@ -158,7 +158,7 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(screen.queryByText("Bean Bag")).not.toBeInTheDocument();
   });
 
-  it("Accessories tab groups by subtype: monitors get Select, others steppers (e09s02)", () => {
+  it("Accessories tab groups by subtype: monitors Select, single-selects toggle (e09s02)", () => {
     render(
       <Harness>
         <SelectionPanel catalog={catalog} />
@@ -171,9 +171,10 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(screen.queryByRole("button", { name: "Add Monitor 1" })).not.toBeInTheDocument();
     const select = within(monitorGroup).getAllByRole("button", { name: "Select" })[0];
     expect(select).toBeInTheDocument();
-    // Other panel accessories (lamp) keep their steppers.
+    // Lamp (like coffee/beanbag) is now Select/Deselect single-select.
     const lampGroup = screen.getByText("lamp").closest("div") as HTMLElement;
-    expect(within(lampGroup).getByRole("button", { name: "Add Desk Lamp" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add Desk Lamp" })).not.toBeInTheDocument();
+    expect(within(lampGroup).getByRole("button", { name: "Select" })).toBeInTheDocument();
   });
 
   it("Accessories tab shows the Misc group (coffee + beanbag) with Select/Deselect", () => {

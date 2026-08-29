@@ -29,6 +29,25 @@ test.describe("builder happy path (decision #35)", () => {
     await expect(page.getByRole("button", { name: `Add ${coffee.name}` })).toBeVisible();
   });
 
+  test("a filled zone click increments the SELECTED machine and shows Max at cap", async ({
+    page,
+  }) => {
+    const espresso = firstWithSkuPrefix("CFE"); // first coffee = Espresso Machine
+    await page.goto("/builder");
+    await page.getByRole("tab", { name: "Accessories" }).click();
+    // Select Espresso Machine via its Misc stepper (coffee cap = 1).
+    await page.getByRole("button", { name: `Add ${espresso.name}` }).click();
+    await expect(page.getByRole("button", { name: "Coffee Station: 1" })).toBeVisible();
+    await expect(page.getByText("Max")).toBeVisible();
+    // Clicking the filled zone must NOT swap to another coffee — stays at 1.
+    await page.getByRole("button", { name: "Coffee Station: 1" }).click();
+    await expect(page.getByRole("button", { name: "Coffee Station: 1" })).toBeVisible();
+    // The zone card still shows the selected machine (scoped to the zone button).
+    await expect(
+      page.getByRole("button", { name: "Coffee Station: 1" }).getByRole("img"),
+    ).toHaveAttribute("alt", espresso.name);
+  });
+
   test("the panel search filters products by keyword (name/description)", async ({ page }) => {
     await page.goto("/builder");
     const meshChair = firstOfCategory("chair"); // first chair; its description contains "mesh"

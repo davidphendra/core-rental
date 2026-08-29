@@ -47,8 +47,13 @@ export function CanvasSlot({
   const canRemove = quantity === 1;
 
   const onAdd = () => {
-    if (target !== undefined) {
-      dispatch({ type: "addAccessory", product: target });
+    // Increment the SELECTED product when the slot is filled (fix: the old
+    // code always added products[0], swapping the displayed product); fall
+    // back to the first product only for an empty slot. Over-cap clicks are
+    // quiet no-ops in the reducer (G2) and show the Max label.
+    const addTarget = selected ?? target;
+    if (addTarget !== undefined) {
+      dispatch({ type: "addAccessory", product: addTarget });
     }
   };
   const onStep = (delta: number) => {

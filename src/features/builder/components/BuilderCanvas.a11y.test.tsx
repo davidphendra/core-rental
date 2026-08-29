@@ -65,6 +65,6 @@ describe("BuilderCanvas keyboard operability (decision #24)", () => {
       </Harness>,
     );
     fireEvent.keyDown(screen.getByRole("button", { name: "Add Lamp" }), { key: " " });
-    expect(screen.getByRole("button", { name: "Lamp: 1" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Lamp" })).toBeInTheDocument();
   });
 });

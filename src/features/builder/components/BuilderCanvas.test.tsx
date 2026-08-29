@@ -228,9 +228,9 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     // Pouf Ottoman selected (the SECOND beanbag) — the first is "Bean Bag".
     expect(screen.getByRole("img", { name: "Pouf Ottoman" })).toBeInTheDocument();
     expect(screen.getByText("Max")).toBeInTheDocument(); // beanbag max 1
-    fireEvent.click(screen.getByRole("button", { name: "Relax Zone: 1" }));
+    fireEvent.click(screen.getByRole("button", { name: "Relax Zone" }));
     // No switch, no increment — still the selected beanbag at 1.
-    expect(screen.getByRole("button", { name: "Relax Zone: 1" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Relax Zone" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Pouf Ottoman" })).toBeInTheDocument();
     expect(screen.queryByRole("img", { name: "Bean Bag" })).not.toBeInTheDocument();
   });
@@ -244,10 +244,10 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
       </Harness>,
     );
     // Espresso selected (the first coffee) — pour-over must NOT replace it.
-    expect(screen.getByRole("button", { name: "Coffee Station: 1" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Coffee Station" })).toBeInTheDocument();
     expect(screen.getByText("Max")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Coffee Station: 1" }));
-    expect(screen.getByRole("button", { name: "Coffee Station: 1" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Coffee Station" }));
+    expect(screen.getByRole("button", { name: "Coffee Station" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Espresso" })).toBeInTheDocument();
     expect(screen.queryByRole("img", { name: "Pour-Over Kit" })).not.toBeInTheDocument();
   });
@@ -260,7 +260,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
         <BuilderCanvas catalog={catalog} />
       </Harness>,
     );
-    expect(screen.getByRole("button", { name: "Coffee Station: 1" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Coffee Station" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add Bean Bag" })).toBeInTheDocument();
   });
 });

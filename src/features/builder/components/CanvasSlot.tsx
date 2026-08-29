@@ -113,7 +113,7 @@ export function CanvasSlot({
     >
       <button
         type="button"
-        aria-label={`${label}: ${quantity}`}
+        aria-label={quantity > 1 ? `${label}: ${quantity}` : label}
         aria-pressed="true"
         className="border-primary bg-surface-container-low focus-visible:outline-primary group flex h-full w-full items-center justify-center overflow-hidden rounded-xl border-2 transition-all focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={onAdd}
@@ -121,9 +121,11 @@ export function CanvasSlot({
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- slot thumbnails (mockup parity) */}
         <img src={selected.image} alt={selected.name} className="h-full w-full object-cover" />
-        <span className="bg-primary text-label-sm text-on-primary absolute right-1 top-1 rounded-full px-2 py-0.5 font-bold">
-          ×{quantity}
-        </span>
+        {quantity > 1 ? (
+          <span className="bg-primary text-label-sm text-on-primary absolute right-1 top-1 rounded-full px-2 py-0.5 font-bold">
+            ×{quantity}
+          </span>
+        ) : null}
         {!canAddMore ? (
           <span className="bg-on-surface/70 text-label-sm text-inverse-on-surface absolute inset-x-0 bottom-0 py-0.5 text-center font-bold">
             Max

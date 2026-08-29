@@ -38,14 +38,14 @@ test.describe("builder happy path (decision #35)", () => {
     // Select Espresso Machine via its Misc Select button (single-select, cap 1).
     const espressoCard = page.locator("article").filter({ hasText: espresso.name });
     await espressoCard.getByRole("button", { name: "Select", exact: true }).click();
-    await expect(page.getByRole("button", { name: "Coffee Station: 1" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Coffee Station", exact: true })).toBeVisible();
     await expect(page.getByText("Max")).toBeVisible();
     // Clicking the filled zone must NOT swap to another coffee — stays at 1.
-    await page.getByRole("button", { name: "Coffee Station: 1" }).click();
-    await expect(page.getByRole("button", { name: "Coffee Station: 1" })).toBeVisible();
+    await page.getByRole("button", { name: "Coffee Station", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Coffee Station", exact: true })).toBeVisible();
     // The zone card still shows the selected machine (scoped to the zone button).
     await expect(
-      page.getByRole("button", { name: "Coffee Station: 1" }).getByRole("img"),
+      page.getByRole("button", { name: "Coffee Station", exact: true }).getByRole("img"),
     ).toHaveAttribute("alt", espresso.name);
   });
 

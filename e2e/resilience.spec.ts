@@ -12,6 +12,7 @@ test.describe("resilience negative flows (N7, N8, N10)", () => {
     await page.route("**/placeholders/**", (route) => route.abort());
 
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: firstOfCategory("chair").name })).toBeVisible();
 
     const firstImage = page.locator("article img").first();
@@ -42,6 +43,7 @@ test.describe("resilience negative flows (N7, N8, N10)", () => {
     }, STORAGE_KEY);
 
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: firstOfCategory("chair").name })).toBeVisible();
     const firstChairCard = page
       .locator("article")

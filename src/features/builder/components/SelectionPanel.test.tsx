@@ -80,14 +80,24 @@ function Harness({ children }: { children: ReactNode }) {
 }
 
 describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
-  it("filters chairs on the Chairs tab (default)", () => {
+  it("shows desks on the Desks tab (default after the tab reorder)", () => {
     render(
       <Harness>
         <SelectionPanel catalog={catalog} />
       </Harness>,
     );
+    expect(screen.getByText("Seminyak Desk")).toBeInTheDocument();
+    expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
+  });
+
+  it("switching to the Chairs tab shows the chairs", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
-    expect(screen.getByText("Canggu Task")).toBeInTheDocument();
     expect(screen.queryByText("Seminyak Desk")).not.toBeInTheDocument();
   });
 
@@ -106,6 +116,7 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
         <SelectionPanel catalog={catalog} />
       </Harness>,
     );
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     clickNth("button", "Select", 0);
     expect(screen.getByRole("button", { name: "Deselect" })).toBeInTheDocument();
     clickNth("button", "Select", 0);
@@ -119,6 +130,7 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
         <SelectionPanel catalog={catalog} />
       </Harness>,
     );
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     clickNth("button", "Select", 0);
     fireEvent.click(screen.getByRole("button", { name: "Deselect" }));
     expect(screen.queryByRole("button", { name: "Deselect" })).not.toBeInTheDocument();
@@ -197,6 +209,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("filters chairs by name (case-insensitive substring)", () => {
     render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "CANGGU" } });
     expect(screen.getByText("Canggu Task")).toBeInTheDocument();
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
@@ -204,6 +217,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("matches against the description too", () => {
     render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "mesh" } });
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
     expect(screen.queryByText("Canggu Task")).not.toBeInTheDocument();
@@ -211,6 +225,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("shows 'No products match' when nothing matches", () => {
     render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "zzz" } });
     expect(screen.getByText(/no products match/i)).toBeInTheDocument();
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
@@ -229,6 +244,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("the clear button resets the filter", () => {
     render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "canggu" } });
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
@@ -238,6 +254,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("Escape clears the keyword", () => {
     render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     const input = screen.getByLabelText("Search chairs");
     fireEvent.change(input, { target: { value: "canggu" } });
     fireEvent.keyDown(input, { key: "Escape" });
@@ -246,6 +263,8 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("each tab keeps its own keyword (per-tab search)", () => {
     render(<SearchHarness />);
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
     fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "canggu" } });
     fireEvent.click(screen.getByRole("tab", { name: "Desks" }));
     expect(screen.getByText("Seminyak Desk")).toBeInTheDocument();

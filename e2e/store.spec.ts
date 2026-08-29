@@ -38,6 +38,7 @@ test.describe("store catalog gallery (decision #32)", () => {
 
     // Build a valid cart first (D1 defaults apply + persist on /builder).
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
 
     // The store lists only chair/desk/accessory (3 tabs, no Extras).

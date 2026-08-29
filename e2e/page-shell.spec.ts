@@ -35,10 +35,7 @@ test.describe("page shell negative flows (N2, N9)", () => {
       "cursor",
       "pointer",
     );
-    await expect(page.getByRole("searchbox", { name: "Search chairs" })).toHaveCSS(
-      "cursor",
-      "text",
-    );
+    await expect(page.getByRole("searchbox", { name: "Search desks" })).toHaveCSS("cursor", "text");
     // Home: a nav link.
     await page.goto("/");
     await expect(page.getByRole("link", { name: "Builder" }).first()).toHaveCSS(

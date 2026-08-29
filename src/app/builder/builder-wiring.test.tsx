@@ -77,7 +77,7 @@ describe("Builder wiring — D1 defaults (decisions D1, #25)", () => {
     );
     expect(screen.getByRole("heading", { name: "Design Your Workspace!" })).toBeInTheDocument();
     await waitFor(() =>
-      expect(screen.getAllByRole("heading", { name: "Uluwatu Chair" }).length).toBeGreaterThan(0),
+      expect(screen.getAllByRole("heading", { name: "Seminyak Desk" }).length).toBeGreaterThan(0),
     );
   });
 });

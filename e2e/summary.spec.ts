@@ -23,6 +23,7 @@ test.describe("summary + rent happy path (decision #35, #37)", () => {
 
     // Build on /builder (D1 defaults select the first chair + desk).
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
     await page.getByRole("tab", { name: "Accessories" }).click();
     const monitorCard = page.locator("article").filter({ hasText: monitor.name });

@@ -14,8 +14,8 @@ import { QuantityStepper } from "./QuantityStepper";
 type Tab = "chair" | "desk" | "accessory";
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
-  { key: "chair", label: "Chairs", icon: "chair" },
   { key: "desk", label: "Desks", icon: "desk" },
+  { key: "chair", label: "Chairs", icon: "chair" },
   { key: "accessory", label: "Accessories", icon: "keyboard" },
 ];
 
@@ -32,7 +32,7 @@ const SUBTYPE_ORDER: PanelGroup[] = ["monitor", "lamp", "plant", "misc"];
  */
 export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
   const { state, dispatch } = useBuilderStore();
-  const [tab, setTab] = useState<Tab>("chair");
+  const [tab, setTab] = useState<Tab>("desk"); // desk first (tab reorder ruling)
   // Per-tab keyword (Q1=2 ruling): each tab keeps its own search state.
   const [query, setQuery] = useState<Record<Tab, string>>({
     chair: "",
@@ -146,7 +146,7 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
         ) : null}
       </div>
 
-      <div className="border-outline-variant mt-4 flex-1 overflow-y-auto border-t pr-2 pt-4">
+      <div className="mt-4 flex-1 overflow-y-auto pr-2 pt-4">
         {tab === "accessory" ? (
           grouped.map(({ key, items }) => (
             <div key={key} className="mb-4">

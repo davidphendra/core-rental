@@ -52,7 +52,8 @@ test.describe("builder happy path (decision #35)", () => {
     await page.goto("/builder");
     const meshChair = firstOfCategory("chair"); // first chair; its description contains "mesh"
     const taskChair = nthOfCategory("chair", 1);
-    // Search by name (case-insensitive).
+    // Search by name (case-insensitive) — Chairs is the second tab now.
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await page.getByRole("searchbox", { name: "Search chairs" }).fill(taskChair.name.toLowerCase());
     await expect(page.getByRole("heading", { name: taskChair.name })).toBeVisible();
     await expect(page.getByRole("heading", { name: meshChair.name })).toHaveCount(0);
@@ -69,7 +70,8 @@ test.describe("builder happy path (decision #35)", () => {
     const monitor = firstWithSkuPrefix("MON");
 
     await page.goto("/builder");
-    // Panel loaded (chairs listed).
+    // Panel loaded — activate the Chairs tab (desks are first now).
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: firstOfCategory("chair").name })).toBeVisible();
 
     // Swap to the second chair via its card.
@@ -104,6 +106,7 @@ test.describe("builder happy path (decision #35)", () => {
     const monitor = firstWithSkuPrefix("MON");
 
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
     await page.getByRole("tab", { name: "Accessories" }).click();
     const monitorCard = page.locator("article").filter({ hasText: monitor.name });
@@ -189,6 +192,7 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     const chairA = firstOfCategory("chair");
     const chairB = nthOfCategory("chair", 1);
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: chairA.name })).toBeVisible();
 
     const cardA = page.locator("article").filter({ hasText: chairA.name });
@@ -203,6 +207,7 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
   test("the canvas chair and desk × buttons remove them directly", async ({ page }) => {
     const chair = firstOfCategory("chair");
     await page.goto("/builder");
+    await page.getByRole("tab", { name: "Chairs" }).click();
     await expect(page.getByRole("heading", { name: chair.name })).toBeVisible();
 
     const canvas = page.locator('div[class*="rounded-[2rem]"]');

@@ -4,9 +4,9 @@ active_story_id: null
 active_bug_id: null
 workflow_mode: solo-git
 release:
-  target_version: "1.11.5"
-  last_tag: "v1.11.5"
-  last_publish: "pushed 12 commits + 11 tags (v1.9.1..v1.11.5), CI green"
+  target_version: "1.11.7"
+  last_tag: "v1.11.7"
+  last_publish: "cleanup refactor + qty-badge fix released (v1.11.6, v1.11.7), CI green"
   ci_verified: true
 metrics:
   story_start: "2026-08-29T05:15:04Z"
@@ -33,8 +33,8 @@ bug_cycle:
   completed_steps: []
 git:
   branch: main
-  hash: "2c04a67"
-  note: "Full UX batch released: replace-always, search, observability, cursor, Misc group, zone fix, tab order, coffee/beanbag + lamp/plant single-select, cart-validity gates. v1.11.5, CI green."
+  hash: "2b0cd8e"
+  note: "Cleanup (dead code + extra/EXT schema) and qty-badge fix released as v1.11.6/v1.11.7, CI green."
   change_log:
     - date: 2025
       summary: Store page converted to a display-only catalog gallery — Add to Setup and Request Rental buttons removed, partner request modal deleted (decision #20 superseded). Adding lives only in the Builder's Selection Panel.

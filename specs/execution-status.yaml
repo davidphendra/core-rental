@@ -76,3 +76,6 @@ stories:
     status: todo
   e09s03:
     status: todo
+  e09s01:
+    status: in_progress
+    started_at: "2026-08-29T05:15:04Z"

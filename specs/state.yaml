@@ -10,15 +10,19 @@ release:
 metrics:
   story_start: "2026-08-29T05:15:04Z"
 epic_cycle:
-  current_step: 3
-  next_skill: kickoff-branch
+  current_step: 7
+  next_skill: commit-message
   completed_steps:
     - 0
     - 1
     - 2
+    - 3
+    - 4
+    - 5
+    - 6
   story_bcps: 19
   fast_mode: false
-  notes: "Step 2 (plan-work) pre-satisfied by the planning spine — 3 countable specs + tasks.yaml (all failing) already written in specs/epics/e09-sku-monitor-slots."
+  audit_result: pass
 bug_cycle:
   current_step: null
   completed_steps: []
@@ -94,4 +98,4 @@ handoff:
     - specs/release-plan.yaml
     - specs/epics (per active capsule)
     - specs/tech-architecture/TEST_PLAN_LATEST.md
-  next_skill: kickoff-branch
+  next_skill: audit-code

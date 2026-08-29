@@ -9,31 +9,45 @@ import {
   isCartEligible,
 } from "./setupRules";
 
-const prod = (id: string, category: Product["category"]): Product => ({
-  id,
-  name: id,
+/**
+ * e09: products are identified by 12-char skuNo (3-letter code + 9 alnum).
+ * Codes: CHA/DSK single-select, MON/LMP/PLT/CFE/BBG accessory caps, EXT extra,
+ * PTN partner (excluded).
+ */
+const prod = (skuNo: string, category: Product["category"]): Product => ({
+  skuNo,
+  name: skuNo,
   category,
   pricePerMonth: 100_000,
   description: "d",
   image: "/x.svg",
 });
 
-describe("capKeyForProduct (decision #22)", () => {
-  it("derives cap keys from accessory ids", () => {
-    expect(capKeyForProduct(prod("accessory-monitor-x", "accessory"))).toBe("monitor");
-    expect(capKeyForProduct(prod("accessory-plant-x", "accessory"))).toBe("plant");
-    expect(capKeyForProduct(prod("accessory-coffee-x", "accessory"))).toBe("coffee");
-    expect(capKeyForProduct(prod("accessory-beanbag-x", "accessory"))).toBe("beanbag");
+const MON = "MONA1B2C3D4E";
+const PLT = "PLTA1B2C3D4E";
+const CFE = "CFEA1B2C3D4E";
+const BBG = "BBGA1B2C3D4E";
+const CHA = "CHAA1B2C3D4E";
+const DSK = "DSKA1B2C3D4E";
+const PTN = "PTNA1B2C3D4E";
+
+describe("capKeyForProduct (decision #22; e09 sku-prefix derivation)", () => {
+  it("derives cap keys from the sku code prefix", () => {
+    expect(capKeyForProduct(prod(MON, "accessory"))).toBe("monitor");
+    expect(capKeyForProduct(prod(PLT, "accessory"))).toBe("plant");
+    expect(capKeyForProduct(prod("CFEA1B2C3D4E", "accessory"))).toBe("coffee");
+    expect(capKeyForProduct(prod("BBGA1B2C3D4E", "accessory"))).toBe("beanbag");
+    expect(capKeyForProduct(prod("LMPA1B2C3D4E", "accessory"))).toBe("lamp");
   });
 
   it("maps extra to the extra cap", () => {
-    expect(capKeyForProduct(prod("extra-surfboard", "extra"))).toBe("extra");
+    expect(capKeyForProduct(prod("EXTA1B2C3D4E", "extra"))).toBe("extra");
   });
 
   it("returns null for single-select and excluded categories", () => {
-    expect(capKeyForProduct(prod("chair-x", "chair"))).toBeNull();
-    expect(capKeyForProduct(prod("desk-x", "desk"))).toBeNull();
-    expect(capKeyForProduct(prod("partner-x", "partner"))).toBeNull();
+    expect(capKeyForProduct(prod(CHA, "chair"))).toBeNull();
+    expect(capKeyForProduct(prod(DSK, "desk"))).toBeNull();
+    expect(capKeyForProduct(prod(PTN, "partner"))).toBeNull();
   });
 
   it("caps table matches decision #22", () => {
@@ -50,44 +64,41 @@ describe("capKeyForProduct (decision #22)", () => {
 
 describe("isCartEligible (decision #20)", () => {
   it("excludes partner products from the cart", () => {
-    expect(isCartEligible(prod("partner-x", "partner"))).toBe(false);
-    expect(isCartEligible(prod("chair-x", "chair"))).toBe(true);
-    expect(isCartEligible(prod("extra-x", "extra"))).toBe(true);
+    expect(isCartEligible(prod(PTN, "partner"))).toBe(false);
+    expect(isCartEligible(prod(CHA, "chair"))).toBe(true);
+    expect(isCartEligible(prod("EXTA1B2C3D4E", "extra"))).toBe(true);
   });
 });
 
 describe("canAdd (G2, N3)", () => {
   it("rejects partner products outright", () => {
-    expect(canAdd({ quantities: {} }, prod("partner-x", "partner"))).toBe(false);
+    expect(canAdd({ quantities: {} }, prod(PTN, "partner"))).toBe(false);
   });
 
   it("rejects over-cap additions (boundary: at cap)", () => {
-    const monitor = prod("accessory-monitor-x", "accessory");
-    expect(canAdd({ quantities: { "accessory-monitor-x": 3 } }, monitor)).toBe(false);
-    expect(canAdd({ quantities: { "accessory-monitor-x": 2 } }, monitor)).toBe(true);
+    const monitor = prod(MON, "accessory");
+    expect(canAdd({ quantities: { [MON]: 3 } }, monitor)).toBe(false);
+    expect(canAdd({ quantities: { [MON]: 2 } }, monitor)).toBe(true);
   });
 
   it("allows single-select categories", () => {
-    expect(canAdd({ quantities: {} }, prod("chair-x", "chair"))).toBe(true);
+    expect(canAdd({ quantities: {} }, prod(CHA, "chair"))).toBe(true);
   });
 });
 
 describe("defaultSelection (D1)", () => {
   it("returns the first chair and first desk", () => {
     const catalog = [
-      prod("desk-b", "desk"),
-      prod("chair-a", "chair"),
-      prod("chair-c", "chair"),
-      prod("desk-d", "desk"),
+      prod(DSK, "desk"),
+      prod(CHA, "chair"),
+      prod("CHAA1B2C3D4F", "chair"),
+      prod("DSKA1B2C3D4F", "desk"),
     ];
-    expect(defaultSelection(catalog)).toEqual({ chairId: "chair-a", deskId: "desk-b" });
+    expect(defaultSelection(catalog)).toEqual({ chairId: CHA, deskId: DSK });
   });
 
   it("returns nulls when a category is missing", () => {
-    expect(defaultSelection([prod("chair-a", "chair")])).toEqual({
-      chairId: "chair-a",
-      deskId: null,
-    });
+    expect(defaultSelection([prod(CHA, "chair")])).toEqual({ chairId: CHA, deskId: null });
     expect(defaultSelection([])).toEqual({ chairId: null, deskId: null });
   });
 });

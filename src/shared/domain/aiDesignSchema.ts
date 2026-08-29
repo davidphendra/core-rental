@@ -10,17 +10,6 @@ import { SKU_PATTERN } from "../types/product";
  * match, caps, totals, and budget are all re-checked here (S4/S7 THREAT_MODEL).
  */
 
-/** 3-letter sku prefix → builder slot it may occupy. */
-const SLOT_PREFIX: Record<string, string> = {
-  CHA: "chairSku",
-  DSK: "deskSku",
-  MON: "monitorSkus",
-  CFE: "coffeeSku",
-  BBG: "beanbagSku",
-  LMP: "lampSku",
-  PLT: "plantSku",
-};
-
 /** zod schema for the LLM's finalizeDesign call (shape only). */
 export const aiDesignInputSchema = z.object({
   chairSku: z.string().regex(SKU_PATTERN).nullable().optional(),
@@ -33,8 +22,6 @@ export const aiDesignInputSchema = z.object({
   totalPerMonth: z.number().int().nonnegative().optional(),
   note: z.string().max(300).optional(),
 });
-
-export type AiDesignInput = z.infer<typeof aiDesignInputSchema>;
 
 /** The normalized, validated design applied to the builder. */
 export interface AiDesign {
@@ -169,9 +156,4 @@ export function cheapestRentableTotal(catalog: readonly Product[]): number {
   const desks = catalog.filter((p) => p.skuNo.startsWith("DSK"));
   if (chairs.length === 0 || desks.length === 0) return Number.POSITIVE_INFINITY;
   return Math.min(...chairs.map((c) => c.pricePerMonth)) + Math.min(...desks.map((d) => d.pricePerMonth));
-}
-
-/** 3-letter sku prefix → builder slot label, for error messages. */
-export function slotLabel(prefix: string): string {
-  return SLOT_PREFIX[prefix] ?? prefix;
 }

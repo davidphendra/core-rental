@@ -90,6 +90,6 @@ stories:
     started_at: "2026-08-29T12:26:00Z"
     completed_at: "2026-08-29T12:31:26Z"
   e10s03:
-    status: in_progress
+    status: done
     started_at: "2026-08-29T12:33:18Z"
-    completed_at: null
+    completed_at: "2026-08-29T12:34:27Z"

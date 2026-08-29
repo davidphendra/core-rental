@@ -10,7 +10,7 @@ tasks:
       (AI SDK docs: LM Studio is an officially listed OpenAI-compatible provider.)
     verify: pnpm install && pnpm typecheck
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -24,7 +24,7 @@ tasks:
       model id. Injectable for tests (default = AI SDK generateText).
     verify: pnpm test -- src/app/api/ai-design
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -39,7 +39,7 @@ tasks:
       budget and returns the validated design or refusal info.
     verify: pnpm test -- src/app/api/ai-design
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -53,7 +53,7 @@ tasks:
       recomputed sum; stated budget not exceeded. All slots optional.
     verify: pnpm test -- src/app/api/ai-design
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -68,7 +68,7 @@ tasks:
       429/503/500; no prompt text in any response or log.
     verify: pnpm test -- src/app/api/ai-design && pnpm lint
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -82,7 +82,7 @@ tasks:
       prompt bounds, provider failure, disabled state.
     verify: pnpm test
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:

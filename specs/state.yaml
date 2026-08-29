@@ -1,6 +1,6 @@
 active_flow: build_epic
 active_epic_id: e10
-active_story_id: null
+active_story_id: e10s01
 active_bug_id: null
 workflow_mode: solo-git
 release:
@@ -11,15 +11,20 @@ release:
 metrics:
   story_start: null
 epic_cycle:
-  current_step: 0
-  next_skill: security-review
-  completed_steps: []
+  current_step: 3
+  next_skill: develop-tdd
+  completed_steps:
+    - 0
+    - 1
+    - 2
+    - 3
   story_bcps: 19
   fast_mode: false
   audit_result: null
   notes: "e10 AI Workspace Designer build — planning spine complete (scope/slice/
     plan/release-plan, consistency clean, ADR 0007 + THREAT_MODEL tasks added).
-    Step 0: threat model in progress. Constraints: TDD w/ mocked LLM, E2E stubbed
+    Kickoff done (worktree ../e10-ai-designer, branch e10-ai-designer,
+    preflight green). Next: develop-tdd e10s01. Constraints: TDD w/ mocked LLM, E2E stubbed
     route, NOT pushed until the user's release signal."
 bug_cycle:
   current_step: null

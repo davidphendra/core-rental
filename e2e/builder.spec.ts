@@ -15,6 +15,19 @@ test.describe("builder happy path (decision #35)", () => {
     await resetStorage(page);
   });
 
+  test("the panel search filters products by keyword (name/description)", async ({ page }) => {
+    await page.goto("/builder");
+    const meshChair = firstOfCategory("chair"); // first chair; its description contains "mesh"
+    const taskChair = nthOfCategory("chair", 1);
+    // Search by name (case-insensitive).
+    await page.getByRole("searchbox", { name: "Search chairs" }).fill(taskChair.name.toLowerCase());
+    await expect(page.getByRole("heading", { name: taskChair.name })).toBeVisible();
+    await expect(page.getByRole("heading", { name: meshChair.name })).toHaveCount(0);
+    // Clear button restores the list.
+    await page.getByRole("button", { name: "Clear search" }).click();
+    await expect(page.getByRole("heading", { name: meshChair.name })).toBeVisible();
+  });
+
   test("build a setup: select chair + desk, stack 2 monitors, verify the live IDR total", async ({
     page,
   }) => {

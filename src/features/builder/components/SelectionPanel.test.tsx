@@ -183,21 +183,21 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("filters chairs by name (case-insensitive substring)", () => {
     render(<SearchHarness />);
-    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "CANGGU" } });
+    fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "CANGGU" } });
     expect(screen.getByText("Canggu Task")).toBeInTheDocument();
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
   });
 
   it("matches against the description too", () => {
     render(<SearchHarness />);
-    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "mesh" } });
+    fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "mesh" } });
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
     expect(screen.queryByText("Canggu Task")).not.toBeInTheDocument();
   });
 
   it("shows 'No products match' when nothing matches", () => {
     render(<SearchHarness />);
-    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "zzz" } });
+    fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "zzz" } });
     expect(screen.getByText(/no products match/i)).toBeInTheDocument();
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
   });
@@ -205,7 +205,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
   it("accessories: keyword filters each subcategory group; empty groups show a message", () => {
     render(<SearchHarness />);
     fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
-    fireEvent.change(screen.getByLabel("Search accessories"), { target: { value: "desk" } });
+    fireEvent.change(screen.getByLabelText("Search accessories"), { target: { value: "desk" } });
     const lampGroup = screen.getByText("lamp").closest("div") as HTMLElement;
     expect(within(lampGroup).getByText("Desk Lamp")).toBeInTheDocument();
     const monitorGroup = screen.getByText("monitor").closest("div") as HTMLElement;
@@ -215,7 +215,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("the clear button resets the filter", () => {
     render(<SearchHarness />);
-    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "canggu" } });
+    fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "canggu" } });
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
@@ -224,7 +224,7 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("Escape clears the keyword", () => {
     render(<SearchHarness />);
-    const input = screen.getByLabel("Search chairs");
+    const input = screen.getByLabelText("Search chairs");
     fireEvent.change(input, { target: { value: "canggu" } });
     fireEvent.keyDown(input, { key: "Escape" });
     expect(screen.getByText("Uluwatu Chair")).toBeInTheDocument();
@@ -232,12 +232,12 @@ describe("SelectionPanel search filter (keyword by name/description)", () => {
 
   it("each tab keeps its own keyword (per-tab search)", () => {
     render(<SearchHarness />);
-    fireEvent.change(screen.getByLabel("Search chairs"), { target: { value: "canggu" } });
+    fireEvent.change(screen.getByLabelText("Search chairs"), { target: { value: "canggu" } });
     fireEvent.click(screen.getByRole("tab", { name: "Desks" }));
     expect(screen.getByText("Seminyak Desk")).toBeInTheDocument();
-    expect((screen.getByLabel("Search desks") as HTMLInputElement).value).toBe("");
+    expect((screen.getByLabelText("Search desks") as HTMLInputElement).value).toBe("");
     fireEvent.click(screen.getByRole("tab", { name: "Chairs" }));
-    expect((screen.getByLabel("Search chairs") as HTMLInputElement).value).toBe("canggu");
+    expect((screen.getByLabelText("Search chairs") as HTMLInputElement).value).toBe("canggu");
     expect(screen.getByText("Canggu Task")).toBeInTheDocument();
     expect(screen.queryByText("Uluwatu Chair")).not.toBeInTheDocument();
   });

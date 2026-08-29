@@ -31,21 +31,41 @@ const SUBTYPE_ORDER: CapKey[] = ["monitor", "lamp", "plant"];
 export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
   const { state, dispatch } = useBuilderStore();
   const [tab, setTab] = useState<Tab>("chair");
+  // Per-tab keyword (Q1=2 ruling): each tab keeps its own search state.
+  const [query, setQuery] = useState<Record<Tab, string>>({
+    chair: "",
+    desk: "",
+    accessory: "",
+  });
+
+  /** Search matcher (Q3 ruling): case-insensitive substring on name OR description. */
+  const matches = (product: Product) => {
+    const q = query[tab].trim().toLowerCase();
+    if (q.length === 0) {
+      return true;
+    }
+    return product.name.toLowerCase().includes(q) || product.description.toLowerCase().includes(q);
+  };
 
   const filtered = catalog.filter((p) => {
     if (tab === "accessory") return p.category === "accessory";
     return p.category === tab;
   });
+  const filteredByQuery = filtered.filter(matches);
 
   const grouped =
     tab === "accessory"
       ? SUBTYPE_ORDER.map((key) => ({
           key,
-          items: filtered.filter((p) => capKeyForProduct(p) === key),
-        })).filter((g) => g.items.length > 0)
+          items: filteredByQuery.filter((p) => capKeyForProduct(p) === key),
+        }))
       : [];
 
   const isSelection = tab === "chair" || tab === "desk";
+  const searchLabel =
+    tab === "chair" ? "Search chairs" : tab === "desk" ? "Search desks" : "Search accessories";
+
+  const clearSearch = () => setQuery((q) => ({ ...q, [tab]: "" }));
 
   return (
     <div className="flex h-full flex-col">
@@ -93,6 +113,33 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
         })}
       </div>
 
+      {/* Per-tab keyword search (Q1=2 ruling) — filters name/description. */}
+      <div className="relative mb-3">
+        <input
+          type="search"
+          aria-label={searchLabel}
+          value={query[tab]}
+          onChange={(e) => setQuery((q) => ({ ...q, [tab]: e.target.value }))}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") clearSearch();
+          }}
+          placeholder="Search…"
+          className="focus-visible:outline-primary text-body-md bg-surface-container-lowest w-full rounded-xl px-3 py-2 pr-9 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        />
+        {query[tab].length > 0 ? (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={clearSearch}
+            className="bg-on-surface/70 text-inverse-on-surface hover:bg-on-surface focus-visible:outline-primary absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <span className="material-symbols-outlined text-[12px]" aria-hidden="true">
+              close
+            </span>
+          </button>
+        ) : null}
+      </div>
+
       <div className="border-outline-variant mt-4 flex-1 overflow-y-auto border-t pr-2 pt-4">
         {tab === "accessory" ? (
           grouped.map(({ key, items }) => (
@@ -100,32 +147,38 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
               <h3 className="text-label-sm font-label-sm text-outline mb-2 font-bold uppercase tracking-wider">
                 {key}
               </h3>
-              <div className="grid grid-cols-2 gap-3">
-                {items.map((product) => (
-                  <ProductCard key={product.skuNo} product={product} variant="compact">
-                    {capKeyForProduct(product) === "monitor" ? (
-                      // e09s02: monitors are slot-selected (fill/replace), not steppered
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="w-full"
-                        onClick={() => dispatch({ type: "selectMonitor", product })}
-                      >
-                        Select
-                      </Button>
-                    ) : (
-                      <QuantityStepper product={product} />
-                    )}
-                  </ProductCard>
-                ))}
-              </div>
+              {items.length === 0 ? (
+                <p className="text-body-md text-on-surface-variant">No {key} match.</p>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  {items.map((product) => (
+                    <ProductCard key={product.skuNo} product={product} variant="compact">
+                      {capKeyForProduct(product) === "monitor" ? (
+                        // e09s02: monitors are slot-selected (fill/replace), not steppered
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="w-full"
+                          onClick={() => dispatch({ type: "selectMonitor", product })}
+                        >
+                          Select
+                        </Button>
+                      ) : (
+                        <QuantityStepper product={product} />
+                      )}
+                    </ProductCard>
+                  ))}
+                </div>
+              )}
             </div>
           ))
-        ) : filtered.length === 0 ? (
-          <p className="text-body-md text-on-surface-variant">Nothing here yet.</p>
+        ) : filteredByQuery.length === 0 ? (
+          <p className="text-body-md text-on-surface-variant">
+            {query[tab].trim().length > 0 ? "No products match." : "Nothing here yet."}
+          </p>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {filtered.map((product) => {
+            {filteredByQuery.map((product) => {
               const selected =
                 tab === "chair" ? state.chairId === product.skuNo : state.deskId === product.skuNo;
               return (

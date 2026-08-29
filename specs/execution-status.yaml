@@ -73,9 +73,11 @@ stories:
   e09s01:
     status: todo
   e09s02:
-    status: todo
+    status: done
+    completed_at: "2026-08-29T05:54:51Z"
   e09s03:
-    status: todo
+    status: done
+    completed_at: "2026-08-29T05:54:51Z"
   e09s01:
     status: in_progress
     started_at: "2026-08-29T05:15:04Z"

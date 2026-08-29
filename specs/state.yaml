@@ -23,9 +23,9 @@ bug_cycle:
   current_step: null
   completed_steps: []
 git:
-  branch: main
+  branch: feat/e09-sku-monitor-slots
   hash: null
-  note: ALL 8 EPICS RELEASED (v1.0.0 - v1.7.0). Product complete.
+  note: "Kickoff complete — branch created off green main. Next: develop-tdd (e09s01)."
   change_log:
     - date: 2025
       summary: Store page converted to a display-only catalog gallery — Add to Setup and Request Rental buttons removed, partner request modal deleted (decision #20 superseded). Adding lives only in the Builder's Selection Panel.

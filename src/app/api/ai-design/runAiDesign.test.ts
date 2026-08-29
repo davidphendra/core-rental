@@ -3,9 +3,11 @@ import { describe, expect, it } from "vitest";
 import { cheapestRentableTotal } from "@/shared/domain/aiDesignSchema";
 import { formatIdr } from "@/shared/domain/pricing";
 
-import catalog from "../../../shared/data/products.json";
+import catalogJson from "../../../shared/data/products.json";
 
 import { runAiDesign, type LlmAdapter, type LlmRunRequest, type LlmRunResult } from "./runAiDesign";
+
+const catalog = catalogJson as unknown as readonly import("@/shared/types/product").Product[];
 
 const chair = catalog.find((p) => p.skuNo.startsWith("CHA"))!;
 const desk = catalog.find((p) => p.skuNo.startsWith("DSK"))!;
@@ -79,7 +81,7 @@ describe("runAiDesign", () => {
     const llm = mockLlm([{ kind: "design", design: bogus }, { kind: "design", design: FULL }]);
     const outcome = await runAiDesign({ prompt: "anything", catalog, llm });
     expect(outcome.kind).toBe("design");
-    expect(llm.calls[1].feedback).toBeDefined();
+    expect(llm.calls[1]?.feedback).toBeDefined();
   });
 
   it("refuses honestly when the budget cannot fit, even after a retry", async () => {
@@ -92,7 +94,7 @@ describe("runAiDesign", () => {
       expect(outcome.message).toContain(formatIdr(outcome.cheapestTotal));
     }
     expect(llm.calls).toHaveLength(2);
-    expect(llm.calls[0].budget).toBe(budget);
+    expect(llm.calls[0]?.budget).toBe(budget);
   });
 
   it("succeeds when the budget retry picks a cheaper design", async () => {
@@ -104,7 +106,7 @@ describe("runAiDesign", () => {
     const outcome = await runAiDesign({ prompt: "cheap setup", catalog, budget, llm });
     expect(outcome.kind).toBe("design");
     if (outcome.kind === "design") expect(outcome.design.totalPerMonth).toBe(budget);
-    expect(llm.calls[1].feedback).toContain("budget");
+    expect(llm.calls[1]?.feedback).toContain("budget");
   });
 
   it("surfaces provider errors without retrying", async () => {

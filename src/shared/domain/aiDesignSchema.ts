@@ -99,17 +99,20 @@ export function validateDesign(
     }
   };
 
-  const slots: Array<[keyof AiDesignInput, string]> = [
-    ["chairSku", "CHA"],
-    ["deskSku", "DSK"],
-    ["coffeeSku", "CFE"],
-    ["beanbagSku", "BBG"],
-    ["lampSku", "LMP"],
-    ["plantSku", "PLT"],
+  const slots: Array<{
+    key: "chairSku" | "deskSku" | "coffeeSku" | "beanbagSku" | "lampSku" | "plantSku";
+    prefix: string;
+  }> = [
+    { key: "chairSku", prefix: "CHA" },
+    { key: "deskSku", prefix: "DSK" },
+    { key: "coffeeSku", prefix: "CFE" },
+    { key: "beanbagSku", prefix: "BBG" },
+    { key: "lampSku", prefix: "LMP" },
+    { key: "plantSku", prefix: "PLT" },
   ];
-  for (const [key, prefix] of slots) {
+  for (const { key, prefix } of slots) {
     const sku = d[key];
-    if (sku != null) checkSku(sku, prefix, key as string);
+    if (sku != null) checkSku(sku, prefix, key);
   }
   for (const sku of d.monitorSkus ?? []) checkSku(sku, "MON", "monitorSkus");
 

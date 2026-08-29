@@ -65,12 +65,28 @@ const catalog: Product[] = [
     image: "/c1.svg",
   },
   {
+    skuNo: "CFEA1B2C3D4F",
+    name: "Pour-Over Kit",
+    category: "accessory",
+    pricePerMonth: 400_000,
+    description: "d",
+    image: "/c2.svg",
+  },
+  {
     skuNo: "BBGA1B2C3D4E",
     name: "Bean Bag",
     category: "accessory",
     pricePerMonth: 350_000,
     description: "d",
     image: "/b1.svg",
+  },
+  {
+    skuNo: "BBGA1B2C3D4F",
+    name: "Pouf Ottoman",
+    category: "accessory",
+    pricePerMonth: 250_000,
+    description: "d",
+    image: "/b2.svg",
   },
 ];
 
@@ -201,6 +217,44 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: "Add a desk from the panel" }));
     expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
+  });
+
+  it("clicking a filled Relax Zone increments the SELECTED beanbag, not the first", () => {
+    render(
+      <Harness
+        initial={{ chairId: null, deskId: null, quantities: { BBGA1B2C3D4F: 1 }, monitorSlots: [] }}
+      >
+        <BuilderCanvas catalog={catalog} />
+      </Harness>,
+    );
+    // Pouf Ottoman selected (the SECOND beanbag) — the first is "Bean Bag".
+    expect(screen.getByRole("img", { name: "Pouf Ottoman" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Relax Zone: 1" }));
+    expect(screen.getByRole("button", { name: "Relax Zone: 2" })).toBeInTheDocument();
+    // Still Pouf Ottoman — NOT switched to the first beanbag.
+    expect(screen.getByRole("img", { name: "Pouf Ottoman" })).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: "Bean Bag" })).not.toBeInTheDocument();
+    // At cap (2): click is a no-op and the Max label shows.
+    expect(screen.getByText("Max")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Relax Zone: 2" }));
+    expect(screen.getByRole("button", { name: "Relax Zone: 2" })).toBeInTheDocument();
+  });
+
+  it("clicking a filled Coffee Station at cap keeps the SELECTED machine + Max (no switch)", () => {
+    render(
+      <Harness
+        initial={{ chairId: null, deskId: null, quantities: { CFEA1B2C3D4E: 1 }, monitorSlots: [] }}
+      >
+        <BuilderCanvas catalog={catalog} />
+      </Harness>,
+    );
+    // Espresso selected (the first coffee) — pour-over must NOT replace it.
+    expect(screen.getByRole("button", { name: "Coffee Station: 1" })).toBeInTheDocument();
+    expect(screen.getByText("Max")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Coffee Station: 1" }));
+    expect(screen.getByRole("button", { name: "Coffee Station: 1" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Espresso" })).toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: "Pour-Over Kit" })).not.toBeInTheDocument();
   });
 
   it("fills zone tiles when the zone item is in the cart", () => {

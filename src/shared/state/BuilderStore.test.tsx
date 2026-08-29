@@ -81,18 +81,26 @@ describe("builderReducer (G2, decisions #10 #20 #22)", () => {
   });
 
   it("removeAccessory decrements, then removes the key", () => {
-    const s1 = act(EMPTY_SETUP, { type: "addAccessory", product: plant });
-    const s2 = act(s1, { type: "addAccessory", product: plant });
-    const s3 = act(s2, { type: "removeAccessory", productId: plant.skuNo });
+    // All accessories are cap 1 now, so seed a qty-2 state directly (the
+    // reducer still supports the decrement path for any legacy state).
+    const seeded = { ...EMPTY_SETUP, quantities: { [plant.skuNo]: 2 } };
+    const s3 = act(seeded, { type: "removeAccessory", productId: plant.skuNo });
     expect(s3.quantities[plant.skuNo]).toBe(1);
     const s4 = act(s3, { type: "removeAccessory", productId: plant.skuNo });
     expect(s4.quantities[plant.skuNo]).toBeUndefined();
   });
 
+  it("addAccessory respects the cap-1 single-select accessories (no stacking)", () => {
+    const s1 = act(EMPTY_SETUP, { type: "addAccessory", product: plant });
+    expect(s1.quantities[plant.skuNo]).toBe(1);
+    const s2 = act(s1, { type: "addAccessory", product: plant });
+    expect(s2).toBe(s1); // at cap 1 — no-op
+  });
+
   it("setQuantity validates bounds (1..cap), 0 removes", () => {
-    const s1 = act(EMPTY_SETUP, { type: "setQuantity", product: plant, quantity: 3 });
-    expect(s1.quantities[plant.skuNo]).toBe(3);
-    const s2 = act(s1, { type: "setQuantity", product: plant, quantity: 5 }); // cap 4
+    const s1 = act(EMPTY_SETUP, { type: "setQuantity", product: plant, quantity: 1 });
+    expect(s1.quantities[plant.skuNo]).toBe(1);
+    const s2 = act(s1, { type: "setQuantity", product: plant, quantity: 2 }); // cap 1
     expect(s2).toBe(s1); // no-op
     const s3 = act(s1, { type: "setQuantity", product: plant, quantity: -1 });
     expect(s3).toBe(s1);

@@ -6,8 +6,8 @@ import type { SetupState } from "../types/setup";
  */
 export const QUANTITY_CAPS = {
   monitor: 3,
-  plant: 4,
-  lamp: 2,
+  plant: 1,
+  lamp: 1,
   coffee: 1,
   beanbag: 1,
   extra: 1,

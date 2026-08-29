@@ -9,8 +9,6 @@ import { Button } from "@/shared/ui/Button";
 import { ProductCard } from "@/shared/ui/ProductCard";
 import type { Product } from "@/shared/types/product";
 
-import { QuantityStepper } from "./QuantityStepper";
-
 type Tab = "chair" | "desk" | "accessory";
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
@@ -67,7 +65,6 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
         }))
       : [];
 
-  const isSelection = tab === "chair" || tab === "desk";
   const searchLabel =
     tab === "chair" ? "Search chairs" : tab === "desk" ? "Search desks" : "Search accessories";
 
@@ -176,49 +173,43 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
                         </ProductCard>
                       );
                     }
-                    if (capKey === "coffee" || capKey === "beanbag") {
-                      // Single-select replace: click selects (replacing the zone's
-                      // machine), toggle back to Deselect removes it.
-                      const selected = (state.quantities[product.skuNo] ?? 0) > 0;
-                      const onToggle = () => {
-                        if (selected) {
-                          dispatch({ type: "removeAccessory", productId: product.skuNo });
-                          return;
-                        }
-                        // Clear same-capKey siblings currently in the cart.
-                        const clearSkus = Object.keys(state.quantities).filter((sku) => {
-                          if (sku === product.skuNo) return false;
-                          const sibling = catalog.find((p) => p.skuNo === sku);
-                          return sibling !== undefined && capKeyForProduct(sibling) === capKey;
-                        });
-                        dispatch({
-                          type: "replaceExclusiveAccessory",
-                          target: product,
-                          clearSkus,
-                        });
-                      };
-                      return (
-                        <ProductCard
-                          key={product.skuNo}
-                          product={product}
-                          selected={selected}
-                          variant="compact"
-                        >
-                          <Button
-                            size="sm"
-                            className="w-full"
-                            variant={selected ? "primary" : "secondary"}
-                            aria-pressed={selected}
-                            onClick={onToggle}
-                          >
-                            {selected ? "Deselect" : "Select"}
-                          </Button>
-                        </ProductCard>
-                      );
-                    }
+                    // Single-select replace (coffee/beanbag/lamp/plant): click
+                    // selects (replacing the zone's current item), toggle back
+                    // to Deselect removes it. Max is 1 per the cap table.
+                    const selected = (state.quantities[product.skuNo] ?? 0) > 0;
+                    const onToggle = () => {
+                      if (selected) {
+                        dispatch({ type: "removeAccessory", productId: product.skuNo });
+                        return;
+                      }
+                      // Clear same-capKey siblings currently in the cart.
+                      const clearSkus = Object.keys(state.quantities).filter((sku) => {
+                        if (sku === product.skuNo) return false;
+                        const sibling = catalog.find((p) => p.skuNo === sku);
+                        return sibling !== undefined && capKeyForProduct(sibling) === capKey;
+                      });
+                      dispatch({
+                        type: "replaceExclusiveAccessory",
+                        target: product,
+                        clearSkus,
+                      });
+                    };
                     return (
-                      <ProductCard key={product.skuNo} product={product} variant="compact">
-                        <QuantityStepper product={product} />
+                      <ProductCard
+                        key={product.skuNo}
+                        product={product}
+                        selected={selected}
+                        variant="compact"
+                      >
+                        <Button
+                          size="sm"
+                          className="w-full"
+                          variant={selected ? "primary" : "secondary"}
+                          aria-pressed={selected}
+                          onClick={onToggle}
+                        >
+                          {selected ? "Deselect" : "Select"}
+                        </Button>
                       </ProductCard>
                     );
                   })}
@@ -242,29 +233,25 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
                   selected={selected}
                   variant="compact"
                 >
-                  {isSelection ? (
-                    <Button
-                      size="sm"
-                      className="w-full"
-                      variant={selected ? "primary" : "secondary"}
-                      aria-pressed={selected}
-                      onClick={() =>
-                        dispatch(
-                          selected
-                            ? tab === "chair"
-                              ? { type: "deselectChair" }
-                              : { type: "deselectDesk" }
-                            : tab === "chair"
-                              ? { type: "selectChair", product }
-                              : { type: "selectDesk", product },
-                        )
-                      }
-                    >
-                      {selected ? "Deselect" : "Select"}
-                    </Button>
-                  ) : (
-                    <QuantityStepper product={product} />
-                  )}
+                  <Button
+                    size="sm"
+                    className="w-full"
+                    variant={selected ? "primary" : "secondary"}
+                    aria-pressed={selected}
+                    onClick={() =>
+                      dispatch(
+                        selected
+                          ? tab === "chair"
+                            ? { type: "deselectChair" }
+                            : { type: "deselectDesk" }
+                          : tab === "chair"
+                            ? { type: "selectChair", product }
+                            : { type: "selectDesk", product },
+                      )
+                    }
+                  >
+                    {selected ? "Deselect" : "Select"}
+                  </Button>
                 </ProductCard>
               );
             })}

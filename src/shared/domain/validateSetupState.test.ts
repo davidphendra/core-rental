@@ -61,7 +61,7 @@ const catalog: Product[] = [
 const valid = {
   chairId: "chair-a",
   deskId: "desk-a",
-  quantities: { PLTA1B2C3D4E: 2 },
+  quantities: { PLTA1B2C3D4E: 1 },
   monitorSlots: [],
   deliveryLocation: "Villa Lotus, Canggu",
 };
@@ -94,7 +94,7 @@ describe("validateSetupState — G1 trust boundary (threat model M1)", () => {
   });
 
   it("rejects over-cap, negative, non-integer, and unknown quantities", () => {
-    expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 5 } }, catalog)).toBeNull(); // cap 4
+    expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 2 } }, catalog)).toBeNull(); // cap 1
     expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 0 } }, catalog)).toBeNull();
     expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: -1 } }, catalog)).toBeNull();
     expect(validateSetupState({ ...valid, quantities: { PLTA1B2C3D4E: 1.5 } }, catalog)).toBeNull();

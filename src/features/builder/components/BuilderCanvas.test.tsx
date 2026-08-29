@@ -219,7 +219,7 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     expect(screen.getByRole("img", { name: "Seminyak Desk" })).toBeInTheDocument();
   });
 
-  it("clicking a filled Relax Zone increments the SELECTED beanbag, not the first", () => {
+  it("a filled Relax Zone at max (1) keeps the SELECTED beanbag + Max (no switch)", () => {
     render(
       <Harness
         initial={{ chairId: null, deskId: null, quantities: { BBGA1B2C3D4F: 1 }, monitorSlots: [] }}
@@ -229,15 +229,12 @@ describe("BuilderCanvas (decisions #10, #22, D1)", () => {
     );
     // Pouf Ottoman selected (the SECOND beanbag) — the first is "Bean Bag".
     expect(screen.getByRole("img", { name: "Pouf Ottoman" })).toBeInTheDocument();
+    expect(screen.getByText("Max")).toBeInTheDocument(); // beanbag max 1
     fireEvent.click(screen.getByRole("button", { name: "Relax Zone: 1" }));
-    expect(screen.getByRole("button", { name: "Relax Zone: 2" })).toBeInTheDocument();
-    // Still Pouf Ottoman — NOT switched to the first beanbag.
+    // No switch, no increment — still the selected beanbag at 1.
+    expect(screen.getByRole("button", { name: "Relax Zone: 1" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Pouf Ottoman" })).toBeInTheDocument();
     expect(screen.queryByRole("img", { name: "Bean Bag" })).not.toBeInTheDocument();
-    // At cap (2): click is a no-op and the Max label shows.
-    expect(screen.getByText("Max")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Relax Zone: 2" }));
-    expect(screen.getByRole("button", { name: "Relax Zone: 2" })).toBeInTheDocument();
   });
 
   it("clicking a filled Coffee Station at cap keeps the SELECTED machine + Max (no switch)", () => {

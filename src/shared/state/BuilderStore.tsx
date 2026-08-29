@@ -18,6 +18,7 @@ export type BuilderAction =
   | { type: "setQuantity"; product: Product; quantity: number }
   | { type: "selectMonitor"; product: Product }
   | { type: "removeMonitorSlot"; index: number }
+  | { type: "replaceExclusiveAccessory"; target: Product; clearSkus: string[] }
   | { type: "setDeliveryLocation"; value: string }
   | { type: "reset" };
 
@@ -114,6 +115,22 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       const next = [...state.monitorSlots];
       next.splice(index, 1);
       return { ...state, monitorSlots: next };
+    }
+
+    /**
+     * coffee/beanbag single-select: clicking another machine in the panel
+     * REPLACES the zone's selected one — clear same-capKey siblings (except
+     * the target) and set the target to 1 (max is 1 per the cap table).
+     */
+    case "replaceExclusiveAccessory": {
+      const next = { ...state.quantities };
+      for (const sku of action.clearSkus) {
+        if (sku !== action.target.skuNo) {
+          delete next[sku];
+        }
+      }
+      next[action.target.skuNo] = 1;
+      return { ...state, quantities: next };
     }
 
     case "setDeliveryLocation":

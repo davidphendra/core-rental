@@ -57,6 +57,14 @@ const catalog: Product[] = [
     image: "/c.svg",
   },
   {
+    skuNo: "CFEA1B2C3D4F",
+    name: "Pour-Over",
+    category: "accessory",
+    pricePerMonth: 750_000,
+    description: "d",
+    image: "/c.svg",
+  },
+  {
     skuNo: "BBGA1B2C3D4E",
     name: "Bean Bag",
     category: "accessory",
@@ -168,7 +176,7 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     expect(within(lampGroup).getByRole("button", { name: "Add Desk Lamp" })).toBeInTheDocument();
   });
 
-  it("Accessories tab shows the Misc group (coffee + beanbag) with steppers", () => {
+  it("Accessories tab shows the Misc group (coffee + beanbag) with Select/Deselect", () => {
     render(
       <Harness>
         <SelectionPanel catalog={catalog} />
@@ -178,8 +186,42 @@ describe("SelectionPanel (decisions #10, #20, #22, #33)", () => {
     const miscGroup = screen.getByText("misc").closest("div") as HTMLElement;
     expect(within(miscGroup).getByText("Espresso")).toBeInTheDocument(); // coffee
     expect(within(miscGroup).getByText("Bean Bag")).toBeInTheDocument(); // beanbag
-    expect(within(miscGroup).getByRole("button", { name: "Add Espresso" })).toBeInTheDocument();
-    expect(within(miscGroup).getByRole("button", { name: "Add Bean Bag" })).toBeInTheDocument();
+    // Select buttons (single-select replace), not steppers.
+    expect(within(miscGroup).getAllByRole("button", { name: "Select" }).length).toBe(3);
+    expect(screen.queryByRole("button", { name: "Add Espresso" })).not.toBeInTheDocument();
+  });
+
+  it("selecting a coffee replaces the selected machine (single-select)", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
+    const miscGroup = screen.getByText("misc").closest("div") as HTMLElement;
+    const selects = within(miscGroup).getAllByRole("button", { name: "Select" });
+    // Espresso first.
+    fireEvent.click(selects[0]!);
+    const espressoCard = within(miscGroup).getByText("Espresso").closest("article") as HTMLElement;
+    expect(within(espressoCard).getByRole("button", { name: "Deselect" })).toBeInTheDocument();
+    // Clicking the other coffee (Pour-Over) replaces it.
+    const pourOverCard = within(miscGroup).getByText("Pour-Over").closest("article") as HTMLElement;
+    fireEvent.click(within(pourOverCard).getByRole("button", { name: "Select" })!);
+    expect(within(pourOverCard).getByRole("button", { name: "Deselect" })).toBeInTheDocument();
+    expect(within(espressoCard).getByRole("button", { name: "Select" })).toBeInTheDocument();
+  });
+
+  it("deselecting a coffee clears it (toggle back to Select)", () => {
+    render(
+      <Harness>
+        <SelectionPanel catalog={catalog} />
+      </Harness>,
+    );
+    fireEvent.click(screen.getByRole("tab", { name: "Accessories" }));
+    const miscGroup = screen.getByText("misc").closest("div") as HTMLElement;
+    fireEvent.click(within(miscGroup).getAllByRole("button", { name: "Select" })[0]!);
+    fireEvent.click(within(miscGroup).getByRole("button", { name: "Deselect" })!);
+    expect(screen.queryByRole("button", { name: "Deselect" })).not.toBeInTheDocument();
   });
 
   it("Select on a monitor adds it to the slot row (fill first empty)", () => {

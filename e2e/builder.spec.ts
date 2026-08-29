@@ -25,8 +25,8 @@ test.describe("builder happy path (decision #35)", () => {
     const beanbag = firstWithSkuPrefix("BBG");
     await expect(page.getByRole("heading", { name: coffee.name })).toBeVisible();
     await expect(page.getByRole("heading", { name: beanbag.name })).toBeVisible();
-    // Steppers present (caps coffee=1, beanbag<=2).
-    await expect(page.getByRole("button", { name: `Add ${coffee.name}` })).toBeVisible();
+    // Single-select Select buttons (replace semantics), not steppers.
+    await expect(page.getByRole("button", { name: "Select" }).first()).toBeVisible();
   });
 
   test("a filled zone click increments the SELECTED machine and shows Max at cap", async ({
@@ -35,8 +35,9 @@ test.describe("builder happy path (decision #35)", () => {
     const espresso = firstWithSkuPrefix("CFE"); // first coffee = Espresso Machine
     await page.goto("/builder");
     await page.getByRole("tab", { name: "Accessories" }).click();
-    // Select Espresso Machine via its Misc stepper (coffee cap = 1).
-    await page.getByRole("button", { name: `Add ${espresso.name}` }).click();
+    // Select Espresso Machine via its Misc Select button (single-select, cap 1).
+    const espressoCard = page.locator("article").filter({ hasText: espresso.name });
+    await espressoCard.getByRole("button", { name: "Select", exact: true }).click();
     await expect(page.getByRole("button", { name: "Coffee Station: 1" })).toBeVisible();
     await expect(page.getByText("Max")).toBeVisible();
     // Clicking the filled zone must NOT swap to another coffee — stays at 1.

@@ -159,23 +159,69 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
                 </p>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
-                  {items.map((product) => (
-                    <ProductCard key={product.skuNo} product={product} variant="compact">
-                      {capKeyForProduct(product) === "monitor" ? (
-                        // e09s02: monitors are slot-selected (fill/replace), not steppered
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="w-full"
-                          onClick={() => dispatch({ type: "selectMonitor", product })}
+                  {items.map((product) => {
+                    const capKey = capKeyForProduct(product);
+                    if (capKey === "monitor") {
+                      return (
+                        <ProductCard key={product.skuNo} product={product} variant="compact">
+                          {/* e09s02: monitors are slot-selected (fill/replace), not steppered */}
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="w-full"
+                            onClick={() => dispatch({ type: "selectMonitor", product })}
+                          >
+                            Select
+                          </Button>
+                        </ProductCard>
+                      );
+                    }
+                    if (capKey === "coffee" || capKey === "beanbag") {
+                      // Single-select replace: click selects (replacing the zone's
+                      // machine), toggle back to Deselect removes it.
+                      const selected = (state.quantities[product.skuNo] ?? 0) > 0;
+                      const onToggle = () => {
+                        if (selected) {
+                          dispatch({ type: "removeAccessory", productId: product.skuNo });
+                          return;
+                        }
+                        // Clear same-capKey siblings currently in the cart.
+                        const clearSkus = Object.keys(state.quantities).filter((sku) => {
+                          if (sku === product.skuNo) return false;
+                          const sibling = catalog.find((p) => p.skuNo === sku);
+                          return sibling !== undefined && capKeyForProduct(sibling) === capKey;
+                        });
+                        dispatch({
+                          type: "replaceExclusiveAccessory",
+                          target: product,
+                          clearSkus,
+                        });
+                      };
+                      return (
+                        <ProductCard
+                          key={product.skuNo}
+                          product={product}
+                          selected={selected}
+                          variant="compact"
                         >
-                          Select
-                        </Button>
-                      ) : (
+                          <Button
+                            size="sm"
+                            className="w-full"
+                            variant={selected ? "primary" : "secondary"}
+                            aria-pressed={selected}
+                            onClick={onToggle}
+                          >
+                            {selected ? "Deselect" : "Select"}
+                          </Button>
+                        </ProductCard>
+                      );
+                    }
+                    return (
+                      <ProductCard key={product.skuNo} product={product} variant="compact">
                         <QuantityStepper product={product} />
-                      )}
-                    </ProductCard>
-                  ))}
+                      </ProductCard>
+                    );
+                  })}
                 </div>
               )}
             </div>

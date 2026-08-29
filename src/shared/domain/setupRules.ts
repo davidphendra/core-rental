@@ -9,7 +9,7 @@ export const QUANTITY_CAPS = {
   plant: 4,
   lamp: 2,
   coffee: 1,
-  beanbag: 2,
+  beanbag: 1,
   extra: 1,
 } as const;
 

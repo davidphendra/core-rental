@@ -141,3 +141,5 @@
 ## Repository structure (proposed — not yet scaffolded)
 
 See `specs/tech-architecture/tech-stack.md` § Repository Structure for the full tree.
+
+- **2025 — replace-always monitor select when full (supersedes the Q3 no-op):** with all 3 monitor slots filled, selecting ANY monitor in the panel — including one already placed — replaces the most-recently-added card (e.g. [A,B,C] + select A → [A,B,A], so 2-of-a-model is reachable from a full row). The only quiet no-op left is selecting the model that is already the most recent (identical value). The swapped card always pulses briefly (Q2 unchanged). Ruling recorded as superseding the e09s02 Q3 "no-op if already placed".

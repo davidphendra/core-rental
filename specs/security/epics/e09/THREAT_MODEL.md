@@ -38,7 +38,7 @@
 
 - **Description:** UI or scripted dispatches could attempt >3 monitors or duplicate placements.
 - **Exploit scenario:** Repeated `selectMonitor` dispatches past 3 slots.
-- **Mitigation (planned):** **Defense in depth** — the reducer enforces fill-first-empty / replace-most-recent / no-op-if-placed; the total monitor count can never exceed 3 by construction. UI buttons are cosmetic.
+- **Mitigation (planned):** **Defense in depth** — the reducer enforces fill-first-empty / replace-most-recent (replace-always when full); the total monitor count can never exceed 3 by construction. UI buttons are cosmetic.
 - **Task mapping:** e09s02-1, e09s02-5.
 
 ### S4 — SKU hash collision — LOW

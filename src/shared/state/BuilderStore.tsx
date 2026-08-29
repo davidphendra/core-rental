@@ -88,14 +88,15 @@ export function builderReducer(state: SetupState, action: BuilderAction): SetupS
       return { ...state, quantities: next };
     }
 
-    /** e09s02 monitor slots (Q1/Q3 rulings): space → append (duplicates build
-     * 2A+1B, 3C); full → replace most recently added (last); full + already
-     * placed → no-op. */
+    /** e09s02 monitor slots (Q1 ruling + update): space → append (duplicates
+     * build 2A+1B, 3C); full → replace the most recently added card with ANY
+     * selection — even an already-placed model (2A reachable from a full row);
+     * full + selecting the current last model → quiet no-op (identical value). */
     case "selectMonitor": {
       const sku = action.product.skuNo;
       if (state.monitorSlots.length >= 3) {
-        if (state.monitorSlots.includes(sku)) {
-          return state; // full + already placed — no-op (Q3)
+        if (state.monitorSlots[state.monitorSlots.length - 1] === sku) {
+          return state; // already the most recent — identical value, no-op
         }
         const next = [...state.monitorSlots];
         next[next.length - 1] = sku; // replace most recently added (Q1)

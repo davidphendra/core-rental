@@ -113,6 +113,10 @@ test.describe("builder negative flows (N3, N4, N5)", () => {
     await selectCard(monitor2).click();
     await expect(page.getByRole("button", { name: "Remove Monitor" })).toHaveCount(3);
     await expect(page.getByRole("button", { name: "Add Monitor" })).toHaveCount(0);
+    // Replace-always ruling: selecting an already-placed model ALSO replaces
+    // the most recently added card (row was [A,A,M2] -> [A,A,A]; 2A from full).
+    await selectCard(monitor).click();
+    await expect(page.getByRole("button", { name: "Remove Monitor" })).toHaveCount(3);
   });
 
   test("N4: removing a monitor decreases the total", async ({ page }) => {

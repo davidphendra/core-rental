@@ -1,0 +1,97 @@
+import { describe, expect, it } from "vitest";
+
+import type { Product } from "@/shared/types/product";
+
+import catalogJson from "../../../shared/data/products.json";
+
+import { getSetupTotal, resolveToolOutcome, searchCatalog } from "./llm";
+
+const catalog = catalogJson as unknown as readonly Product[];
+
+describe("searchCatalog", () => {
+  it("returns up to 8 hits matching a free-text query", () => {
+    const hits = searchCatalog({ query: "gaming" }, catalog);
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.length).toBeLessThanOrEqual(8);
+    for (const h of hits) {
+      const text = `${h.name} ${h.description}`.toLowerCase();
+      expect(text).toContain("gaming");
+    }
+  });
+
+  it("filters by product type via the sku prefix", () => {
+    const monitors = searchCatalog({ type: "monitor" }, catalog);
+    expect(monitors.length).toBeGreaterThan(0);
+    for (const h of monitors) expect(h.skuNo.startsWith("MON")).toBe(true);
+  });
+
+  it("respects a maxPrice ceiling", () => {
+    const hits = searchCatalog({ type: "chair", maxPrice: 500_000 }, catalog);
+    for (const h of hits) expect(h.pricePerMonth).toBeLessThanOrEqual(500_000);
+  });
+
+  it("returns an empty list when nothing matches", () => {
+    expect(searchCatalog({ query: "zzz-nothing-matches" }, catalog)).toEqual([]);
+  });
+});
+
+describe("getSetupTotal", () => {
+  it("sums monthly prices of found skus and reports the count", () => {
+    const chair = catalog.find((p) => p.skuNo.startsWith("CHA"))!;
+    const desk = catalog.find((p) => p.skuNo.startsWith("DSK"))!;
+    const r = getSetupTotal([chair.skuNo, desk.skuNo, "UNKNOWN1"], catalog);
+    expect(r.count).toBe(2);
+    expect(r.total).toBe(chair.pricePerMonth + desk.pricePerMonth);
+  });
+
+  it("skips skus not in the catalog", () => {
+    const r = getSetupTotal(["UNKNOWN1", "UNKNOWN2"], catalog);
+    expect(r).toEqual({ total: 0, count: 0 });
+  });
+});
+
+describe("catalog fixture sanity", () => {
+  it("has products for every searchable type", () => {
+    const types = ["chair", "desk", "monitor", "lamp", "plant", "coffee", "beanbag"] as const;
+    for (const t of types) {
+      expect(searchCatalog({ type: t }, catalog).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("catalog entries satisfy the Product contract", () => {
+    const sample = catalog[0] as Product;
+    expect(typeof sample.skuNo).toBe("string");
+    expect(typeof sample.pricePerMonth).toBe("number");
+  });
+});
+
+describe("resolveToolOutcome", () => {
+  it("resolves a rejectQuery call to a rejection", () => {
+    const r = resolveToolOutcome([{ toolName: "rejectQuery", args: {} }]);
+    expect(r.kind).toBe("rejection");
+  });
+
+  it("resolves a finalizeDesign call to a design", () => {
+    const r = resolveToolOutcome([{ toolName: "finalizeDesign", args: { deskSku: "X" } }]);
+    expect(r.kind).toBe("design");
+    if (r.kind === "design") expect(r.design).toEqual({ deskSku: "X" });
+  });
+
+  it("prefers rejectQuery when both terminal tools were called", () => {
+    const r = resolveToolOutcome([
+      { toolName: "searchCatalog", args: {} },
+      { toolName: "rejectQuery", args: {} },
+      { toolName: "finalizeDesign", args: { deskSku: "X" } },
+    ]);
+    expect(r.kind).toBe("rejection");
+  });
+
+  it("returns none when no terminal tool was called", () => {
+    const r = resolveToolOutcome([{ toolName: "searchCatalog", args: {} }]);
+    expect(r.kind).toBe("none");
+  });
+
+  it("returns none for an empty tool list", () => {
+    expect(resolveToolOutcome([]).kind).toBe("none");
+  });
+});

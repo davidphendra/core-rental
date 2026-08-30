@@ -12,7 +12,7 @@ import { LoadingSkeleton } from "@/shared/ui/LoadingSkeleton";
 import { SiteHeader } from "@/shared/ui/SiteHeader";
 import type { Product } from "@/shared/types/product";
 
-import { BuilderCanvas, SelectionPanel, StickySummaryBar } from "@/features/builder";
+import { BuilderCanvas, DesignWithAI, SelectionPanel, StickySummaryBar } from "@/features/builder";
 
 /** Builder UI (e05s03): renders the canvas + panel + sticky total for a catalog. */
 export function BuilderContent({ catalog }: { catalog: readonly Product[] }) {
@@ -47,6 +47,7 @@ export function BuilderContent({ catalog }: { catalog: readonly Product[] }) {
             </h1>
             <p className="text-body-lg font-body-lg text-outline">Create Your Perfect Setup</p>
           </div>
+          <DesignWithAI catalog={catalog} />
           <BuilderCanvas catalog={catalog} />
           <div className="mt-8 lg:hidden">
             <SelectionPanel catalog={catalog} />

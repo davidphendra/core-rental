@@ -92,3 +92,25 @@ Optional CLI previews: `vercel dev` / `pnpm dlx vercel deploy --preview`
 **CI:** GitHub Actions (`lint → typecheck → unit → coverage → build → e2e →
 belt-and-braces`) runs on every push/PR and gates merges. Security headers
 (CSP etc.) are served by `next.config.ts` on every route — asserted by E2E N9.
+
+## AI Workspace Designer (dev)
+
+The builder's **Design with AI** panel turns a natural-language request
+("fancy gaming workspace, max Rp 30 juta") into a validated builder design.
+It is **env-gated**: the route returns `503 ai_disabled` until a provider is
+configured, so the deployed demo is unaffected until you choose to enable it.
+
+- **Local dev (free, offline):** run LM Studio on `localhost:1234/v1` with a
+  tool-calling model (default `gpt-oss-20b`; `devstral-small-2-2512` also
+  works), then copy `.env.example` → `.env.local`:
+  ```bash
+  AI_BASE_URL=http://localhost:1234/v1
+  AI_MODEL=gpt-oss-20b
+  ```
+- **Production (OpenAI):** set `OPENAI_API_KEY` + `AI_MODEL` in the Vercel
+  project env vars. Costs real money per request — guarded by a best-effort
+  in-memory rate limit (~10 req / 10 min / IP) and output caps.
+- **Design contract:** the AI discovers products via tools (never the prompt),
+  and the route re-validates every SKU + the monthly total server-side — a
+  hallucinated or over-budget design can never be applied. The user's prompt
+  text is never logged or tracked (PII-safe). See `specs/adr/0007-ai-design-route.md`.

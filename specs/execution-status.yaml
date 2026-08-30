@@ -81,3 +81,15 @@ stories:
     status: done
     started_at: "2026-08-29T05:54:30Z"
     completed_at: "2026-08-29T05:54:51Z"
+  e10s01:
+    status: done
+    started_at: "2026-08-29T12:12:47Z"
+    completed_at: "2026-08-29T12:23:06Z"
+  e10s02:
+    status: done
+    started_at: "2026-08-29T12:26:00Z"
+    completed_at: "2026-08-29T12:31:26Z"
+  e10s03:
+    status: done
+    started_at: "2026-08-29T12:33:18Z"
+    completed_at: "2026-08-29T12:34:27Z"

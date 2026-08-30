@@ -15,7 +15,9 @@ export type LogEventName =
   | "error.boundary"
   | "unhandledrejection"
   | "unhandlederror"
-  | "cart.updated";
+  | "cart.updated"
+  | "ai.request"
+  | "ai.design_applied";
 
 export interface LogFields {
   [key: string]: string | number | boolean | null | undefined;

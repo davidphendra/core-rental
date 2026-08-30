@@ -11,7 +11,7 @@ tasks:
       guard. Status announced via a live region.
     verify: pnpm test -- src/features/builder && pnpm lint
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -25,7 +25,7 @@ tasks:
       rendered with actionable messages.
     verify: pnpm test -- src/features/builder && pnpm lint
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -39,7 +39,7 @@ tasks:
       {chairSku, deskSku, monitorCount, total} (no prompt text) via the logger.
     verify: pnpm test -- src/features/builder && pnpm lint
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -53,7 +53,7 @@ tasks:
       generation status, aria states on Apply/confirm, contrast per design tokens.
     verify: pnpm test -- src/features/builder
     risk: P2
-    status: failing
+    status: passing
     allure:
       severity: normal
       categories:
@@ -67,7 +67,7 @@ tasks:
       the builder spec: happy path, replace-confirm, refusal, disabled, cancel.
     verify: pnpm test && pnpm build && pnpm test:e2e
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:

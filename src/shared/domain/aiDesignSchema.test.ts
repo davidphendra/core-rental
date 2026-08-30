@@ -7,6 +7,7 @@ const p = (skuNo: string, pricePerMonth = 100_000): Product => ({
   skuNo,
   name: skuNo,
   category: "accessory",
+  subCategory: null,
   pricePerMonth,
   description: "d",
   image: "/x.svg",
@@ -77,10 +78,10 @@ describe("validateDesign", () => {
     expect(r.ok).toBe(false);
   });
 
-  it("rejects when the LLM-reported total mismatches the computed total", () => {
+  it("tolerates a mismatched LLM-reported total and recomputes it", () => {
     const r = validateDesign({ ...FULL, totalPerMonth: 1 }, catalog);
-    expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.errors.join(" ")).toContain("total mismatch");
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.design.totalPerMonth).toBe(3_520_000); // computed wins
   });
 
   it("rejects over-budget designs and flags the budget breach", () => {

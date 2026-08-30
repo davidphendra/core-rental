@@ -12,6 +12,7 @@ const prod = (skuNo: string, category: Product["category"]): Product => ({
   skuNo,
   name: skuNo,
   category,
+  subCategory: null,
   pricePerMonth: 100_000,
   description: "d",
   image: "/x.svg",

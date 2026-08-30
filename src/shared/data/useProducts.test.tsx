@@ -22,6 +22,7 @@ const CATALOG: Product[] = [
     skuNo: "CHAA1B2C3D4E",
     name: "Test Chair",
     category: "chair",
+    subCategory: null,
     pricePerMonth: 450_000,
     description: "d",
     image: "/x.svg",

@@ -1,5 +1,6 @@
+import { capKeyForProduct } from "../domain/setupRules";
 import type { Product } from "../types/product";
-import { SKU_PATTERN } from "../types/product";
+import { PRODUCT_SUB_CATEGORIES, SKU_PATTERN, type ProductSubCategory } from "../types/product";
 import catalogJson from "./products.json";
 
 /** TanStack Query key for the catalog (single source, cached across navigation). */
@@ -27,16 +28,30 @@ export function isProduct(value: unknown): value is Product {
     return false;
   }
   const p = value as Record<string, unknown>;
-  return (
-    typeof p.skuNo === "string" &&
-    SKU_PATTERN.test(p.skuNo) &&
-    typeof p.name === "string" &&
-    typeof p.pricePerMonth === "number" &&
-    Number.isInteger(p.pricePerMonth) &&
-    p.pricePerMonth > 0 &&
-    typeof p.description === "string" &&
-    typeof p.image === "string"
-  );
+  if (
+    typeof p.skuNo !== "string" ||
+    !SKU_PATTERN.test(p.skuNo) ||
+    typeof p.name !== "string" ||
+    typeof p.pricePerMonth !== "number" ||
+    !Number.isInteger(p.pricePerMonth) ||
+    p.pricePerMonth <= 0 ||
+    typeof p.description !== "string" ||
+    typeof p.image !== "string"
+  ) {
+    return false;
+  }
+  // subCategory: required — null on chair/desk/partner, one of the five on
+  // accessories, and MUST match the sku prefix (single source of truth).
+  if (typeof p.subCategory !== "string" && p.subCategory !== null) {
+    return false;
+  }
+  if (
+    p.subCategory !== null &&
+    !PRODUCT_SUB_CATEGORIES.includes(p.subCategory as ProductSubCategory)
+  ) {
+    return false;
+  }
+  return p.subCategory === capKeyForProduct(p as unknown as Product);
 }
 
 /**

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import {
+  catalog,
   computeTotal,
   firstOfCategory,
   firstWithSkuPrefix,
@@ -298,7 +299,9 @@ test.describe("Design with AI (e10s02)", () => {
 
   test("an impossible budget shows an honest refusal", async ({ page }) => {
     await stubAi(page, {
-      refusal: { message: "The cheapest rentable setup is Rp1.000.000 per month — no valid design fits." },
+      refusal: {
+        message: "The cheapest rentable setup is Rp1.000.000 per month — no valid design fits.",
+      },
     });
     await page.goto("/builder");
     await page.getByLabel("Describe your workspace").fill("cheap setup");
@@ -332,5 +335,185 @@ test.describe("Design with AI (e10s02)", () => {
     await page.getByRole("button", { name: "Generate" }).click();
     await page.getByRole("button", { name: "Cancel" }).click();
     await expect(page.getByRole("button", { name: "Generate" })).toBeVisible();
+  });
+});
+
+test.describe("Design with AI scenarios (e10)", () => {
+  const chair = firstWithSkuPrefix("CHA");
+  const desk = firstWithSkuPrefix("DSK");
+  const monitor = firstWithSkuPrefix("MON");
+  const monitor2 = nthWithSkuPrefix("MON", 1);
+  const lamp = firstWithSkuPrefix("LMP");
+  const plant = firstWithSkuPrefix("PLT");
+
+  const cheapestChair = catalog
+    .filter((p) => p.skuNo.startsWith("CHA"))
+    .reduce((a, b) => (b.pricePerMonth < a.pricePerMonth ? b : a));
+  const cheapestDesk = catalog
+    .filter((p) => p.skuNo.startsWith("DSK"))
+    .reduce((a, b) => (b.pricePerMonth < a.pricePerMonth ? b : a));
+
+  const stubAi = (page: import("@playwright/test").Page, payload: unknown) =>
+    page.route("**/api/ai-design", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(payload),
+      }),
+    );
+
+  test.beforeEach(async ({ page }) => {
+    await resetStorage(page);
+  });
+
+  test("scenario 1 — 'fancy setup for college' returns a full validated setup", async ({
+    page,
+  }) => {
+    const design = {
+      chairSku: chair.skuNo,
+      deskSku: desk.skuNo,
+      monitorSkus: [monitor.skuNo, monitor2.skuNo],
+      lampSku: lamp.skuNo,
+      plantSku: plant.skuNo,
+      coffeeSku: null,
+      beanbagSku: null,
+      totalPerMonth:
+        chair.pricePerMonth +
+        desk.pricePerMonth +
+        monitor.pricePerMonth +
+        monitor2.pricePerMonth +
+        lamp.pricePerMonth +
+        plant.pricePerMonth,
+      note: "A balanced study setup — two monitors and a lamp for late-night work.",
+    };
+    await stubAi(page, { design });
+    await page.goto("/builder");
+    await page
+      .getByLabel("Describe your workspace")
+      .fill("I want workspace fancy setup for college");
+    await page.getByRole("button", { name: "Generate" }).click();
+    const panel = page.getByLabel("Design with AI");
+    await expect(panel.getByText("Monitor 2")).toBeVisible();
+    await expect(panel.getByText(idr(design.totalPerMonth))).toBeVisible();
+    await expect(panel.getByText(design.note)).toBeVisible();
+    // Apply (with confirm — D1 defaults seeded a chair+desk) populates the canvas.
+    await panel.getByRole("button", { name: "Apply this design" }).click();
+    await page.getByRole("button", { name: "Replace setup" }).click();
+    await expect(page.getByRole("main").getByAltText(desk.name).first()).toBeVisible();
+  });
+
+  test("scenario 2 — 'minimal setup with budget Rp 1 jt' returns exactly the cheapest chair + desk (at budget)", async ({
+    page,
+  }) => {
+    const total = cheapestChair.pricePerMonth + cheapestDesk.pricePerMonth;
+    expect(total).toBe(1_000_000); // knife-edge: the cheapest rentable setup is exactly Rp 1 juta
+    const design = {
+      chairSku: cheapestChair.skuNo,
+      deskSku: cheapestDesk.skuNo,
+      monitorSkus: [],
+      coffeeSku: null,
+      beanbagSku: null,
+      lampSku: null,
+      plantSku: null,
+      totalPerMonth: total,
+      note: "The minimal setup — just the essentials, at budget.",
+    };
+    await stubAi(page, { design });
+    await page.goto("/builder");
+    await page
+      .getByLabel("Describe your workspace")
+      .fill("I look for minimal workspace setup with budget Rp 1 jt");
+    await page.getByRole("button", { name: "Generate" }).click();
+    const panel = page.getByLabel("Design with AI");
+    await expect(panel.getByText(idr(total))).toBeVisible();
+    await expect(panel.getByText("Monitor 1")).not.toBeVisible(); // no accessories
+    await expect(panel.getByText("Coffee")).not.toBeVisible();
+    await panel.getByRole("button", { name: "Apply this design" }).click();
+    await page.getByRole("button", { name: "Replace setup" }).click();
+    await expect(page.getByRole("main").getByAltText(cheapestDesk.name).first()).toBeVisible();
+  });
+
+  test("scenario 3 — 'high gaming workspace under Rp 20 jt' stays under budget", async ({
+    page,
+  }) => {
+    const design = {
+      chairSku: chair.skuNo,
+      deskSku: desk.skuNo,
+      monitorSkus: [monitor.skuNo, monitor2.skuNo, firstWithSkuPrefix("MON").skuNo],
+      coffeeSku: firstWithSkuPrefix("CFE").skuNo,
+      beanbagSku: null,
+      lampSku: lamp.skuNo,
+      plantSku: null,
+      totalPerMonth: 0, // recomputed below
+      note: "Three monitors for the full immersive gaming feel.",
+    };
+    design.totalPerMonth =
+      chair.pricePerMonth +
+      desk.pricePerMonth +
+      3 * monitor.pricePerMonth +
+      firstWithSkuPrefix("CFE").pricePerMonth +
+      lamp.pricePerMonth;
+    expect(design.totalPerMonth).toBeLessThan(20_000_000); // well under the stated budget
+    await stubAi(page, { design });
+    await page.goto("/builder");
+    await page
+      .getByLabel("Describe your workspace")
+      .fill("I look for high gaming workspace under Rp 20 jt");
+    await page.getByRole("button", { name: "Generate" }).click();
+    const panel = page.getByLabel("Design with AI");
+    await expect(panel.getByText("Monitor 3")).toBeVisible();
+    await expect(panel.getByText(idr(design.totalPerMonth))).toBeVisible();
+    await panel.getByRole("button", { name: "Apply this design" }).click();
+    await page.getByRole("button", { name: "Replace setup" }).click();
+    await expect(page.getByRole("main").getByAltText(desk.name).first()).toBeVisible();
+  });
+});
+
+test.describe("Design with AI — real LLM (gated, e10)", () => {
+  const lmStudioBaseUrl = process.env.AI_BASE_URL ?? "http://localhost:8080/v1";
+
+  const lmReachable = async (): Promise<boolean> => {
+    try {
+      const res = await fetch(`${lmStudioBaseUrl}/models`, { signal: AbortSignal.timeout(3000) });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  };
+
+  test("'high gaming workspace under Rp 20 jt' returns a validated budget-compliant design", async ({
+    page,
+  }) => {
+    test.setTimeout(600_000); // the local model is slow (~minutes)
+    test.skip(
+      !(await lmReachable()),
+      "LM Studio not reachable — real-LLM scenario skipped (CI has none)",
+    );
+    // No route stub: the production server loads .env → AI enabled → the REAL model answers.
+    const res = await page.request.post("/api/ai-design", {
+      data: { prompt: "I look for high gaming workspace under Rp 20 jt" },
+    });
+    expect(res.status()).toBe(200);
+    const body = (await res.json()) as {
+      design?: {
+        chairSku?: string | null;
+        deskSku?: string | null;
+        monitorSkus?: string[];
+        totalPerMonth?: number;
+      };
+      rejection?: { message?: string };
+      refusal?: { message?: string };
+      error?: string;
+    };
+    expect(
+      body.design,
+      `expected a design — got ${JSON.stringify(body).slice(0, 200)}`,
+    ).toBeDefined();
+    const d = body.design as NonNullable<typeof body.design>;
+    expect(d.chairSku).toBeTruthy(); // seating required
+    expect(d.deskSku).toBeTruthy();
+    expect(d.monitorSkus?.length ?? 0).toBeLessThanOrEqual(3); // builder cap
+    expect(d.totalPerMonth).toBeGreaterThan(0);
+    expect(d.totalPerMonth as number).toBeLessThanOrEqual(20_000_000); // "under Rp 20 jt"
   });
 });

@@ -133,3 +133,14 @@ describe("POST /api/ai-design", () => {
     }
   });
 });
+
+describe("POST /api/ai-design off-topic rejection", () => {
+  it("returns 200 with the standardized rejection payload", async () => {
+    const res = await post(
+      "what's the weather?",
+      mockLlm([{ kind: "rejection", message: "query not about workspace building" }]),
+    );
+    expect(res.status).toBe(200);
+    expect((await res.json()).rejection.message).toBe("query not about workspace building");
+  });
+});

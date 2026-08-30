@@ -160,3 +160,13 @@ describe("DesignWithAI", () => {
     expect(screen.getByRole("button", { name: "Generate" })).toBeDisabled();
   });
 });
+
+describe("DesignWithAI rejection state", () => {
+  it("shows the standardized message for off-topic queries", async () => {
+    stubFetch(jsonResponse({ rejection: { message: "query not about workspace building" } }));
+    renderPanel();
+    await typeAndGenerate("what's the weather?");
+    expect(await screen.findByText(/not about workspace building/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Regenerate" })).toBeInTheDocument();
+  });
+});

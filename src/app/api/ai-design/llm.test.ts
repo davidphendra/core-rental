@@ -4,7 +4,7 @@ import type { Product } from "@/shared/types/product";
 
 import catalogJson from "../../../shared/data/products.json";
 
-import { getSetupTotal, searchCatalog } from "./llm";
+import { getSetupTotal, resolveToolOutcome, searchCatalog } from "./llm";
 
 const catalog = catalogJson as unknown as readonly Product[];
 
@@ -62,5 +62,36 @@ describe("catalog fixture sanity", () => {
     const sample = catalog[0] as Product;
     expect(typeof sample.skuNo).toBe("string");
     expect(typeof sample.pricePerMonth).toBe("number");
+  });
+});
+
+describe("resolveToolOutcome", () => {
+  it("resolves a rejectQuery call to a rejection", () => {
+    const r = resolveToolOutcome([{ toolName: "rejectQuery", args: {} }]);
+    expect(r.kind).toBe("rejection");
+  });
+
+  it("resolves a finalizeDesign call to a design", () => {
+    const r = resolveToolOutcome([{ toolName: "finalizeDesign", args: { deskSku: "X" } }]);
+    expect(r.kind).toBe("design");
+    if (r.kind === "design") expect(r.design).toEqual({ deskSku: "X" });
+  });
+
+  it("prefers rejectQuery when both terminal tools were called", () => {
+    const r = resolveToolOutcome([
+      { toolName: "searchCatalog", args: {} },
+      { toolName: "rejectQuery", args: {} },
+      { toolName: "finalizeDesign", args: { deskSku: "X" } },
+    ]);
+    expect(r.kind).toBe("rejection");
+  });
+
+  it("returns none when no terminal tool was called", () => {
+    const r = resolveToolOutcome([{ toolName: "searchCatalog", args: {} }]);
+    expect(r.kind).toBe("none");
+  });
+
+  it("returns none for an empty tool list", () => {
+    expect(resolveToolOutcome([]).kind).toBe("none");
   });
 });

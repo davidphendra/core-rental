@@ -117,3 +117,13 @@ describe("runAiDesign", () => {
     expect(llm.calls).toHaveLength(1);
   });
 });
+
+describe("runAiDesign rejection (off-topic gate)", () => {
+  it("passes through an off-topic rejection without retrying", async () => {
+    const llm = mockLlm([{ kind: "rejection", message: "query not about workspace building" }]);
+    const outcome = await runAiDesign({ prompt: "what's the weather in Bali?", catalog, llm });
+    expect(outcome.kind).toBe("rejection");
+    if (outcome.kind === "rejection") expect(outcome.message).toContain("workspace building");
+    expect(llm.calls).toHaveLength(1); // rejection is definitive — no retry
+  });
+});

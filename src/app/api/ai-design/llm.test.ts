@@ -4,17 +4,19 @@ import type { Product } from "@/shared/types/product";
 
 import catalogJson from "../../../shared/data/products.json";
 
-import { getSetupTotal, resolveToolOutcome, searchCatalog } from "./llm";
+import { resolveToolOutcome, searchCatalog } from "./llm";
 
 const catalog = catalogJson as unknown as readonly Product[];
 
 describe("searchCatalog", () => {
-  it("returns ALL matches for a free-text query (the LLM ranks top 5)", () => {
+  it("returns up to 8 lean matches for a free-text query (retriever, LLM ranks)", () => {
     const hits = searchCatalog({ query: "gaming" }, catalog);
     expect(hits.length).toBeGreaterThan(0);
+    expect(hits.length).toBeLessThanOrEqual(8);
     for (const h of hits) {
       const text = `${h.name} ${h.description}`.toLowerCase();
       expect(text).toContain("gaming");
+      expect(h.description.length).toBeLessThanOrEqual(60);
     }
   });
 
@@ -39,8 +41,10 @@ describe("searchCatalog", () => {
     for (const h of lamps) expect(h.skuNo.startsWith("LMP")).toBe(true);
   });
 
-  it("returns the full catalog when no filters are given", () => {
-    expect(searchCatalog({}, catalog).length).toBe(catalog.length);
+  it("returns up to 8 candidates when no filters are given (lean retriever)", () => {
+    const all = searchCatalog({}, catalog);
+    expect(all.length).toBeGreaterThan(0);
+    expect(all.length).toBeLessThanOrEqual(8);
   });
 
   it("respects a maxPrice ceiling", () => {
@@ -51,21 +55,6 @@ describe("searchCatalog", () => {
   it("returns an empty list when nothing matches, including invalid enums", () => {
     expect(searchCatalog({ query: "zzz-nothing-matches" }, catalog)).toEqual([]);
     expect(searchCatalog({ subCategory: "sofa" as never }, catalog)).toEqual([]);
-  });
-});
-
-describe("getSetupTotal", () => {
-  it("sums monthly prices of found skus and reports the count", () => {
-    const chair = catalog.find((p) => p.skuNo.startsWith("CHA"))!;
-    const desk = catalog.find((p) => p.skuNo.startsWith("DSK"))!;
-    const r = getSetupTotal([chair.skuNo, desk.skuNo, "UNKNOWN1"], catalog);
-    expect(r.count).toBe(2);
-    expect(r.total).toBe(chair.pricePerMonth + desk.pricePerMonth);
-  });
-
-  it("skips skus not in the catalog", () => {
-    const r = getSetupTotal(["UNKNOWN1", "UNKNOWN2"], catalog);
-    expect(r).toEqual({ total: 0, count: 0 });
   });
 });
 

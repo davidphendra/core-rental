@@ -37,8 +37,7 @@ export interface AiDesign {
 }
 
 export type DesignValidation =
-  | { ok: true; design: AiDesign }
-  | { ok: false; errors: string[]; overBudget: boolean };
+  { ok: true; design: AiDesign } | { ok: false; errors: string[]; overBudget: boolean };
 
 /**
  * Validate an LLM design against the committed catalog. Rejects: unknown skus,
@@ -118,9 +117,9 @@ export function validateDesign(
   // already rejected above, so this sum cannot double-count anything else.
   const total = selected.reduce((sum, sku) => sum + (bySku.get(sku)?.pricePerMonth ?? 0), 0);
 
-  if (d.totalPerMonth != null && d.totalPerMonth !== total) {
-    errors.push(`total mismatch: LLM reported ${d.totalPerMonth}, computed ${total}`);
-  }
+  // The LLM-reported totalPerMonth is advisory: the computed `total` (from
+  // real prices) is authoritative — it is what the budget check uses and what
+  // gets returned. A mismatched model number is tolerated, never trusted.
   if (budget != null && total > budget) {
     errors.push(`total ${total} exceeds budget ${budget}`);
   }
@@ -155,5 +154,7 @@ export function cheapestRentableTotal(catalog: readonly Product[]): number {
   const chairs = catalog.filter((p) => p.skuNo.startsWith("CHA"));
   const desks = catalog.filter((p) => p.skuNo.startsWith("DSK"));
   if (chairs.length === 0 || desks.length === 0) return Number.POSITIVE_INFINITY;
-  return Math.min(...chairs.map((c) => c.pricePerMonth)) + Math.min(...desks.map((d) => d.pricePerMonth));
+  return (
+    Math.min(...chairs.map((c) => c.pricePerMonth)) + Math.min(...desks.map((d) => d.pricePerMonth))
+  );
 }

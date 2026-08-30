@@ -16,6 +16,13 @@
  *   matching catalog prices like "750.000")
  * - bare absolute: "30000000" (7+ digits)
  */
+/**
+ * Standardized off-topic rejection message (Q2 ruling): the model may call
+ * rejectQuery, but the returned message is always exactly this — server-side
+ * constant, never model-varied.
+ */
+export const WORKSPACE_REJECTION_MESSAGE = "query not about workspace building";
+
 export function extractBudgetIdr(prompt: string): number | null {
   const text = prompt.trim().toLowerCase();
 

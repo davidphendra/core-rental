@@ -32,7 +32,7 @@ interface DesignWithAIProps {
   catalog: readonly Product[];
 }
 
-type PanelStatus = "idle" | "loading" | "result" | "refusal" | "error";
+type PanelStatus = "idle" | "loading" | "result" | "refusal" | "rejected" | "error";
 
 type ExclusiveSlot = "coffeeSku" | "beanbagSku" | "lampSku" | "plantSku";
 
@@ -68,6 +68,7 @@ export function DesignWithAI({ catalog }: DesignWithAIProps) {
   const [status, setStatus] = useState<PanelStatus>("idle");
   const [design, setDesign] = useState<AiDesign | null>(null);
   const [refusal, setRefusal] = useState<RefusalInfo | null>(null);
+  const [rejection, setRejection] = useState<RefusalInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [confirming, setConfirming] = useState(false);
@@ -95,6 +96,7 @@ export function DesignWithAI({ catalog }: DesignWithAIProps) {
     setStep(0);
     setDesign(null);
     setRefusal(null);
+    setRejection(null);
     setError(null);
     setConfirming(false);
 
@@ -111,7 +113,7 @@ export function DesignWithAI({ catalog }: DesignWithAIProps) {
         signal: controller.signal,
       });
       const body = (await res.json().catch(() => null)) as
-        | { design?: AiDesign; refusal?: RefusalInfo; error?: string }
+        | { design?: AiDesign; refusal?: RefusalInfo; rejection?: RefusalInfo; error?: string }
         | null;
 
       if (res.ok && body?.design) {
@@ -120,6 +122,9 @@ export function DesignWithAI({ catalog }: DesignWithAIProps) {
       } else if (res.ok && body?.refusal) {
         setRefusal(body.refusal);
         setStatus("refusal");
+      } else if (res.ok && body?.rejection) {
+        setRejection(body.rejection);
+        setStatus("rejected");
       } else if (res.status === 429) {
         setError("Too many requests — wait a moment and try again.");
         setStatus("error");
@@ -299,9 +304,11 @@ export function DesignWithAI({ catalog }: DesignWithAIProps) {
           </div>
         )}
 
-        {status === "refusal" && refusal && (
+        {(status === "refusal" || status === "rejected") && (refusal ?? rejection) && (
           <div className="border-t border-outline-variant pt-3">
-            <p className="text-body-sm font-body-sm text-on-surface-variant">{refusal.message}</p>
+            <p className="text-body-sm font-body-sm text-on-surface-variant">
+              {(refusal ?? rejection)?.message}
+            </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Button variant="secondary" onClick={() => void generate()}>
                 Regenerate

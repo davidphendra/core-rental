@@ -2,6 +2,7 @@ import { generateText, tool } from "ai";
 import type { LanguageModel } from "ai";
 import { z } from "zod";
 
+import { WORKSPACE_REJECTION_MESSAGE } from "@/shared/domain/aiDesign";
 import { aiDesignInputSchema } from "@/shared/domain/aiDesignSchema";
 import type { Product } from "@/shared/types/product";
 
@@ -84,26 +85,44 @@ export function getSetupTotal(skus: string[], catalog: readonly Product[]): { to
 }
 
 function systemPrompt(catalog: readonly Product[], budget: number | null, feedback?: string): string {
-  const caps =
-    "The builder holds exactly ONE chair, ONE desk, up to THREE monitors, and at most one each of coffee, beanbag, lamp, plant. Empty slots are allowed.";
-  const workflow =
-    "Interpret the user's request, then call searchCatalog (per type) to find real products. Use getSetupTotal to check totals. Finally call finalizeDesign with the exact design schema. Never invent SKUs — only use what searchCatalog returned.";
-  const note =
-    "Best-fit + explain: if the request cannot fit the builder (e.g. 2 chairs, 4 monitors), adapt within the caps and explain in the note field what you did.";
-  const budgetLine = budget != null ? `A budget of Rp ${budget.toLocaleString("id-ID")} per month is stated — the total must fit it.` : "";
+  const budgetLine =
+    budget != null ? `A budget of Rp ${budget.toLocaleString("id-ID")} per month is stated — every combination must fit it.` : "";
   const feedbackLine = feedback ? `Previous attempt failed: ${feedback}` : "";
   return [
-    "You are the workspace designer for a Bali office-equipment rental service.",
-    `The catalog has ${catalog.length} products.`,
-    caps,
-    workflow,
-    note,
+    "You are the workspace designer for Core Rental, a Bali office-equipment rental service.",
+    `The catalog has ${catalog.length} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
+    "GATE: If the user's query is NOT about designing or building a workspace (weather, recipes, coding, travel, etc.), call rejectQuery immediately — do not search, do not design.",
+    "WORKFLOW:",
+    "1. For EACH product type — desk, chair, monitor, lamp, plant, bean bag, coffee machine — call searchCatalog with that type and the user's query. Rank the results by how well they match the query and keep the top 5 per type (at least 35 candidate products in total).",
+    "2. Build the top 3 combinations that best match the query. Each combination: exactly ONE desk and ONE chair, up to THREE monitors, and at most ONE each of lamp, plant, coffee machine, bean bag. Empty accessory slots are allowed.",
+    "3. Randomly pick ONE of the three combinations and submit it via finalizeDesign, with totalPerMonth computed via getSetupTotal and a short plain-language note explaining the pick.",
+    "CAPS: 1 desk, 1 chair, up to 3 monitors, at most 1 each of lamp/plant/coffee/bean bag. Never invent SKUs — only use products returned by searchCatalog.",
     budgetLine,
     feedbackLine,
     "Respond in the note field in plain language (max ~300 chars).",
   ]
     .filter(Boolean)
     .join(" ");
+}
+
+export type ResolvedToolOutcome =
+  | { kind: "rejection" }
+  | { kind: "design"; design: unknown }
+  | { kind: "none" };
+
+/**
+ * Which terminal tool did the model call? rejectQuery wins (the gate is
+ * definitive), then finalizeDesign. Extracted pure for testability.
+ */
+export function resolveToolOutcome(
+  toolResults: Array<{ toolName: string; args?: unknown }>,
+): ResolvedToolOutcome {
+  if (toolResults.some((r) => r.toolName === "rejectQuery")) return { kind: "rejection" };
+  const finalized = toolResults.find((r) => r.toolName === "finalizeDesign");
+  if (finalized && "args" in finalized) {
+    return { kind: "design", design: (finalized as { args: unknown }).args };
+  }
+  return { kind: "none" };
 }
 
 export function createLlmAdapter(model: LanguageModel, catalog: readonly Product[]): LlmAdapter {
@@ -132,14 +151,24 @@ export function createLlmAdapter(model: LanguageModel, catalog: readonly Product
             inputSchema: aiDesignInputSchema,
             execute: () => ({ accepted: true }),
           }),
+          rejectQuery: tool({
+            description:
+              "Call this when the user's query is NOT about designing or building a workspace. The request is rejected with a standardized message — no arguments needed",
+            inputSchema: z.object({}),
+            execute: () => ({ rejected: true }),
+          }),
         },
       });
 
-      const finalized = result.toolResults?.find((r) => r.toolName === "finalizeDesign");
-      if (finalized && "args" in finalized) {
-        return { kind: "design", design: (finalized as { args: unknown }).args };
+      const resolved = resolveToolOutcome(result.toolResults ?? []);
+      switch (resolved.kind) {
+        case "rejection":
+          return { kind: "rejection", message: WORKSPACE_REJECTION_MESSAGE };
+        case "design":
+          return { kind: "design", design: resolved.design };
+        default:
+          return { kind: "llm_error", message: "The model did not finalize a design. Try rewording your request." };
       }
-      return { kind: "llm_error", message: "The model did not finalize a design. Try rewording your request." };
     },
   };
 }

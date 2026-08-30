@@ -17,7 +17,10 @@ export interface LlmRunRequest {
   feedback?: string;
 }
 
-export type LlmRunResult = { kind: "design"; design: unknown } | { kind: "llm_error"; message: string };
+export type LlmRunResult =
+  | { kind: "design"; design: unknown }
+  | { kind: "rejection"; message: string }
+  | { kind: "llm_error"; message: string };
 
 export interface LlmAdapter {
   run(request: LlmRunRequest): Promise<LlmRunResult>;
@@ -26,6 +29,7 @@ export interface LlmAdapter {
 export type AiOutcome =
   | { kind: "design"; design: AiDesign }
   | { kind: "refusal"; message: string; cheapestTotal: number }
+  | { kind: "rejection"; message: string }
   | { kind: "error"; reason: "provider_error" | "invalid_output"; message: string };
 
 const MAX_ATTEMPTS = 2;
@@ -44,6 +48,9 @@ export async function runAiDesign(params: {
     const result = await llm.run({ prompt, budget, feedback });
     if (result.kind === "llm_error") {
       return { kind: "error", reason: "provider_error", message: result.message };
+    }
+    if (result.kind === "rejection") {
+      return { kind: "rejection", message: result.message }; // definitive gate — no retry
     }
 
     const validation = validateDesign(result.design, catalog, budget);

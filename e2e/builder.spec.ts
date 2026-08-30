@@ -306,6 +306,14 @@ test.describe("Design with AI (e10s02)", () => {
     await expect(page.getByText(/cheapest rentable setup/)).toBeVisible();
   });
 
+  test("an off-topic query is rejected with the standardized message", async ({ page }) => {
+    await stubAi(page, { rejection: { message: "query not about workspace building" } });
+    await page.goto("/builder");
+    await page.getByLabel("Describe your workspace").fill("what's the weather in Bali?");
+    await page.getByRole("button", { name: "Generate" }).click();
+    await expect(page.getByText("query not about workspace building")).toBeVisible();
+  });
+
   test("a disabled deployment surfaces an actionable message", async ({ page }) => {
     await stubAi(page, { error: "ai_disabled" }, 503);
     await page.goto("/builder");

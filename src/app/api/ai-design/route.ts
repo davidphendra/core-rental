@@ -97,6 +97,8 @@ export function createAiDesignHandler(deps: AiDesignHandlerDeps = {}) {
         return json({ design: outcome.design });
       case "refusal":
         return json({ refusal: { message: outcome.message, cheapestTotal: outcome.cheapestTotal } });
+      case "rejection":
+        return json({ rejection: { message: outcome.message } });
       case "error":
         return json(
           { error: outcome.reason, message: outcome.message },

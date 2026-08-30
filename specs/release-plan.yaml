@@ -7,7 +7,7 @@
 release:
   version: "1.12.0" # mirror of expected tag — semantic-release decides at merge
   codename: "AI Workspace Designer"
-  status: planning # planning | in_progress | released
+  status: released # planning | in_progress | released
   semantic_release: true
   bump_hint: minor # CI decides at merge
 
@@ -15,7 +15,7 @@ epics:
   - id: e10
     title: AI Workspace Designer
     wsjf: 6.0
-    capsule_dir: epics/e10-ai-designer
+    capsule_dir: epics/archive/e10-ai-designer
   - id: e09
     title: SKU System & Monitor Slots
     wsjf: 5.0

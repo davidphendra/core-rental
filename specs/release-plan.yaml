@@ -5,8 +5,8 @@
 # lives in specs/execution-status.yaml, never here.
 
 release:
-  version: "1.12.0" # mirror of expected tag — semantic-release decides at merge
-  codename: "AI Workspace Designer"
+  version: "1.13.0" # mirror of expected tag — semantic-release decides at merge
+  codename: "AI Designer: SubCategory Search & Speed"
   status: released # planning | in_progress | released
   semantic_release: true
   bump_hint: minor # CI decides at merge

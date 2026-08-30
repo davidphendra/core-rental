@@ -40,7 +40,7 @@ const designSchema = jsonSchema<Record<string, unknown>>({
     lampSku: { type: "string" },
     plantSku: { type: "string" },
     totalPerMonth: { type: "number" },
-    note: { type: "string" },
+    note: { type: "string", maxLength: 120 },
   },
 });
 
@@ -97,10 +97,11 @@ function systemPrompt(
     `The catalog has ${catalog.length} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
     "GATE: Only call rejectQuery for topics completely unrelated to workspaces or office furniture (e.g. weather, cooking, coding, travel). For anything about a workspace, office, desk, chair, study, gaming, or coffee setup — even vague ones — proceed with the workflow.",
     "WORKFLOW:",
-    "1. In your FIRST message, call searchCatalog for ALL 7 types IN PARALLEL — desk (category='desk'), chair (category='chair'), monitor/lamp/plant/coffee/beanbag (category='accessory' + subCategory). Every call returns candidates. After all 7 types have candidates, NEVER call searchCatalog again.",
+    "1. In your FIRST message, call searchCatalog EXACTLY 7 times — once per type, IN PARALLEL: desk (category='desk'), chair (category='chair'), monitor/lamp/plant/coffee/beanbag (category='accessory' + subCategory). Every call returns candidates. That is the ONLY searchCatalog batch — do NOT call searchCatalog again for any reason.",
     "2. Rank the candidates by how well they match the user's query and keep the top 2 per type (at least 14 candidate products in total).",
     "3. Build the top 3 combinations that best match the query. Each combination: exactly ONE desk and ONE chair, up to THREE monitors, and at most ONE each of lamp, plant, coffee machine, bean bag. Empty accessory slots are allowed.",
-    "4. Randomly pick ONE of the three combinations and submit it via finalizeDesign — include chairSku, deskSku, monitorSkus, the accessory skus, totalPerMonth (the server recomputes it), and a short plain-language note explaining the pick.",
+    "4. Randomly pick ONE of the three combinations and submit it via finalizeDesign — include chairSku, deskSku, monitorSkus, the accessory skus, totalPerMonth (the server recomputes it), and a short plain-language note (max ~120 chars) explaining the pick.",
+    "Do NOT write any text before or between tool calls — respond with tool calls ONLY. All explanation belongs in the finalizeDesign note.",
     "CAPS: 1 desk, 1 chair, up to 3 monitors, at most 1 each of lamp/plant/coffee/bean bag. Never invent SKUs — only use products returned by searchCatalog.",
     budgetLine,
     feedbackLine,
@@ -147,7 +148,7 @@ export function createLlmAdapter(model: LanguageModel, catalog: readonly Product
         tools: {
           searchCatalog: tool({
             description:
-              "Search the rental catalog by category (chair|desk|accessory) and/or subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory). Every call returns candidates — you do the query-relevance ranking",
+              "Search the rental catalog by category (chair|desk|accessory) and/or subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory). Every call returns candidates. Call it exactly ONCE per type (7 calls total, all in the first message) — you do the query-relevance ranking",
             inputSchema: searchParamsSchema,
             execute: (args) => searchCatalog(args, catalog),
           }),

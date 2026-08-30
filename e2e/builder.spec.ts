@@ -468,3 +468,52 @@ test.describe("Design with AI scenarios (e10)", () => {
     await expect(page.getByRole("main").getByAltText(desk.name).first()).toBeVisible();
   });
 });
+
+test.describe("Design with AI — real LLM (gated, e10)", () => {
+  const lmStudioBaseUrl = process.env.AI_BASE_URL ?? "http://localhost:8080/v1";
+
+  const lmReachable = async (): Promise<boolean> => {
+    try {
+      const res = await fetch(`${lmStudioBaseUrl}/models`, { signal: AbortSignal.timeout(3000) });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  };
+
+  test("'high gaming workspace under Rp 20 jt' returns a validated budget-compliant design", async ({
+    page,
+  }) => {
+    test.setTimeout(600_000); // the local model is slow (~minutes)
+    test.skip(
+      !(await lmReachable()),
+      "LM Studio not reachable — real-LLM scenario skipped (CI has none)",
+    );
+    // No route stub: the production server loads .env → AI enabled → the REAL model answers.
+    const res = await page.request.post("/api/ai-design", {
+      data: { prompt: "I look for high gaming workspace under Rp 20 jt" },
+    });
+    expect(res.status()).toBe(200);
+    const body = (await res.json()) as {
+      design?: {
+        chairSku?: string | null;
+        deskSku?: string | null;
+        monitorSkus?: string[];
+        totalPerMonth?: number;
+      };
+      rejection?: { message?: string };
+      refusal?: { message?: string };
+      error?: string;
+    };
+    expect(
+      body.design,
+      `expected a design — got ${JSON.stringify(body).slice(0, 200)}`,
+    ).toBeDefined();
+    const d = body.design as NonNullable<typeof body.design>;
+    expect(d.chairSku).toBeTruthy(); // seating required
+    expect(d.deskSku).toBeTruthy();
+    expect(d.monitorSkus?.length ?? 0).toBeLessThanOrEqual(3); // builder cap
+    expect(d.totalPerMonth).toBeGreaterThan(0);
+    expect(d.totalPerMonth as number).toBeLessThanOrEqual(20_000_000); // "under Rp 20 jt"
+  });
+});

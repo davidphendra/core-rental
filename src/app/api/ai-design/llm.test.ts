@@ -92,10 +92,18 @@ describe("resolveToolOutcome", () => {
     expect(r.kind).toBe("rejection");
   });
 
-  it("resolves a finalizeDesign call to a design", () => {
+  it("resolves a finalizeDesign call to a design (v7: args)", () => {
     const r = resolveToolOutcome([{ toolName: "finalizeDesign", args: { deskSku: "X" } }]);
     expect(r.kind).toBe("design");
     if (r.kind === "design") expect(r.design).toEqual({ deskSku: "X" });
+  });
+
+  it("resolves a finalizeDesign call to a design (v7: input — real ToolResult shape)", () => {
+    const r = resolveToolOutcome([
+      { toolName: "finalizeDesign", input: { deskSku: "X", totalPerMonth: 5 } },
+    ]);
+    expect(r.kind).toBe("design");
+    if (r.kind === "design") expect(r.design).toEqual({ deskSku: "X", totalPerMonth: 5 });
   });
 
   it("prefers rejectQuery when both terminal tools were called", () => {

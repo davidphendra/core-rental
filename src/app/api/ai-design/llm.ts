@@ -73,7 +73,7 @@ export interface CatalogHit {
 
 /**
  * Pure search over the committed catalog — a RETRIEVER: returns ALL matches
- * (no top-5 slice). Ranking to the top 5 per type is the LLM's job (user
+ * (no slice). Ranking to the top 2 per type is the LLM's job (user
  * ruling). subCategory implies accessory by construction (non-accessories have
  * subCategory null). Invalid enums match nothing → empty result, never a crash.
  */
@@ -131,7 +131,9 @@ function systemPrompt(
     `The catalog has ${catalog.length} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
     "GATE: Only call rejectQuery for topics completely unrelated to workspaces or office furniture (e.g. weather, cooking, coding, travel). For anything about a workspace, office, desk, chair, study, gaming, or coffee setup — even vague ones — proceed with the workflow.",
     "WORKFLOW:",
-    "1. For EACH product type — desk, chair, monitor, lamp, plant, bean bag, coffee machine — call searchCatalog with the matching filters and the user's query: desk → category='desk'; chair → category='chair'; monitor/lamp/plant/coffee/beanbag → category='accessory' + subCategory. searchCatalog returns ALL candidates — YOU rank them by how well they match the user's query and keep the top 5 per type (at least 35 candidate products in total).",
+    "1. For EACH product type — desk, chair, monitor, lamp, plant, bean bag, coffee machine do this process: ",
+    "   1.1. Call searchCatalog with the matching filters and the user's query: desk → category='desk'; chair → category='chair'; monitor/lamp/plant/coffee/beanbag → category='accessory' + subCategory. If a type search with the user's query returns an EMPTY list, call searchCatalog again for that type WITHOUT the query so it still yields candidates — never repeat a search that returned empty. ",
+    "   1.2. YOU rank them by how well they match the user's query and keep the top 2 per type (at least 14 candidate products in total).",
     "2. Build the top 3 combinations that best match the query. Each combination: exactly ONE desk and ONE chair, up to THREE monitors, and at most ONE each of lamp, plant, coffee machine, bean bag. Empty accessory slots are allowed.",
     "3. Randomly pick ONE of the three combinations and submit it via finalizeDesign, with totalPerMonth computed via getSetupTotal and a short plain-language note explaining the pick.",
     "CAPS: 1 desk, 1 chair, up to 3 monitors, at most 1 each of lamp/plant/coffee/bean bag. Never invent SKUs — only use products returned by searchCatalog.",
@@ -151,12 +153,15 @@ export type ResolvedToolOutcome =
  * definitive), then finalizeDesign. Extracted pure for testability.
  */
 export function resolveToolOutcome(
-  toolResults: Array<{ toolName: string; args?: unknown }>,
+  toolResults: Array<{ toolName: string; args?: unknown; input?: unknown }>,
 ): ResolvedToolOutcome {
   if (toolResults.some((r) => r.toolName === "rejectQuery")) return { kind: "rejection" };
   const finalized = toolResults.find((r) => r.toolName === "finalizeDesign");
-  if (finalized && "args" in finalized) {
-    return { kind: "design", design: (finalized as { args: unknown }).args };
+  if (finalized && ("input" in finalized || "args" in finalized)) {
+    // v7 ToolResult exposes the tool arguments as `input` (older SDKs: `args`).
+    const design =
+      (finalized as { input?: unknown }).input ?? (finalized as { args?: unknown }).args;
+    return { kind: "design", design };
   }
   return { kind: "none" };
 }
@@ -177,7 +182,7 @@ export function createLlmAdapter(model: LanguageModel, catalog: readonly Product
         tools: {
           searchCatalog: tool({
             description:
-              "Search the rental catalog. Filters: category (chair|desk|accessory), subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory), maxPrice, query. Returns ALL matching products — you must rank them and keep the top 5 per type",
+              "Search the rental catalog. Filters: category (chair|desk|accessory), subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory), maxPrice, query. Returns ALL matching products — you must rank them and keep the top 2 per type",
             inputSchema: searchParamsSchema,
             execute: (args) => searchCatalog(args, catalog),
           }),

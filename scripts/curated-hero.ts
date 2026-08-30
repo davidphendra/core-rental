@@ -12,6 +12,7 @@ export const HERO_PRODUCTS: Product[] = [
     skuNo: computeSku("CHA", "Uluwatu Chair"),
     name: "Uluwatu Chair",
     category: "chair",
+    subCategory: null,
     pricePerMonth: 450_000,
     description: "Light gray mesh ergonomic chair. Clean, modern, island-cafe approved.",
     image:
@@ -21,6 +22,7 @@ export const HERO_PRODUCTS: Product[] = [
     skuNo: computeSku("CHA", "Canggu Task"),
     name: "Canggu Task",
     category: "chair",
+    subCategory: null,
     pricePerMonth: 600_000,
     description:
       "Premium black ergonomic task chair with headrest. Built for long coding sessions.",
@@ -32,6 +34,7 @@ export const HERO_PRODUCTS: Product[] = [
     skuNo: computeSku("PLT", "Monstera Plant"),
     name: "Monstera Plant",
     category: "accessory",
+    subCategory: "plant",
     pricePerMonth: 200_000,
     description: "Breathe fresh island air into your setup. Low maintenance, high vibes.",
     image:
@@ -42,6 +45,7 @@ export const HERO_PRODUCTS: Product[] = [
     skuNo: computeSku("CFE", "Espresso Machine"),
     name: "Espresso Machine",
     category: "accessory",
+    subCategory: "coffee",
     pricePerMonth: 750_000,
     description: "Premium bean-to-cup machine. Keep your energy up for those long coding sessions.",
     image:
@@ -51,6 +55,7 @@ export const HERO_PRODUCTS: Product[] = [
     skuNo: computeSku("BBG", "Bean Bag Lounge"),
     name: "Bean Bag Lounge",
     category: "accessory",
+    subCategory: "beanbag",
     pricePerMonth: 350_000,
     description: "Perfect for brainstorming or a quick creative break away from the desk.",
     image:
@@ -60,6 +65,7 @@ export const HERO_PRODUCTS: Product[] = [
     skuNo: computeSku("PTN", "Motorcycle Rental"),
     name: "Motorcycle Rental",
     category: "partner",
+    subCategory: null,
     pricePerMonth: 1_500_000,
     description:
       "Your ticket to weekend adventures and quick cafe runs. Partner service — request only, not part of the setup total.",

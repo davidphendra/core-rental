@@ -26,7 +26,14 @@ describe("isValidCatalog contract guard (E2, threat model S1)", () => {
   it("accepts a valid catalog", () => {
     expect(
       isValidCatalog([
-        { skuNo: "CHAA1B2C3D4E", name: "A", pricePerMonth: 100, description: "d", image: "/x.svg" },
+        {
+          skuNo: "CHAA1B2C3D4E",
+          name: "A",
+          pricePerMonth: 100,
+          description: "d",
+          image: "/x.svg",
+          subCategory: null,
+        },
       ]),
     ).toBe(true);
   });

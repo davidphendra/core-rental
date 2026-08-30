@@ -10,6 +10,7 @@ const p = (skuNo: string, pricePerMonth = 100_000): Product => ({
   skuNo,
   name: skuNo,
   category: "accessory",
+  subCategory: null,
   pricePerMonth,
   description: "d",
   image: "/x.svg",
@@ -21,7 +22,13 @@ const MON = "MONA1B2C3D4E";
 const LMP = "LMPA1B2C3D4E";
 const CFE = "CFEA1B2C3D4E";
 
-const catalog: Product[] = [p(CHA, 500_000), p(DSK, 1_000_000), p(MON, 400_000), p(LMP, 150_000), p(CFE, 600_000)];
+const catalog: Product[] = [
+  p(CHA, 500_000),
+  p(DSK, 1_000_000),
+  p(MON, 400_000),
+  p(LMP, 150_000),
+  p(CFE, 600_000),
+];
 
 const DESIGN = {
   chairSku: CHA,
@@ -122,7 +129,9 @@ describe("DesignWithAI", () => {
   });
 
   it("shows an honest refusal with the message", async () => {
-    stubFetch(jsonResponse({ refusal: { message: "The cheapest rentable setup is Rp1.000.000." } }));
+    stubFetch(
+      jsonResponse({ refusal: { message: "The cheapest rentable setup is Rp1.000.000." } }),
+    );
     renderPanel();
     await typeAndGenerate("cheap setup");
     expect(await screen.findByText(/cheapest rentable setup/)).toBeInTheDocument();
@@ -145,7 +154,9 @@ describe("DesignWithAI", () => {
   it("recovers to idle when cancelled mid-generation", async () => {
     stubFetch(new Promise<Response>(() => {})); // never settles — generation stays in flight
     renderPanel();
-    fireEvent.change(screen.getByLabelText("Describe your workspace"), { target: { value: "hello" } });
+    fireEvent.change(screen.getByLabelText("Describe your workspace"), {
+      target: { value: "hello" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Generate" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument());
     await act(async () => {
@@ -156,7 +167,9 @@ describe("DesignWithAI", () => {
 
   it("never enables Generate for whitespace-only prompts", () => {
     renderPanel();
-    fireEvent.change(screen.getByLabelText("Describe your workspace"), { target: { value: "   " } });
+    fireEvent.change(screen.getByLabelText("Describe your workspace"), {
+      target: { value: "   " },
+    });
     expect(screen.getByRole("button", { name: "Generate" })).toBeDisabled();
   });
 });

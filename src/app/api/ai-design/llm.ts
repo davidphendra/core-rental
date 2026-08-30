@@ -2,7 +2,7 @@ import { generateText, hasToolCall, jsonSchema, tool } from "ai";
 import type { LanguageModel } from "ai";
 
 import { WORKSPACE_REJECTION_MESSAGE } from "@/shared/domain/aiDesign";
-import type { Product } from "@/shared/types/product";
+import type { Product, ProductSubCategory } from "@/shared/types/product";
 
 import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "./runAiDesign";
 
@@ -14,17 +14,6 @@ import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "./runAiDesign";
  * re-validates everything server-side (never trust the LLM, S4/S7).
  */
 
-/** sku-prefix lookup for the searchable product types. */
-const TYPE_PREFIX: Record<string, string> = {
-  chair: "CHA",
-  desk: "DSK",
-  monitor: "MON",
-  lamp: "LMP",
-  plant: "PLT",
-  coffee: "CFE",
-  beanbag: "BBG",
-};
-
 /**
  * llama.cpp-safe tool schemas (S2 wire compat): LM Studio's schema parser
  * rejects zod's generated keywords ($schema, additionalProperties, pattern,
@@ -35,13 +24,10 @@ const searchParamsSchema = jsonSchema<SearchCatalogArgs>({
   type: "object",
   properties: {
     query: { type: "string" },
-    type: {
-      type: "string",
-      enum: ["chair", "desk", "monitor", "lamp", "plant", "coffee", "beanbag"],
-    },
+    category: { type: "string", enum: ["chair", "desk", "accessory"] },
+    subCategory: { type: "string", enum: ["monitor", "lamp", "plant", "coffee", "beanbag"] },
     maxPrice: { type: "number" },
   },
-  required: ["type"],
 });
 
 const totalParamsSchema = jsonSchema<{ skus: string[] }>({
@@ -71,7 +57,10 @@ const rejectParamsSchema = jsonSchema<Record<string, never>>({ type: "object" })
 
 export interface SearchCatalogArgs {
   query?: string;
-  type?: "chair" | "desk" | "monitor" | "lamp" | "plant" | "coffee" | "beanbag";
+  /** Coarse category: chair | desk | accessory. */
+  category?: "chair" | "desk" | "accessory";
+  /** Fine type for accessories (subCategory implies accessory). */
+  subCategory?: ProductSubCategory;
   maxPrice?: number;
 }
 
@@ -82,13 +71,17 @@ export interface CatalogHit {
   description: string;
 }
 
-/** Pure search over the committed catalog — top 5 per type (user workflow:
- * "keep the top 5 per type"), descriptions trimmed to limit context bloat. */
+/**
+ * Pure search over the committed catalog — a RETRIEVER: returns ALL matches
+ * (no top-5 slice). Ranking to the top 5 per type is the LLM's job (user
+ * ruling). subCategory implies accessory by construction (non-accessories have
+ * subCategory null). Invalid enums match nothing → empty result, never a crash.
+ */
 export function searchCatalog(args: SearchCatalogArgs, catalog: readonly Product[]): CatalogHit[] {
   const query = args.query?.trim().toLowerCase();
-  const prefix = args.type ? TYPE_PREFIX[args.type] : undefined;
   const hits = catalog.filter((p) => {
-    if (prefix && !p.skuNo.startsWith(prefix)) return false;
+    if (args.category !== undefined && p.category !== args.category) return false;
+    if (args.subCategory !== undefined && p.subCategory !== args.subCategory) return false;
     if (args.maxPrice != null && p.pricePerMonth > args.maxPrice) return false;
     if (
       query &&
@@ -97,7 +90,7 @@ export function searchCatalog(args: SearchCatalogArgs, catalog: readonly Product
       return false;
     return true;
   });
-  return hits.slice(0, 5).map((p) => ({
+  return hits.map((p) => ({
     skuNo: p.skuNo,
     name: p.name,
     pricePerMonth: p.pricePerMonth,
@@ -138,7 +131,7 @@ function systemPrompt(
     `The catalog has ${catalog.length} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
     "GATE: Only call rejectQuery for topics completely unrelated to workspaces or office furniture (e.g. weather, cooking, coding, travel). For anything about a workspace, office, desk, chair, study, gaming, or coffee setup — even vague ones — proceed with the workflow.",
     "WORKFLOW:",
-    "1. For EACH product type — desk, chair, monitor, lamp, plant, bean bag, coffee machine — call searchCatalog with that type and the user's query. Rank the results by how well they match the query and keep the top 5 per type (at least 35 candidate products in total).",
+    "1. For EACH product type — desk, chair, monitor, lamp, plant, bean bag, coffee machine — call searchCatalog with the matching filters and the user's query: desk → category='desk'; chair → category='chair'; monitor/lamp/plant/coffee/beanbag → category='accessory' + subCategory. searchCatalog returns ALL candidates — YOU rank them by how well they match the user's query and keep the top 5 per type (at least 35 candidate products in total).",
     "2. Build the top 3 combinations that best match the query. Each combination: exactly ONE desk and ONE chair, up to THREE monitors, and at most ONE each of lamp, plant, coffee machine, bean bag. Empty accessory slots are allowed.",
     "3. Randomly pick ONE of the three combinations and submit it via finalizeDesign, with totalPerMonth computed via getSetupTotal and a short plain-language note explaining the pick.",
     "CAPS: 1 desk, 1 chair, up to 3 monitors, at most 1 each of lamp/plant/coffee/bean bag. Never invent SKUs — only use products returned by searchCatalog.",
@@ -184,7 +177,7 @@ export function createLlmAdapter(model: LanguageModel, catalog: readonly Product
         tools: {
           searchCatalog: tool({
             description:
-              "Search the rental catalog for products matching a query and/or a product type. Use it once per type (desk, chair, monitor, lamp, plant, coffee, beanbag) with the user's query and keep the top 5 matches per type",
+              "Search the rental catalog. Filters: category (chair|desk|accessory), subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory), maxPrice, query. Returns ALL matching products — you must rank them and keep the top 5 per type",
             inputSchema: searchParamsSchema,
             execute: (args) => searchCatalog(args, catalog),
           }),

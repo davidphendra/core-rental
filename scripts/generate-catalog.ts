@@ -157,6 +157,7 @@ function buildFromTemplate(
       category,
       pricePerMonth: template.priceMin + i * template.priceStep,
       description: template.description(name),
+      subCategory: null, // chair/desk have no sub-category
       image: heroSkus.has(skuNo) ? "" : `/placeholders/${category}-${slugify(name)}.svg`,
     };
   });
@@ -181,6 +182,7 @@ function buildAccessories(heroSkus: Set<string>): Product[] {
         category: "accessory",
         pricePerMonth: template.priceMin + i * template.priceStep,
         description: template.description(itemName),
+        subCategory: name, // the cap-key IS the sub-category (monitor/lamp/plant/coffee/beanbag)
         image: heroSkus.has(skuNo) ? "" : `/placeholders/accessory-${slugify(itemName)}.svg`,
       });
     }

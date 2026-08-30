@@ -8,6 +8,7 @@ const product: Product = {
   skuNo: "chair-1",
   name: "Uluwatu Chair",
   category: "chair",
+  subCategory: null,
   pricePerMonth: 450_000,
   description: "Mesh ergonomic chair.",
   image: "https://lh3.googleusercontent.com/aida-public/example",

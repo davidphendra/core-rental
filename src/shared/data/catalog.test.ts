@@ -5,7 +5,9 @@ import { describe, expect, it } from "vitest";
 
 import { buildCatalog, placeholderSvg } from "../../../scripts/generate-catalog";
 import { HERO_PRODUCTS } from "../../../scripts/curated-hero";
+import { capKeyForProduct } from "../domain/setupRules";
 import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from "../types/product";
+import { isProduct, isValidCatalog } from "./products";
 
 const committed = JSON.parse(
   readFileSync(join(process.cwd(), "src/shared/data/products.json"), "utf8"),
@@ -111,5 +113,36 @@ describe("placeholderSvg (decision #31)", () => {
     expect(placeholderSvg({ ...sample, name: "<script>alert(1)</script>" })).not.toContain(
       "<script>",
     );
+  });
+});
+
+describe("subCategory (e10 feature)", () => {
+  it("every product has subCategory matching its sku prefix (cap key)", () => {
+    const valid = isValidCatalog(committed);
+    expect(valid).toBe(true);
+    for (const p of committed) {
+      expect(p.subCategory).toBe(capKeyForProduct(p));
+    }
+  });
+
+  it("accessories carry one of the five sub-categories; chair/desk/partner are null", () => {
+    for (const p of committed) {
+      if (p.category === "accessory") {
+        expect(["monitor", "lamp", "plant", "coffee", "beanbag"]).toContain(p.subCategory);
+      } else {
+        expect(p.subCategory).toBeNull();
+      }
+    }
+  });
+
+  it("rejects a product whose subCategory disagrees with its sku prefix", () => {
+    const tampered = { ...committed[0], subCategory: "monitor" }; // chair with a monitor sub
+    expect(isProduct(tampered)).toBe(false);
+    expect(isValidCatalog([...committed.slice(1), tampered])).toBe(false);
+  });
+
+  it("rejects an unknown subCategory value", () => {
+    const tampered = { ...committed[0], subCategory: "sofa" };
+    expect(isProduct(tampered)).toBe(false);
   });
 });

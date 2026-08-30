@@ -9,29 +9,48 @@ import { getSetupTotal, resolveToolOutcome, searchCatalog } from "./llm";
 const catalog = catalogJson as unknown as readonly Product[];
 
 describe("searchCatalog", () => {
-  it("returns up to 8 hits matching a free-text query", () => {
+  it("returns ALL matches for a free-text query (the LLM ranks top 5)", () => {
     const hits = searchCatalog({ query: "gaming" }, catalog);
     expect(hits.length).toBeGreaterThan(0);
-    expect(hits.length).toBeLessThanOrEqual(8);
     for (const h of hits) {
       const text = `${h.name} ${h.description}`.toLowerCase();
       expect(text).toContain("gaming");
     }
   });
 
-  it("filters by product type via the sku prefix", () => {
-    const monitors = searchCatalog({ type: "monitor" }, catalog);
+  it("filters by category", () => {
+    const chairs = searchCatalog({ category: "chair" }, catalog);
+    expect(chairs.length).toBeGreaterThan(0);
+    for (const h of chairs) expect(h.skuNo.startsWith("CHA")).toBe(true);
+    const desks = searchCatalog({ category: "desk" }, catalog);
+    expect(desks.length).toBeGreaterThan(0);
+    for (const h of desks) expect(h.skuNo.startsWith("DSK")).toBe(true);
+  });
+
+  it("filters accessories by subCategory with loose pairing (no category needed)", () => {
+    const monitors = searchCatalog({ subCategory: "monitor" }, catalog);
     expect(monitors.length).toBeGreaterThan(0);
     for (const h of monitors) expect(h.skuNo.startsWith("MON")).toBe(true);
   });
 
+  it("combines category and subCategory", () => {
+    const lamps = searchCatalog({ category: "accessory", subCategory: "lamp" }, catalog);
+    expect(lamps.length).toBeGreaterThan(0);
+    for (const h of lamps) expect(h.skuNo.startsWith("LMP")).toBe(true);
+  });
+
+  it("returns the full catalog when no filters are given", () => {
+    expect(searchCatalog({}, catalog).length).toBe(catalog.length);
+  });
+
   it("respects a maxPrice ceiling", () => {
-    const hits = searchCatalog({ type: "chair", maxPrice: 500_000 }, catalog);
+    const hits = searchCatalog({ category: "chair", maxPrice: 500_000 }, catalog);
     for (const h of hits) expect(h.pricePerMonth).toBeLessThanOrEqual(500_000);
   });
 
-  it("returns an empty list when nothing matches", () => {
+  it("returns an empty list when nothing matches, including invalid enums", () => {
     expect(searchCatalog({ query: "zzz-nothing-matches" }, catalog)).toEqual([]);
+    expect(searchCatalog({ subCategory: "sofa" as never }, catalog)).toEqual([]);
   });
 });
 
@@ -51,10 +70,12 @@ describe("getSetupTotal", () => {
 });
 
 describe("catalog fixture sanity", () => {
-  it("has products for every searchable type", () => {
-    const types = ["chair", "desk", "monitor", "lamp", "plant", "coffee", "beanbag"] as const;
-    for (const t of types) {
-      expect(searchCatalog({ type: t }, catalog).length).toBeGreaterThan(0);
+  it("has products for every category and sub-category", () => {
+    for (const c of ["chair", "desk", "accessory"] as const) {
+      expect(searchCatalog({ category: c }, catalog).length).toBeGreaterThan(0);
+    }
+    for (const s of ["monitor", "lamp", "plant", "coffee", "beanbag"] as const) {
+      expect(searchCatalog({ subCategory: s }, catalog).length).toBeGreaterThan(0);
     }
   });
 

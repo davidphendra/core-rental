@@ -8,18 +8,7 @@ import { resolveToolOutcome, searchCatalog } from "./llm";
 
 const catalog = catalogJson as unknown as readonly Product[];
 
-describe("searchCatalog", () => {
-  it("returns up to 8 lean matches for a free-text query (retriever, LLM ranks)", () => {
-    const hits = searchCatalog({ query: "gaming" }, catalog);
-    expect(hits.length).toBeGreaterThan(0);
-    expect(hits.length).toBeLessThanOrEqual(8);
-    for (const h of hits) {
-      const text = `${h.name} ${h.description}`.toLowerCase();
-      expect(text).toContain("gaming");
-      expect(h.description.length).toBeLessThanOrEqual(60);
-    }
-  });
-
+describe("searchCatalog (category/subCategory retriever only)", () => {
   it("filters by category", () => {
     const chairs = searchCatalog({ category: "chair" }, catalog);
     expect(chairs.length).toBeGreaterThan(0);
@@ -41,19 +30,23 @@ describe("searchCatalog", () => {
     for (const h of lamps) expect(h.skuNo.startsWith("LMP")).toBe(true);
   });
 
-  it("returns up to 8 candidates when no filters are given (lean retriever)", () => {
+  it("never returns empty for any valid category/subCategory combination", () => {
+    for (const c of ["chair", "desk", "accessory"] as const) {
+      expect(searchCatalog({ category: c }, catalog).length).toBeGreaterThan(0);
+    }
+    for (const sub of ["monitor", "lamp", "plant", "coffee", "beanbag"] as const) {
+      expect(searchCatalog({ subCategory: sub }, catalog).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("returns up to 8 lean candidates when no filters are given", () => {
     const all = searchCatalog({}, catalog);
     expect(all.length).toBeGreaterThan(0);
     expect(all.length).toBeLessThanOrEqual(8);
+    for (const h of all) expect(h.description.length).toBeLessThanOrEqual(60);
   });
 
-  it("respects a maxPrice ceiling", () => {
-    const hits = searchCatalog({ category: "chair", maxPrice: 500_000 }, catalog);
-    for (const h of hits) expect(h.pricePerMonth).toBeLessThanOrEqual(500_000);
-  });
-
-  it("returns an empty list when nothing matches, including invalid enums", () => {
-    expect(searchCatalog({ query: "zzz-nothing-matches" }, catalog)).toEqual([]);
+  it("returns an empty list only for invalid enums", () => {
     expect(searchCatalog({ subCategory: "sofa" as never }, catalog)).toEqual([]);
   });
 });

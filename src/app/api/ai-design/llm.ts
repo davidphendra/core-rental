@@ -24,10 +24,8 @@ import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "./runAiDesign";
 const searchParamsSchema = jsonSchema<SearchCatalogArgs>({
   type: "object",
   properties: {
-    query: { type: "string" },
     category: { type: "string", enum: ["chair", "desk", "accessory"] },
     subCategory: { type: "string", enum: ["monitor", "lamp", "plant", "coffee", "beanbag"] },
-    maxPrice: { type: "number" },
   },
 });
 
@@ -49,12 +47,10 @@ const designSchema = jsonSchema<Record<string, unknown>>({
 const rejectParamsSchema = jsonSchema<Record<string, never>>({ type: "object" });
 
 export interface SearchCatalogArgs {
-  query?: string;
   /** Coarse category: chair | desk | accessory. */
   category?: "chair" | "desk" | "accessory";
   /** Fine type for accessories (subCategory implies accessory). */
   subCategory?: ProductSubCategory;
-  maxPrice?: number;
 }
 
 export interface CatalogHit {
@@ -65,24 +61,17 @@ export interface CatalogHit {
 }
 
 /**
- * Pure search over the committed catalog — a RETRIEVER (ranking to the top 2
- * per type is the LLM's job). For speed the payload is lean: at most 8 hits
- * per search, descriptions trimmed to 60 chars (context stays small so model
- * roundtrips stay fast). subCategory implies accessory by construction
- * (non-accessories have subCategory null). Invalid enums match nothing → empty
- * result, never a crash.
+ * Pure category/subCategory retriever (user ruling: the query filter was
+ * useless — the LLM does all semantic matching/ranking). Every valid combo is
+ * guaranteed non-empty (each type has 6–10 products; subCategory implies
+ * accessory by construction). Lean payload: ≤8 hits, 60-char descriptions, so
+ * model roundtrips stay fast. Invalid enums match nothing → empty, never a
+ * crash.
  */
 export function searchCatalog(args: SearchCatalogArgs, catalog: readonly Product[]): CatalogHit[] {
-  const query = args.query?.trim().toLowerCase();
   const hits = catalog.filter((p) => {
     if (args.category !== undefined && p.category !== args.category) return false;
     if (args.subCategory !== undefined && p.subCategory !== args.subCategory) return false;
-    if (args.maxPrice != null && p.pricePerMonth > args.maxPrice) return false;
-    if (
-      query &&
-      !(p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query))
-    )
-      return false;
     return true;
   });
   return hits.slice(0, 8).map((p) => ({
@@ -108,7 +97,7 @@ function systemPrompt(
     `The catalog has ${catalog.length} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
     "GATE: Only call rejectQuery for topics completely unrelated to workspaces or office furniture (e.g. weather, cooking, coding, travel). For anything about a workspace, office, desk, chair, study, gaming, or coffee setup — even vague ones — proceed with the workflow.",
     "WORKFLOW:",
-    "1. In your FIRST message, call searchCatalog for ALL 7 types IN PARALLEL — desk (category='desk'), chair (category='chair'), monitor/lamp/plant/coffee/beanbag (category='accessory' + subCategory) — each with the user's query. If a type returns an EMPTY list, retry that one type WITHOUT the query immediately. After all 7 types have candidates, NEVER call searchCatalog again.",
+    "1. In your FIRST message, call searchCatalog for ALL 7 types IN PARALLEL — desk (category='desk'), chair (category='chair'), monitor/lamp/plant/coffee/beanbag (category='accessory' + subCategory). Every call returns candidates. After all 7 types have candidates, NEVER call searchCatalog again.",
     "2. Rank the candidates by how well they match the user's query and keep the top 2 per type (at least 14 candidate products in total).",
     "3. Build the top 3 combinations that best match the query. Each combination: exactly ONE desk and ONE chair, up to THREE monitors, and at most ONE each of lamp, plant, coffee machine, bean bag. Empty accessory slots are allowed.",
     "4. Randomly pick ONE of the three combinations and submit it via finalizeDesign — include chairSku, deskSku, monitorSkus, the accessory skus, totalPerMonth (the server recomputes it), and a short plain-language note explaining the pick.",
@@ -158,7 +147,7 @@ export function createLlmAdapter(model: LanguageModel, catalog: readonly Product
         tools: {
           searchCatalog: tool({
             description:
-              "Search the rental catalog. Filters: category (chair|desk|accessory), subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory), maxPrice, query. Returns ALL matching products — you must rank them and keep the top 2 per type",
+              "Search the rental catalog by category (chair|desk|accessory) and/or subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory). Every call returns candidates — you do the query-relevance ranking",
             inputSchema: searchParamsSchema,
             execute: (args) => searchCatalog(args, catalog),
           }),

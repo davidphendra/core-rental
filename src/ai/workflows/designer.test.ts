@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { cheapestRentableTotal } from "@/shared/domain/aiDesignSchema";
 import { formatIdr } from "@/shared/domain/pricing";
 
-import catalogJson from "../../../shared/data/products.json";
+import catalogJson from "../../shared/data/products.json";
 
 import {
   runAiDesign,

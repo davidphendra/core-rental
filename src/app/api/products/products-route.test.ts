@@ -4,6 +4,8 @@ import { GET } from "./route";
 import { isProduct, isValidCatalog } from "@/shared/data/products";
 import { PRODUCT_CATEGORIES } from "@/shared/types/product";
 
+const url = (query: string) => new Request(`http://localhost/api/products${query}`);
+
 describe("GET /api/products (decision #25, E2)", () => {
   it("returns the committed catalog with 200", async () => {
     const res = await GET();
@@ -19,6 +21,74 @@ describe("GET /api/products (decision #25, E2)", () => {
       expect(isProduct(p)).toBe(true);
       expect(PRODUCT_CATEGORIES).toContain(p.category);
     }
+  });
+});
+
+describe("GET /api/products?category= (v1.14.0 backend filtering)", () => {
+  it("filters to the requested category only", async () => {
+    const res = await GET(url("?category=desk"));
+    expect(res.status).toBe(200);
+    const data = (await res.json()) as Array<Record<string, unknown>>;
+    expect(data.length).toBeGreaterThan(0);
+    for (const p of data) {
+      expect(p.category).toBe("desk");
+    }
+  });
+
+  it("serves chairs and accessories too", async () => {
+    for (const category of ["chair", "accessory"]) {
+      const data = (await (await GET(url(`?category=${category}`))).json()) as Array<
+        Record<string, unknown>
+      >;
+      expect(data.length).toBeGreaterThan(0);
+      for (const p of data) expect(p.category).toBe(category);
+    }
+  });
+
+  it("rejects an unknown category with 400 and no internals", async () => {
+    const res = await GET(url("?category=sofa"));
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(body.error).toBeTypeOf("string");
+    expect(JSON.stringify(body)).not.toMatch(/stack|at |internal/i);
+  });
+});
+
+describe("GET /api/products?q= (v1.14.0 keyword filter)", () => {
+  it("returns only products whose name or description matches (case-insensitive)", async () => {
+    const all = (await (await GET()).json()) as Array<Record<string, unknown>>;
+    const res = await GET(url("?q=gaming"));
+    const data = (await res.json()) as Array<Record<string, unknown>>;
+    expect(data.length).toBeGreaterThan(0);
+    expect(data.length).toBeLessThan(all.length);
+    for (const p of data) {
+      const haystack = `${String(p.name)} ${String(p.description)}`.toLowerCase();
+      expect(haystack).toContain("gaming");
+    }
+  });
+
+  it("combines category and q", async () => {
+    const res = await GET(url("?category=accessory&q=gaming"));
+    const data = (await res.json()) as Array<Record<string, unknown>>;
+    for (const p of data) {
+      expect(p.category).toBe("accessory");
+      const haystack = `${String(p.name)} ${String(p.description)}`.toLowerCase();
+      expect(haystack).toContain("gaming");
+    }
+  });
+
+  it("treats whitespace-only q as no filter", async () => {
+    const all = (await (await GET()).json()) as Array<Record<string, unknown>>;
+    const res = await GET(url("?q=%20%20"));
+    const data = (await res.json()) as Array<Record<string, unknown>>;
+    expect(data.length).toBe(all.length);
+  });
+
+  it("returns an empty list (200) when nothing matches", async () => {
+    const res = await GET(url("?q=zzzzzzzzzzz"));
+    expect(res.status).toBe(200);
+    const data = (await res.json()) as unknown[];
+    expect(data).toEqual([]);
   });
 });
 

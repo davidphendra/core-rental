@@ -1,27 +1,12 @@
 import { capKeyForProduct } from "../domain/setupRules";
 import type { Product } from "../types/product";
 import { PRODUCT_SUB_CATEGORIES, SKU_PATTERN, type ProductSubCategory } from "../types/product";
-import catalogJson from "./products.json";
 
 /** TanStack Query key for the catalog (single source, cached across navigation). */
 export const productsQueryKey = ["products"] as const;
 
 /** Client-side staleness for the catalog (decision #25). */
 export const productsStaleTime = 5 * 60 * 1000;
-
-/**
- * Server-safe catalog read for server components (decision #25: home stays a
- * server component). Falls back to an empty list on an invalid committed
- * catalog (the API route still 500s on the same condition — E2).
- */
-let cachedCatalog: readonly Product[] | null = null;
-
-export function getCatalog(): readonly Product[] {
-  if (cachedCatalog === null) {
-    cachedCatalog = isValidCatalog(catalogJson) ? catalogJson : [];
-  }
-  return cachedCatalog;
-}
 
 export function isProduct(value: unknown): value is Product {
   if (typeof value !== "object" || value === null) {

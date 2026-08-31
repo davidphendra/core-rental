@@ -2,6 +2,7 @@ import { generateText, hasToolCall, jsonSchema, tool } from "ai";
 import type { LanguageModel } from "ai";
 
 import { WORKSPACE_REJECTION_MESSAGE } from "@/shared/domain/aiDesign";
+import { matchesCategoryFilter } from "@/shared/domain/catalogFilter";
 import type { Product, ProductSubCategory } from "@/shared/types/product";
 
 import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "./runAiDesign";
@@ -69,11 +70,7 @@ export interface CatalogHit {
  * crash.
  */
 export function searchCatalog(args: SearchCatalogArgs, catalog: readonly Product[]): CatalogHit[] {
-  const hits = catalog.filter((p) => {
-    if (args.category !== undefined && p.category !== args.category) return false;
-    if (args.subCategory !== undefined && p.subCategory !== args.subCategory) return false;
-    return true;
-  });
+  const hits = catalog.filter((p) => matchesCategoryFilter(p, args));
   return hits.slice(0, 8).map((p) => ({
     skuNo: p.skuNo,
     name: p.name,

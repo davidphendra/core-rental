@@ -1,9 +1,16 @@
 import react from "@vitejs/plugin-react";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  resolve: {
+    alias: {
+      // server-only (v1.14.0) throws outside a bundler; tests get an empty stub.
+      "server-only": fileURLToPath(new URL("./src/test/server-only-stub.ts", import.meta.url)),
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true, // enables @testing-library/react auto-cleanup between tests

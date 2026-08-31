@@ -13,6 +13,29 @@ const committed = JSON.parse(
   readFileSync(join(process.cwd(), "src/shared/data/products.json"), "utf8"),
 ) as Product[];
 
+describe("products.json isolation (v1.14.0)", () => {
+  it("client-safe module (products.ts) imports no products.json", () => {
+    const src = readFileSync(join(process.cwd(), "src/shared/data/products.ts"), "utf8");
+    expect(src).not.toMatch(/products\.json/);
+  });
+
+  it("catalog.server.ts is the only frontend-adjacent JSON importer, server-only guarded", () => {
+    const src = readFileSync(join(process.cwd(), "src/shared/data/catalog.server.ts"), "utf8");
+    expect(src).toMatch(/["']server-only["']/);
+    expect(src).toMatch(/products\.json/);
+  });
+
+  it("browser data hooks import only the client-safe module, never catalog.server", () => {
+    const hookSrc = readFileSync(join(process.cwd(), "src/shared/data/useProducts.ts"), "utf8");
+    expect(hookSrc).not.toMatch(/catalog\.server|products\.json/);
+    const viewSrc = readFileSync(
+      join(process.cwd(), "src/shared/data/useProductsByCategory.ts"),
+      "utf8",
+    );
+    expect(viewSrc).not.toMatch(/catalog\.server|products\.json/);
+  });
+});
+
 /** e09 contract: 3-letter code + 9 alnum chars, uppercase. */
 const SKU_PATTERN = /^[A-Z]{3}[A-Z0-9]{9}$/;
 const KNOWN_CODES = new Set(["CHA", "DSK", "MON", "LMP", "PLT", "CFE", "BBG", "EXT", "PTN"]);

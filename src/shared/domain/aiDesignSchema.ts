@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { SKU_CODE_TO_CAP, type CapKey } from "./setupRules";
 import type { Product } from "../types/product";
 import { SKU_PATTERN } from "../types/product";
 
@@ -85,22 +86,27 @@ export function validateDesign(
     }
   };
 
+  // Slot→prefix mapping. The five accessory prefixes derive from the single
+  // source of truth (setupRules.SKU_CODE_TO_CAP); chair/desk are explicit —
+  // they are single-select (no cap key, #10) and appear only in this contract.
+  const codeForCap = (cap: CapKey): string =>
+    Object.entries(SKU_CODE_TO_CAP).find(([, key]) => key === cap)?.[0] ?? "";
   const slots: Array<{
     key: "chairSku" | "deskSku" | "coffeeSku" | "beanbagSku" | "lampSku" | "plantSku";
     prefix: string;
   }> = [
     { key: "chairSku", prefix: "CHA" },
     { key: "deskSku", prefix: "DSK" },
-    { key: "coffeeSku", prefix: "CFE" },
-    { key: "beanbagSku", prefix: "BBG" },
-    { key: "lampSku", prefix: "LMP" },
-    { key: "plantSku", prefix: "PLT" },
+    { key: "coffeeSku", prefix: codeForCap("coffee") },
+    { key: "beanbagSku", prefix: codeForCap("beanbag") },
+    { key: "lampSku", prefix: codeForCap("lamp") },
+    { key: "plantSku", prefix: codeForCap("plant") },
   ];
   for (const { key, prefix } of slots) {
     const sku = d[key];
     if (sku != null) checkSku(sku, prefix, key);
   }
-  for (const sku of d.monitorSkus ?? []) checkSku(sku, "MON", "monitorSkus");
+  for (const sku of d.monitorSkus ?? []) checkSku(sku, codeForCap("monitor"), "monitorSkus");
 
   if (errors.length > 0) return { ok: false, errors, overBudget: false };
 

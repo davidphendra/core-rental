@@ -1,10 +1,9 @@
 import type { LanguageModel } from "ai";
 
+import { getCatalog } from "@/shared/data/catalog.server";
 import { extractBudgetIdr } from "@/shared/domain/aiDesign";
 import { logger } from "@/shared/observability/logger";
 import type { Product } from "@/shared/types/product";
-
-import catalogJson from "../../../shared/data/products.json";
 
 import { rateLimitAllowed } from "./guardrails";
 import { createLlmAdapter } from "./llm";
@@ -41,7 +40,7 @@ export interface AiDesignHandlerDeps {
 }
 
 export function createAiDesignHandler(deps: AiDesignHandlerDeps = {}) {
-  const catalog: readonly Product[] = deps.catalog ?? (catalogJson as readonly Product[]);
+  const catalog: readonly Product[] = deps.catalog ?? getCatalog();
   const createModel = deps.createModel ?? createAiModel;
   const allowRequest = deps.allowRequest ?? rateLimitAllowed;
 
@@ -96,7 +95,9 @@ export function createAiDesignHandler(deps: AiDesignHandlerDeps = {}) {
       case "design":
         return json({ design: outcome.design });
       case "refusal":
-        return json({ refusal: { message: outcome.message, cheapestTotal: outcome.cheapestTotal } });
+        return json({
+          refusal: { message: outcome.message, cheapestTotal: outcome.cheapestTotal },
+        });
       case "rejection":
         return json({ rejection: { message: outcome.message } });
       case "error":

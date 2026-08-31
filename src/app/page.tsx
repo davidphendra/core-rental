@@ -1,4 +1,4 @@
-import { getCatalog } from "@/shared/data/products";
+import { getCatalog } from "@/shared/data/catalog.server";
 import { BottomNav } from "@/shared/ui/BottomNav";
 import { SiteHeader } from "@/shared/ui/SiteHeader";
 

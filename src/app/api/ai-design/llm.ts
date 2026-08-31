@@ -2,34 +2,16 @@ import { generateText, hasToolCall, jsonSchema, tool } from "ai";
 import type { LanguageModel } from "ai";
 
 import { WORKSPACE_REJECTION_MESSAGE } from "@/shared/domain/aiDesign";
+import { searchCatalog, searchParamsSchema, type SearchCatalogArgs } from "@/ai/tools/search";
 import { matchesCategoryFilter } from "@/shared/domain/catalogFilter";
 import type { Product, ProductSubCategory } from "@/shared/types/product";
 
 import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/workflows/designer";
 
 /**
- * e10: default LLM adapter — wires the Vercel AI SDK (generateText + tools) to
- * the injectable LlmAdapter contract. The model discovers products through
- * searchCatalog (pure-tool discovery, decision 3) and submits via
- * finalizeDesign; the orchestrator still re-validates everything server-side
- * (never trust the LLM, S4/S7) — totals are recomputed from real prices, so
- * no getSetupTotal roundtrip is needed (removed for speed).
+ * llama.cpp-safe schemas for the terminal tools (see tools/search.ts for the
+ * retriever schema). Steer the model only — strict validation is server-side.
  */
-
-/**
- * llama.cpp-safe tool schemas (S2 wire compat): LM Studio's schema parser
- * rejects zod's generated keywords ($schema, additionalProperties, pattern,
- * maxItems, anyOf). These minimal JSON schemas only steer the model — strict
- * validation happens server-side in validateDesign.
- */
-const searchParamsSchema = jsonSchema<SearchCatalogArgs>({
-  type: "object",
-  properties: {
-    category: { type: "string", enum: ["chair", "desk", "accessory"] },
-    subCategory: { type: "string", enum: ["monitor", "lamp", "plant", "coffee", "beanbag"] },
-  },
-});
-
 const designSchema = jsonSchema<Record<string, unknown>>({
   type: "object",
   properties: {
@@ -47,38 +29,21 @@ const designSchema = jsonSchema<Record<string, unknown>>({
 
 const rejectParamsSchema = jsonSchema<Record<string, never>>({ type: "object" });
 
-export interface SearchCatalogArgs {
-  /** Coarse category: chair | desk | accessory. */
-  category?: "chair" | "desk" | "accessory";
-  /** Fine type for accessories (subCategory implies accessory). */
-  subCategory?: ProductSubCategory;
-}
-
-export interface CatalogHit {
-  skuNo: string;
-  name: string;
-  pricePerMonth: number;
-  description: string;
-}
+/**
+ * e10: default LLM adapter — wires the Vercel AI SDK (generateText + tools) to
+ * the injectable LlmAdapter contract. The model discovers products through
+ * searchCatalog (pure-tool discovery, decision 3) and submits via
+ * finalizeDesign; the orchestrator still re-validates everything server-side
+ * (never trust the LLM, S4/S7) — totals are recomputed from real prices, so
+ * no getSetupTotal roundtrip is needed (removed for speed).
+ */
 
 /**
- * Pure category/subCategory retriever (user ruling: the query filter was
- * useless — the LLM does all semantic matching/ranking). Every valid combo is
- * guaranteed non-empty (each type has 6–10 products; subCategory implies
- * accessory by construction). Lean payload: ≤8 hits, 60-char descriptions, so
- * model roundtrips stay fast. Invalid enums match nothing → empty, never a
- * crash.
+ * llama.cpp-safe tool schemas (S2 wire compat): LM Studio's schema parser
+ * rejects zod's generated keywords ($schema, additionalProperties, pattern,
+ * maxItems, anyOf). These minimal JSON schemas only steer the model — strict
+ * validation happens server-side in validateDesign.
  */
-export function searchCatalog(args: SearchCatalogArgs, catalog: readonly Product[]): CatalogHit[] {
-  const hits = catalog.filter((p) => matchesCategoryFilter(p, args));
-  return hits.slice(0, 8).map((p) => ({
-    skuNo: p.skuNo,
-    name: p.name,
-    pricePerMonth: p.pricePerMonth,
-    description: p.description.length > 60 ? `${p.description.slice(0, 57)}…` : p.description,
-  }));
-}
-
 function systemPrompt(
   catalog: readonly Product[],
   budget: number | null,

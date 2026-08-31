@@ -10,6 +10,8 @@ export type LogEventName =
   | "delivery.submitted"
   | "catalog.loaded"
   | "catalog.failed"
+  | "catalog.view.loaded"
+  | "catalog.view.failed"
   | "storage.degraded"
   | "validation.rejected"
   | "error.boundary"

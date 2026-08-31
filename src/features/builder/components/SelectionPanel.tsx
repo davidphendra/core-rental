@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { useProducts } from "@/shared/data/useProducts";
+import { useProductsByCategory } from "@/shared/data/useProductsByCategory";
 import { capKeyForProduct } from "@/shared/domain/setupRules";
 import type { CapKey } from "@/shared/domain/setupRules";
 import { useBuilderStore } from "@/shared/state/BuilderStore";
 import { Button } from "@/shared/ui/Button";
 import { ProductCard } from "@/shared/ui/ProductCard";
-import type { Product } from "@/shared/types/product";
 
 type Tab = "chair" | "desk" | "accessory";
 
@@ -22,13 +23,18 @@ const TABS: { key: Tab; label: string; icon: string }[] = [
 type PanelGroup = CapKey | "misc";
 const SUBTYPE_ORDER: PanelGroup[] = ["monitor", "lamp", "plant", "misc"];
 
+/** v1.14.0: keyword search is server-side — debounce keystrokes before fetching. */
+const DEBOUNCE_MS = 250;
+
 /**
- * Builder selection panel (interactive_builder mockup): tabs filter the unified
- * catalog; chairs/desks are single-select (exclusivity, #10); accessories get
- * quantity steppers (caps, #22). Coffee/beanbag are managed on the canvas
- * zones (Coffee Station / Relax Zone) — not in the panel.
+ * Builder selection panel (interactive_builder mockup): each tab is a
+ * server-filtered catalog view (v1.14.0 — ?category + ?q on /api/products);
+ * chairs/desks are single-select (exclusivity, #10); accessories get quantity
+ * steppers (caps, #22). Coffee/beanbag are managed on the canvas zones
+ * (Coffee Station / Relax Zone) — not in the panel. Group headers are pure
+ * rendering over the already-filtered accessory view (Q2 ruling).
  */
-export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
+export function SelectionPanel() {
   const { state, dispatch } = useBuilderStore();
   const [tab, setTab] = useState<Tab>("desk"); // desk first (tab reorder ruling)
   // Per-tab keyword (Q1=2 ruling): each tab keeps its own search state.
@@ -37,27 +43,36 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
     desk: "",
     accessory: "",
   });
-
-  /** Search matcher (Q3 ruling): case-insensitive substring on name OR description. */
-  const matches = (product: Product) => {
-    const q = query[tab].trim().toLowerCase();
-    if (q.length === 0) {
-      return true;
-    }
-    return product.name.toLowerCase().includes(q) || product.description.toLowerCase().includes(q);
-  };
-
-  const filtered = catalog.filter((p) => {
-    if (tab === "accessory") return p.category === "accessory";
-    return p.category === tab;
+  const [debouncedQuery, setDebouncedQuery] = useState<Record<Tab, string>>({
+    chair: "",
+    desk: "",
+    accessory: "",
   });
-  const filteredByQuery = filtered.filter(matches);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery((dq) => (dq[tab] === query[tab] ? dq : { ...dq, [tab]: query[tab] }));
+    }, DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [query, tab]);
+
+  // View: the backend filters (?category + ?q) — no client-side filtering.
+  const { data: view = [], isPending } = useProductsByCategory({
+    category: tab,
+    q: debouncedQuery[tab],
+  });
+  // Full catalog (cached — the page already loads it) only for same-capKey
+  // sibling lookup when replacing an exclusive accessory: the view may have
+  // filtered a carted sibling out, so it must not decide what gets cleared.
+  const { data: allProducts = [] } = useProducts();
+
+  const searching = query[tab] !== debouncedQuery[tab];
 
   const grouped =
     tab === "accessory"
       ? SUBTYPE_ORDER.map((key) => ({
           key,
-          items: filteredByQuery.filter((p) =>
+          items: view.filter((p) =>
             key === "misc"
               ? capKeyForProduct(p) === "coffee" || capKeyForProduct(p) === "beanbag"
               : capKeyForProduct(p) === key,
@@ -116,7 +131,7 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
         })}
       </div>
 
-      {/* Per-tab keyword search (Q1=2 ruling) — filters name/description. */}
+      {/* Per-tab keyword search (Q1=2 ruling) — server-side filter, debounced. */}
       <div className="relative mb-3">
         <input
           type="search"
@@ -144,119 +159,128 @@ export function SelectionPanel({ catalog }: { catalog: readonly Product[] }) {
       </div>
 
       <div className="mt-4 flex-1 overflow-y-auto pr-2 pt-4">
-        {tab === "accessory" ? (
-          grouped.map(({ key, items }) => (
-            <div key={key} className="mb-4">
-              <h3 className="text-label-sm font-label-sm text-outline mb-2 font-bold uppercase tracking-wider">
-                {key}
-              </h3>
-              {items.length === 0 ? (
-                <p className="text-label-sm font-label-sm text-on-surface-variant">
-                  No {key} match.
-                </p>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  {items.map((product) => {
-                    const capKey = capKeyForProduct(product);
-                    if (capKey === "monitor") {
+        {(isPending || searching) && (
+          <p role="status" className="text-label-md font-label-md text-on-surface-variant mb-3">
+            {searching ? "Searching…" : "Loading…"}
+          </p>
+        )}
+        <div aria-busy={isPending || searching}>
+          {tab === "accessory" ? (
+            grouped.map(({ key, items }) => (
+              <div key={key} className="mb-4">
+                <h3 className="text-label-sm font-label-sm text-outline mb-2 font-bold uppercase tracking-wider">
+                  {key}
+                </h3>
+                {items.length === 0 ? (
+                  <p className="text-label-sm font-label-sm text-on-surface-variant">
+                    No {key} match.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    {items.map((product) => {
+                      const capKey = capKeyForProduct(product);
+                      if (capKey === "monitor") {
+                        return (
+                          <ProductCard key={product.skuNo} product={product} variant="compact">
+                            {/* e09s02: monitors are slot-selected (fill/replace), not steppered */}
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="w-full"
+                              onClick={() => dispatch({ type: "selectMonitor", product })}
+                            >
+                              Select
+                            </Button>
+                          </ProductCard>
+                        );
+                      }
+                      // Single-select replace (coffee/beanbag/lamp/plant): click
+                      // selects (replacing the zone's current item), toggle back
+                      // to Deselect removes it. Max is 1 per the cap table.
+                      const selected = (state.quantities[product.skuNo] ?? 0) > 0;
+                      const onToggle = () => {
+                        if (selected) {
+                          dispatch({ type: "removeAccessory", productId: product.skuNo });
+                          return;
+                        }
+                        // Clear same-capKey siblings currently in the cart.
+                        const clearSkus = Object.keys(state.quantities).filter((sku) => {
+                          if (sku === product.skuNo) return false;
+                          const sibling = allProducts.find((p) => p.skuNo === sku);
+                          return sibling !== undefined && capKeyForProduct(sibling) === capKey;
+                        });
+                        dispatch({
+                          type: "replaceExclusiveAccessory",
+                          target: product,
+                          clearSkus,
+                        });
+                      };
                       return (
-                        <ProductCard key={product.skuNo} product={product} variant="compact">
-                          {/* e09s02: monitors are slot-selected (fill/replace), not steppered */}
+                        <ProductCard
+                          key={product.skuNo}
+                          product={product}
+                          selected={selected}
+                          variant="compact"
+                        >
                           <Button
                             size="sm"
-                            variant="secondary"
                             className="w-full"
-                            onClick={() => dispatch({ type: "selectMonitor", product })}
+                            variant={selected ? "primary" : "secondary"}
+                            aria-pressed={selected}
+                            onClick={onToggle}
                           >
-                            Select
+                            {selected ? "Deselect" : "Select"}
                           </Button>
                         </ProductCard>
                       );
-                    }
-                    // Single-select replace (coffee/beanbag/lamp/plant): click
-                    // selects (replacing the zone's current item), toggle back
-                    // to Deselect removes it. Max is 1 per the cap table.
-                    const selected = (state.quantities[product.skuNo] ?? 0) > 0;
-                    const onToggle = () => {
-                      if (selected) {
-                        dispatch({ type: "removeAccessory", productId: product.skuNo });
-                        return;
-                      }
-                      // Clear same-capKey siblings currently in the cart.
-                      const clearSkus = Object.keys(state.quantities).filter((sku) => {
-                        if (sku === product.skuNo) return false;
-                        const sibling = catalog.find((p) => p.skuNo === sku);
-                        return sibling !== undefined && capKeyForProduct(sibling) === capKey;
-                      });
-                      dispatch({
-                        type: "replaceExclusiveAccessory",
-                        target: product,
-                        clearSkus,
-                      });
-                    };
-                    return (
-                      <ProductCard
-                        key={product.skuNo}
-                        product={product}
-                        selected={selected}
-                        variant="compact"
-                      >
-                        <Button
-                          size="sm"
-                          className="w-full"
-                          variant={selected ? "primary" : "secondary"}
-                          aria-pressed={selected}
-                          onClick={onToggle}
-                        >
-                          {selected ? "Deselect" : "Select"}
-                        </Button>
-                      </ProductCard>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ))
-        ) : filteredByQuery.length === 0 ? (
-          <p className="text-body-md text-on-surface-variant">
-            {query[tab].trim().length > 0 ? "No products match." : "Nothing here yet."}
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {filteredByQuery.map((product) => {
-              const selected =
-                tab === "chair" ? state.chairId === product.skuNo : state.deskId === product.skuNo;
-              return (
-                <ProductCard
-                  key={product.skuNo}
-                  product={product}
-                  selected={selected}
-                  variant="compact"
-                >
-                  <Button
-                    size="sm"
-                    className="w-full"
-                    variant={selected ? "primary" : "secondary"}
-                    aria-pressed={selected}
-                    onClick={() =>
-                      dispatch(
-                        selected
-                          ? tab === "chair"
-                            ? { type: "deselectChair" }
-                            : { type: "deselectDesk" }
-                          : tab === "chair"
-                            ? { type: "selectChair", product }
-                            : { type: "selectDesk", product },
-                      )
-                    }
+                    })}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : view.length === 0 ? (
+            <p className="text-body-md text-on-surface-variant">
+              {query[tab].trim().length > 0 ? "No products match." : "Nothing here yet."}
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {view.map((product) => {
+                const selected =
+                  tab === "chair"
+                    ? state.chairId === product.skuNo
+                    : state.deskId === product.skuNo;
+                return (
+                  <ProductCard
+                    key={product.skuNo}
+                    product={product}
+                    selected={selected}
+                    variant="compact"
                   >
-                    {selected ? "Deselect" : "Select"}
-                  </Button>
-                </ProductCard>
-              );
-            })}
-          </div>
-        )}
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      variant={selected ? "primary" : "secondary"}
+                      aria-pressed={selected}
+                      onClick={() =>
+                        dispatch(
+                          selected
+                            ? tab === "chair"
+                              ? { type: "deselectChair" }
+                              : { type: "deselectDesk" }
+                            : tab === "chair"
+                              ? { type: "selectChair", product }
+                              : { type: "selectDesk", product },
+                        )
+                      }
+                    >
+                      {selected ? "Deselect" : "Select"}
+                    </Button>
+                  </ProductCard>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ export function BuilderContent({ catalog }: { catalog: readonly Product[] }) {
     <>
       <div className="max-w-container-max mx-auto flex w-full gap-6 px-4 pb-32 pt-6 md:px-10 lg:pb-16">
         <aside className="sticky top-24 hidden h-[calc(100vh-7rem)] w-80 flex-col lg:flex">
-          <SelectionPanel catalog={catalog} />
+          <SelectionPanel />
         </aside>
         <main className="flex-1">
           <div className="mb-10 text-center">
@@ -50,7 +50,7 @@ export function BuilderContent({ catalog }: { catalog: readonly Product[] }) {
           <DesignWithAI catalog={catalog} />
           <BuilderCanvas catalog={catalog} />
           <div className="mt-8 lg:hidden">
-            <SelectionPanel catalog={catalog} />
+            <SelectionPanel />
           </div>
         </main>
       </div>

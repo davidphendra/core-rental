@@ -42,6 +42,13 @@ vi.mock("@/shared/data/useProducts", () => ({
   }),
 }));
 
+vi.mock("@/shared/data/useProductsByCategory", () => ({
+  useProductsByCategory: ({ category }: { category: string }) => ({
+    data: catalog.filter((p) => p.category === category),
+    isPending: false,
+  }),
+}));
+
 // Import after the mock so the module under test sees it.
 import { BuilderContent } from "@/app/builder/page";
 import { useBuilderStore } from "@/shared/state/BuilderStore";

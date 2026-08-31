@@ -1,6 +1,5 @@
 import { jsonSchema } from "ai";
 
-import { matchesCategoryFilter } from "@/shared/domain/catalogFilter";
 import type { Product, ProductSubCategory } from "@/shared/types/product";
 
 /**
@@ -32,20 +31,51 @@ export interface CatalogHit {
 }
 
 /**
- * Pure category/subCategory retriever (user ruling: the query filter was
- * useless — the LLM does all semantic matching/ranking). Every valid combo is
- * guaranteed non-empty (each type has 6–10 products; subCategory implies
- * accessory by construction). Lean payload: ≤8 hits, 60-char descriptions, so
- * model roundtrips stay fast. Invalid enums match nothing → empty, never a
- * crash. The match predicate is shared with the /api/products route
- * (catalogFilter — single source, no duplicated filter logic).
+ * v1.15.0 (grill Q1=b): the catalog is reached ONLY through the /api/products
+ * contract — the endpoint does the filtering (category + subCategory); this
+ * tool just shapes the response. subCategory implies category=accessory
+ * (normalized here — the endpoint requires the pairing, Q2=b). A non-200,
+ * network failure, or malformed payload → empty list, never a crash (same
+ * guarantee as the in-process retriever). Lean payload preserved: ≤8 hits,
+ * 60-char descriptions, so model roundtrips stay fast.
  */
-export function searchCatalog(args: SearchCatalogArgs, catalog: readonly Product[]): CatalogHit[] {
-  const hits = catalog.filter((p) => matchesCategoryFilter(p, args));
-  return hits.slice(0, 8).map((p) => ({
-    skuNo: p.skuNo,
-    name: p.name,
-    pricePerMonth: p.pricePerMonth,
-    description: p.description.length > 60 ? `${p.description.slice(0, 57)}…` : p.description,
+export async function searchCatalog(
+  args: SearchCatalogArgs,
+  origin: string,
+): Promise<CatalogHit[]> {
+  const params = new URLSearchParams();
+  const category =
+    args.subCategory !== undefined && args.category === undefined ? "accessory" : args.category;
+  if (category !== undefined) params.set("category", category);
+  if (args.subCategory !== undefined) params.set("subCategory", args.subCategory);
+  const qs = params.toString();
+
+  let res: Response;
+  try {
+    res = await fetch(`${origin}/api/products${qs.length > 0 ? `?${qs}` : ""}`);
+  } catch {
+    return [];
+  }
+  if (!res.ok) {
+    return [];
+  }
+  let payload: unknown;
+  try {
+    payload = await res.json();
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(payload)) {
+    return [];
+  }
+  const products = payload as Array<Partial<Product>>;
+  return products.slice(0, 8).map((p) => ({
+    skuNo: String(p.skuNo ?? ""),
+    name: String(p.name ?? "Unnamed"),
+    pricePerMonth: typeof p.pricePerMonth === "number" ? p.pricePerMonth : 0,
+    description:
+      (p.description ?? "").length > 60
+        ? `${String(p.description).slice(0, 57)}…`
+        : String(p.description ?? ""),
   }));
 }

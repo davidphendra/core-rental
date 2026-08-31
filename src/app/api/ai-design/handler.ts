@@ -75,7 +75,11 @@ export function createAiDesignHandler(deps: AiDesignHandlerDeps = {}) {
     if (prompt.length > MAX_PROMPT_CHARS) return json({ error: "prompt_too_long" }, 400);
 
     const budget = extractBudgetIdr(prompt);
-    const llm = deps.llm ?? createLlmAdapter(model as LanguageModel, catalog);
+    // v1.15.0: the agent discovers products via the /api/products contract
+    // (self-HTTP) — origin comes from the incoming request (grill Q3=a).
+    const llm =
+      deps.llm ??
+      createLlmAdapter(model as LanguageModel, new URL(request.url).origin, catalog.length);
 
     // Observability (e10s03-4): ai.request with facts only — never the prompt.
     let toolCalls = 0;

@@ -54,6 +54,41 @@ describe("GET /api/products?category= (v1.14.0 backend filtering)", () => {
   });
 });
 
+describe("GET /api/products?subCategory= (v1.15.0 accessory subtype)", () => {
+  it("filters accessories to the requested subtype", async () => {
+    const res = await GET(url("?category=accessory&subCategory=monitor"));
+    expect(res.status).toBe(200);
+    const data = (await res.json()) as Array<Record<string, unknown>>;
+    expect(data.length).toBeGreaterThan(0);
+    for (const p of data) {
+      expect(p.category).toBe("accessory");
+      expect(p.subCategory).toBe("monitor");
+    }
+  });
+
+  it("rejects subCategory without category=accessory (400)", async () => {
+    const res = await GET(url("?subCategory=monitor"));
+    expect(res.status).toBe(400);
+    const resDesk = await GET(url("?category=desk&subCategory=monitor"));
+    expect(resDesk.status).toBe(400);
+  });
+
+  it("rejects an unknown subCategory value (400)", async () => {
+    const res = await GET(url("?category=accessory&subCategory=sofa"));
+    expect(res.status).toBe(400);
+  });
+
+  it("accepts every valid subtype", async () => {
+    for (const sub of ["lamp", "plant", "coffee", "beanbag"]) {
+      const res = await GET(url(`?category=accessory&subCategory=${sub}`));
+      expect(res.status).toBe(200);
+      const data = (await res.json()) as Array<Record<string, unknown>>;
+      expect(data.length).toBeGreaterThan(0);
+      for (const p of data) expect(p.subCategory).toBe(sub);
+    }
+  });
+});
+
 describe("GET /api/products?q= (v1.14.0 keyword filter)", () => {
   it("returns only products whose name or description matches (case-insensitive)", async () => {
     const all = (await (await GET()).json()) as Array<Record<string, unknown>>;

@@ -1,6 +1,5 @@
 import { jsonSchema, tool } from "ai";
 
-import type { Product } from "@/shared/types/product";
 import { searchCatalog, searchParamsSchema } from "./search";
 
 /**
@@ -30,13 +29,13 @@ const rejectParamsSchema = jsonSchema<Record<string, never>>({ type: "object" })
  * finalizeDesign (submit), rejectQuery (off-topic gate). The orchestrator
  * still re-validates everything server-side (never trust the LLM, S4/S7).
  */
-export function createDesignTools(catalog: readonly Product[]) {
+export function createDesignTools(origin: string) {
   return {
     searchCatalog: tool({
       description:
         "Search the rental catalog by category (chair|desk|accessory) and/or subCategory (monitor|lamp|plant|coffee|beanbag — implies accessory). Every call returns candidates. Call it exactly ONCE per type (7 calls total, all in the first message) — you do the query-relevance ranking",
       inputSchema: searchParamsSchema,
-      execute: (args) => searchCatalog(args, catalog),
+      execute: (args) => searchCatalog(args, origin),
     }),
     finalizeDesign: tool({
       description:

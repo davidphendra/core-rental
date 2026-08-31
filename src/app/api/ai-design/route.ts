@@ -5,7 +5,7 @@ import { extractBudgetIdr } from "@/shared/domain/aiDesign";
 import { logger } from "@/shared/observability/logger";
 import type { Product } from "@/shared/types/product";
 
-import { rateLimitAllowed } from "./guardrails";
+import { rateLimitAllowed } from "@/ai/guardrails/safety";
 import { createLlmAdapter } from "./llm";
 import { AiDisabledError, createAiModel } from "@/ai/models/model-config";
 import { runAiDesign, type LlmAdapter } from "./runAiDesign";

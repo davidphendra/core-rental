@@ -5,6 +5,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { ReactNode } from "react";
 
 import { Providers } from "./providers";
+
+// Vercel Web Analytics + Speed Insights: their scripts are served by Vercel's
+// proxy at /_vercel/* only — outside the platform (local dev, `pnpm start`,
+// other hosts) that path is a text/plain 404 → strict-MIME console errors.
+// process.env.VERCEL is set exclusively on Vercel deployments.
+const isVercelPlatform = process.env.VERCEL === "1";
 import { ErrorListeners } from "./error-listeners";
 import { SiteFooter } from "@/shared/ui/SiteFooter";
 import "./globals.css";
@@ -50,8 +56,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Providers>{children}</Providers>
         <SiteFooter />
         <ErrorListeners />
-        <Analytics />
-        <SpeedInsights />
+        {isVercelPlatform && <Analytics />}
+        {isVercelPlatform && <SpeedInsights />}
       </body>
     </html>
   );

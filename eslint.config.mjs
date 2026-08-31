@@ -33,6 +33,19 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  {
+    // The builder's ai/ sub-module (src/features/builder/ai) is SERVER-ONLY —
+    // the feature barrel must stay client-safe (the page imports it), so it
+    // cannot re-export the handler. These files may deep-import its internals;
+    // external consumers still go through the barrel.
+    files: [
+      "src/features/builder/ai/**/*.{ts,tsx}",
+      "src/app/api/ai-design/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "no-restricted-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

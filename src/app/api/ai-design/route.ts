@@ -7,7 +7,7 @@ import type { Product } from "@/shared/types/product";
 
 import { rateLimitAllowed } from "./guardrails";
 import { createLlmAdapter } from "./llm";
-import { AiDisabledError, createAiModel } from "./provider";
+import { AiDisabledError, createAiModel } from "@/ai/models/model-config";
 import { runAiDesign, type LlmAdapter } from "./runAiDesign";
 
 /**

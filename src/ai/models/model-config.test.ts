@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { AiDisabledError, createAiModel, toClassicToolFormat } from "./provider";
+import { AiDisabledError, createAiModel, toClassicToolFormat } from "./model-config";
 
 describe("createAiModel", () => {
   it("throws AiDisabledError when no model is configured", () => {

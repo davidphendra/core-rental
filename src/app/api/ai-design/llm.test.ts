@@ -5,7 +5,7 @@ import type { Product } from "@/shared/types/product";
 import catalogJson from "../../../shared/data/products.json";
 
 import { searchCatalog } from "@/ai/tools/search";
-import { resolveToolOutcome } from "./llm";
+import { resolveToolOutcome } from "@/ai/tools";
 
 const catalog = catalogJson as unknown as readonly Product[];
 

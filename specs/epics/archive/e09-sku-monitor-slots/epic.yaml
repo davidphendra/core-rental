@@ -2,7 +2,7 @@ id: e09
 title: SKU System & Monitor Slots
 wsjf: 5.0
 total_bcps: 19
-status: planning
+status: released
 deltas:
   - story: e09s01
     delta: RENAMED # Product id → skuNo (12-char system identifier); image derivation decoupled
@@ -14,18 +14,18 @@ stories:
   - id: e09s01
     title: Product SKU system
     bcps: 8
-    status: todo
+    status: done
     spec: e09s01-product-sku-system.md
     tasks: e09s01-tasks.yaml
   - id: e09s02
     title: Three monitor slots
     bcps: 8
-    status: todo
+    status: done
     spec: e09s02-three-monitor-slots.md
     tasks: e09s02-tasks.yaml
   - id: e09s03
     title: Builder direct-selection polish
     bcps: 3
-    status: todo
+    status: done
     spec: e09s03-builder-polish.md
     tasks: e09s03-tasks.yaml

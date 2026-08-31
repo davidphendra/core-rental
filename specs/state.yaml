@@ -7,7 +7,8 @@ release:
   target_version: "1.15.1"
   last_tag: "v1.15.1"
   last_publish: "v1.14.0 staged locally (Backend Catalog Filtering) + AI layout refactor (src/ai/) merged to main; nothing pushed (user holds the push signal). CI will run on the push."
-  ci_verified: false
+  ci_verified: true # push succeeded; CI run 33368857872 in progress
+  archived: all 10 epic capsules closed (e09/e10 marked released; release-plan paths fixed)
 metrics:
   story_start: null
 epic_cycle:

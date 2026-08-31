@@ -2,7 +2,7 @@ id: e10
 title: AI Workspace Designer
 wsjf: 6.0
 total_bcps: 19
-status: planning
+status: released
 deltas:
   - story: e10s01
     delta: ADDED # /api/ai-design route — provider-switchable LLM, tool-calling discovery, strict validated design output
@@ -14,18 +14,18 @@ stories:
   - id: e10s01
     title: AI design API route
     bcps: 8
-    status: todo
+    status: done
     spec: e10s01-ai-design-route.md
     tasks: e10s01-tasks.yaml
   - id: e10s02
     title: Builder "Design with AI" panel
     bcps: 6
-    status: todo
+    status: done
     spec: e10s02-builder-ai-panel.md
     tasks: e10s02-tasks.yaml
   - id: e10s03
     title: AI guardrails, observability & verification
     bcps: 5
-    status: todo
+    status: done
     spec: e10s03-ai-guardrails-observability.md
     tasks: e10s03-tasks.yaml

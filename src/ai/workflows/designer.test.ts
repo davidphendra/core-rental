@@ -5,12 +5,8 @@ import { formatIdr } from "@/shared/domain/pricing";
 
 import catalogJson from "../../shared/data/products.json";
 
-import {
-  runAiDesign,
-  type LlmAdapter,
-  type LlmRunRequest,
-  type LlmRunResult,
-} from "@/ai/workflows/designer";
+import { runAiDesign } from "@/ai/workflows/designer";
+import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/agents/chat-agent";
 
 const catalog = catalogJson as unknown as readonly import("@/shared/types/product").Product[];
 

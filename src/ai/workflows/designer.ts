@@ -1,3 +1,4 @@
+import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/agents/chat-agent";
 import {
   cheapestRentableTotal,
   validateDesign,
@@ -12,23 +13,6 @@ import type { Product } from "@/shared/types/product";
  * script model behavior; the default adapter (see llm.ts) wires the Vercel AI
  * SDK. Validation, totals, and budget arithmetic never trust the LLM (S4/S7).
  */
-
-export interface LlmRunRequest {
-  prompt: string;
-  /** Server-extracted budget (IDR/month) or null when none was stated. */
-  budget: number | null;
-  /** Retry guidance from the previous attempt (second call only). */
-  feedback?: string;
-}
-
-export type LlmRunResult =
-  | { kind: "design"; design: unknown }
-  | { kind: "rejection"; message: string }
-  | { kind: "llm_error"; message: string };
-
-export interface LlmAdapter {
-  run(request: LlmRunRequest): Promise<LlmRunResult>;
-}
 
 export type AiOutcome =
   | { kind: "design"; design: AiDesign }

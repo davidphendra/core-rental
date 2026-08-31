@@ -6,9 +6,10 @@ import { logger } from "@/shared/observability/logger";
 import type { Product } from "@/shared/types/product";
 
 import { rateLimitAllowed } from "@/ai/guardrails/safety";
-import { createLlmAdapter } from "./llm";
+import { createLlmAdapter } from "@/ai/agents/chat-agent";
 import { AiDisabledError, createAiModel } from "@/ai/models/model-config";
-import { runAiDesign, type LlmAdapter } from "@/ai/workflows/designer";
+import { runAiDesign } from "@/ai/workflows/designer";
+import type { LlmAdapter } from "@/ai/agents/chat-agent";
 
 /**
  * e10: POST /api/ai-design — the public AI design endpoint.

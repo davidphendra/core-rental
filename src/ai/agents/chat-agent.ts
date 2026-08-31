@@ -1,11 +1,31 @@
+/**
+ * The designer agent contract (injected into the orchestrator so tests can
+ * script model behavior). Lives with the agent — the workflow depends on this
+ * interface, not the other way round.
+ */
+export interface LlmRunRequest {
+  prompt: string;
+  /** Server-extracted budget (IDR/month) or null when none was stated. */
+  budget: number | null;
+  /** Retry guidance from the previous attempt (second call only). */
+  feedback?: string;
+}
+
+export type LlmRunResult =
+  | { kind: "design"; design: unknown }
+  | { kind: "rejection"; message: string }
+  | { kind: "llm_error"; message: string };
+
+export interface LlmAdapter {
+  run(request: LlmRunRequest): Promise<LlmRunResult>;
+}
+
 import { generateText, hasToolCall } from "ai";
 import type { LanguageModel } from "ai";
 
 import { WORKSPACE_REJECTION_MESSAGE, systemPrompt } from "@/ai/prompts/system";
 import { createDesignTools, resolveToolOutcome } from "@/ai/tools";
 import type { Product } from "@/shared/types/product";
-
-import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/workflows/designer";
 
 /**
  * e10: default LLM adapter — wires the Vercel AI SDK (generateText + the tool

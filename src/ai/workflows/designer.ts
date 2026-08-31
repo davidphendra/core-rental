@@ -1,4 +1,8 @@
-import { cheapestRentableTotal, validateDesign, type AiDesign } from "@/shared/domain/aiDesignSchema";
+import {
+  cheapestRentableTotal,
+  validateDesign,
+  type AiDesign,
+} from "@/shared/domain/aiDesignSchema";
 import { formatIdr } from "@/shared/domain/pricing";
 import type { Product } from "@/shared/types/product";
 

@@ -5,7 +5,7 @@ import { WORKSPACE_REJECTION_MESSAGE } from "@/shared/domain/aiDesign";
 import { matchesCategoryFilter } from "@/shared/domain/catalogFilter";
 import type { Product, ProductSubCategory } from "@/shared/types/product";
 
-import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "./runAiDesign";
+import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/workflows/designer";
 
 /**
  * e10: default LLM adapter — wires the Vercel AI SDK (generateText + tools) to

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import catalog from "../../../shared/data/products.json";
 
-import type { LlmAdapter, LlmRunResult } from "./runAiDesign";
+import type { LlmAdapter, LlmRunResult } from "@/ai/workflows/designer";
 import { AiDisabledError } from "@/ai/models/model-config";
 import { createAiDesignHandler } from "./route";
 

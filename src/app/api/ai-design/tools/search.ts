@@ -74,8 +74,8 @@ export async function searchCatalog(
     name: String(p.name ?? "Unnamed"),
     pricePerMonth: typeof p.pricePerMonth === "number" ? p.pricePerMonth : 0,
     description:
-      (p.description ?? "").length > 60
-        ? `${String(p.description).slice(0, 57)}…`
+      (p.description ?? "").length > 100
+        ? `${String(p.description).slice(0, 97)}…`
         : String(p.description ?? ""),
   }));
 }

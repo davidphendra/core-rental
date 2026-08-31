@@ -6,7 +6,7 @@ workflow_mode: solo-git
 release:
   target_version: "1.14.0"
   last_tag: "v1.14.0"
-  last_publish: "v1.13.0 staged locally: subCategory field + searchCatalog category/subCategory retriever + AI workflow/speed fixes (57s→11s, gated E2E) + 3 scenario E2E. Merged to main, tagged; NOT pushed (user holds the push signal). CI will run on the push."
+  last_publish: "v1.14.0 staged locally (Backend Catalog Filtering) + AI layout refactor (src/ai/) merged to main; nothing pushed (user holds the push signal). CI will run on the push."
   ci_verified: false
 metrics:
   story_start: null

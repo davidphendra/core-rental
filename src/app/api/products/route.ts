@@ -1,6 +1,7 @@
 import { getCatalog } from "@/shared/data/catalog.server";
 import { isValidCatalog } from "@/shared/data/products";
 import { CATALOG_FILTER_CATEGORIES, matchesCatalogFilter } from "@/shared/domain/catalogFilter";
+import { PRODUCT_SUB_CATEGORIES } from "@/shared/types/product";
 import type { Product } from "@/shared/types/product";
 
 /**
@@ -25,9 +26,22 @@ export function GET(request?: Request): Response {
     return Response.json({ error: `Invalid category` }, { status: 400 });
   }
   const q = url.searchParams.get("q") ?? undefined;
+  const subCategory = url.searchParams.get("subCategory");
+
+  // v1.15.0: subCategory is only meaningful on accessories — require the
+  // explicit category=accessory pairing (grill Q2=b) and a known value.
+  if (subCategory !== null) {
+    if (category !== "accessory" || !PRODUCT_SUB_CATEGORIES.includes(subCategory as never)) {
+      return Response.json({ error: "Invalid subCategory" }, { status: 400 });
+    }
+  }
 
   const filtered = valid.filter((p) =>
-    matchesCatalogFilter(p, { category: category ?? undefined, q }),
+    matchesCatalogFilter(p, {
+      category: category ?? undefined,
+      subCategory: subCategory ?? undefined,
+      q,
+    }),
   );
   return Response.json(filtered);
 }

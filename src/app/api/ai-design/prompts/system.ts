@@ -1,5 +1,3 @@
-import type { Product } from "@/shared/types/product";
-
 /**
  * e10: system prompt for the workspace-designer agent, plus prompt constants.
  * The workflow is strict about the tool-call budget (7 searchCatalog calls,
@@ -11,7 +9,7 @@ import type { Product } from "@/shared/types/product";
 export const WORKSPACE_REJECTION_MESSAGE = "query not about workspace building";
 
 export function systemPrompt(
-  catalog: readonly Product[],
+  catalogSize: number,
   budget: number | null,
   feedback?: string,
 ): string {
@@ -22,7 +20,7 @@ export function systemPrompt(
   const feedbackLine = feedback ? `Previous attempt failed: ${feedback}` : "";
   return [
     "You are the workspace designer for Core Rental, a Bali office-equipment rental service.",
-    `The catalog has ${catalog.length} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
+    `The catalog has ${catalogSize} products across these types: desk, chair, monitor, lamp, plant, bean bag, coffee machine.`,
     "GATE: Only call rejectQuery for topics completely unrelated to workspaces or office furniture (e.g. weather, cooking, coding, travel). For anything about a workspace, office, desk, chair, study, gaming, or coffee setup — even vague ones — proceed with the workflow.",
     "WORKFLOW:",
     "1. In your FIRST message, call searchCatalog EXACTLY 7 times — once per type, IN PARALLEL: desk (category='desk'), chair (category='chair'), monitor/lamp/plant/coffee/beanbag (category='accessory' + subCategory). Every call returns candidates. That is the ONLY searchCatalog batch — do NOT call searchCatalog again for any reason.",

@@ -25,7 +25,6 @@ import type { LanguageModel } from "ai";
 
 import { WORKSPACE_REJECTION_MESSAGE, systemPrompt } from "../prompts/system";
 import { createDesignTools, resolveToolOutcome } from "../tools";
-import type { Product } from "@/shared/types/product";
 
 /**
  * e10: default LLM adapter — wires the Vercel AI SDK (generateText + the tool
@@ -35,7 +34,11 @@ import type { Product } from "@/shared/types/product";
  * LLM, S4/S7) — totals are recomputed from real prices, so no getSetupTotal
  * roundtrip is needed (removed for speed).
  */
-export function createLlmAdapter(model: LanguageModel, catalog: readonly Product[]): LlmAdapter {
+export function createLlmAdapter(
+  model: LanguageModel,
+  origin: string,
+  catalogSize: number,
+): LlmAdapter {
   return {
     async run(request: LlmRunRequest): Promise<LlmRunResult> {
       const result = await generateText({
@@ -46,9 +49,9 @@ export function createLlmAdapter(model: LanguageModel, catalog: readonly Product
         // the model calls a terminal tool (finalizeDesign/rejectQuery), bounded
         // by an 8-step cap so a stuck model cannot churn for minutes.
         stopWhen: [hasToolCall("finalizeDesign", "rejectQuery"), ({ steps }) => steps.length >= 8],
-        system: systemPrompt(catalog, request.budget, request.feedback),
+        system: systemPrompt(catalogSize, request.budget, request.feedback),
         prompt: request.prompt,
-        tools: createDesignTools(catalog),
+        tools: createDesignTools(origin),
       });
 
       const resolved = resolveToolOutcome(result.toolResults ?? []);

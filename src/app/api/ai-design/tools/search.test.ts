@@ -1,68 +1,109 @@
-import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { matchesCatalogFilter } from "@/shared/domain/catalogFilter";
 import type { Product } from "@/shared/types/product";
-
-import catalogJson from "../../../../shared/data/products.json";
 import { searchCatalog } from "./search";
 
-const catalog = catalogJson as unknown as readonly Product[];
+const ORIGIN = "http://localhost:3000";
 
-describe("searchCatalog (category/subCategory retriever only)", () => {
-  it("filters by category", () => {
-    const chairs = searchCatalog({ category: "chair" }, catalog);
-    expect(chairs.length).toBeGreaterThan(0);
-    for (const h of chairs) expect(h.skuNo.startsWith("CHA")).toBe(true);
-    const desks = searchCatalog({ category: "desk" }, catalog);
-    expect(desks.length).toBeGreaterThan(0);
-    for (const h of desks) expect(h.skuNo.startsWith("DSK")).toBe(true);
+/** Endpoint mimic: the mock filters the real committed catalog the way
+ * /api/products does (shared predicate) so the tool tests the HTTP contract,
+ * not the endpoint's own filtering (covered by products-route.test.ts). */
+const committed = JSON.parse(
+  readFileSync(join(process.cwd(), "src/shared/data/products.json"), "utf8"),
+) as Product[];
+
+function mockEndpoint() {
+  return vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+    const url = new URL(String(input));
+    const category = url.searchParams.get("category") ?? undefined;
+    const subCategory = url.searchParams.get("subCategory") ?? undefined;
+    const filtered = committed.filter((p) => matchesCatalogFilter(p, { category, subCategory }));
+    return new Response(JSON.stringify(filtered), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  });
+}
+
+describe("searchCatalog (v1.15.0: HTTP via /api/products contract)", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it("filters accessories by subCategory with loose pairing (no category needed)", () => {
-    const monitors = searchCatalog({ subCategory: "monitor" }, catalog);
-    expect(monitors.length).toBeGreaterThan(0);
-    for (const h of monitors) expect(h.skuNo.startsWith("MON")).toBe(true);
+  it("calls the endpoint with the category param and returns lean hits", async () => {
+    const fetchMock = mockEndpoint();
+    const hits = await searchCatalog({ category: "chair" }, ORIGIN);
+    expect(fetchMock).toHaveBeenCalledWith("http://localhost:3000/api/products?category=chair");
+    expect(hits.length).toBeGreaterThan(0);
+    for (const h of hits) expect(h.skuNo.startsWith("CHA")).toBe(true);
   });
 
-  it("combines category and subCategory", () => {
-    const lamps = searchCatalog({ category: "accessory", subCategory: "lamp" }, catalog);
-    expect(lamps.length).toBeGreaterThan(0);
-    for (const h of lamps) expect(h.skuNo.startsWith("LMP")).toBe(true);
+  it("normalizes subCategory to category=accessory (endpoint requires the pairing)", async () => {
+    const fetchMock = mockEndpoint();
+    const hits = await searchCatalog({ subCategory: "monitor" }, ORIGIN);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:3000/api/products?category=accessory&subCategory=monitor",
+    );
+    expect(hits.length).toBeGreaterThan(0);
+    for (const h of hits) expect(h.skuNo.startsWith("MON")).toBe(true);
   });
 
-  it("never returns empty for any valid category/subCategory combination", () => {
-    for (const c of ["chair", "desk", "accessory"] as const) {
-      expect(searchCatalog({ category: c }, catalog).length).toBeGreaterThan(0);
+  it("sends both category and subCategory when the model provides category", async () => {
+    const fetchMock = mockEndpoint();
+    await searchCatalog({ category: "accessory", subCategory: "lamp" }, ORIGIN);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://localhost:3000/api/products?category=accessory&subCategory=lamp",
+    );
+  });
+
+  it("returns up to 8 lean candidates", async () => {
+    mockEndpoint();
+    const hits = await searchCatalog({}, ORIGIN);
+    expect(hits.length).toBeLessThanOrEqual(8);
+    for (const h of hits) {
+      expect(h.description.length).toBeLessThanOrEqual(60);
+      expect(h).toHaveProperty("skuNo");
+      expect(h).toHaveProperty("name");
+      expect(h).toHaveProperty("pricePerMonth");
     }
-    for (const sub of ["monitor", "lamp", "plant", "coffee", "beanbag"] as const) {
-      expect(searchCatalog({ subCategory: sub }, catalog).length).toBeGreaterThan(0);
-    }
   });
 
-  it("returns up to 8 lean candidates when no filters are given", () => {
-    const all = searchCatalog({}, catalog);
-    expect(all.length).toBeGreaterThan(0);
-    expect(all.length).toBeLessThanOrEqual(8);
-    for (const h of all) expect(h.description.length).toBeLessThanOrEqual(60);
+  it("returns an empty list on a non-200 response (never crashes)", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ error: "Invalid subCategory" }), { status: 400 }),
+    );
+    const hits = await searchCatalog({ subCategory: "monitor" }, ORIGIN);
+    expect(hits).toEqual([]);
   });
 
-  it("returns an empty list only for invalid enums", () => {
-    expect(searchCatalog({ subCategory: "sofa" as never }, catalog)).toEqual([]);
+  it("returns an empty list on a network failure (never crashes)", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("ECONNREFUSED"));
+    const hits = await searchCatalog({ category: "chair" }, ORIGIN);
+    expect(hits).toEqual([]);
+  });
+
+  it("returns an empty list on a malformed payload (never crashes)", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ not: "an array" }), { status: 200 }),
+    );
+    const hits = await searchCatalog({ category: "chair" }, ORIGIN);
+    expect(hits).toEqual([]);
   });
 });
 
-describe("catalog fixture sanity", () => {
+describe("catalog fixture sanity (why searchCatalog is never empty)", () => {
   it("has products for every category and sub-category", () => {
-    for (const c of ["chair", "desk", "accessory"] as const) {
-      expect(searchCatalog({ category: c }, catalog).length).toBeGreaterThan(0);
+    for (const category of ["chair", "desk", "accessory"]) {
+      const anyOf = committed.filter((p) => p.category === category);
+      expect(anyOf.length).toBeGreaterThan(0);
     }
-    for (const s of ["monitor", "lamp", "plant", "coffee", "beanbag"] as const) {
-      expect(searchCatalog({ subCategory: s }, catalog).length).toBeGreaterThan(0);
+    for (const sub of ["monitor", "lamp", "plant", "coffee", "beanbag"]) {
+      const anyOf = committed.filter((p) => p.subCategory === sub);
+      expect(anyOf.length).toBeGreaterThan(0);
     }
-  });
-
-  it("catalog entries satisfy the Product contract", () => {
-    const sample = catalog[0] as Product;
-    expect(typeof sample.skuNo).toBe("string");
-    expect(typeof sample.pricePerMonth).toBe("number");
   });
 });

@@ -1,30 +1,15 @@
-import { cheapestRentableTotal, validateDesign, type AiDesign } from "@/shared/domain/aiDesignSchema";
+import type { LlmAdapter } from "@/ai/agents/chat-agent";
+import { cheapestRentableTotal, validateDesign, type AiDesign } from "@/ai/guardrails/output";
 import { formatIdr } from "@/shared/domain/pricing";
 import type { Product } from "@/shared/types/product";
 
 /**
  * e10: orchestrates the AI design flow — LLM interpretation → validation →
  * retry-once → honest refusal. The LLM is injected (LlmAdapter) so tests can
- * script model behavior; the default adapter (see llm.ts) wires the Vercel AI
- * SDK. Validation, totals, and budget arithmetic never trust the LLM (S4/S7).
+ * script model behavior; the default adapter (agents/chat-agent) wires the
+ * Vercel AI SDK. Validation, totals, and budget arithmetic never trust the LLM
+ * (S4/S7).
  */
-
-export interface LlmRunRequest {
-  prompt: string;
-  /** Server-extracted budget (IDR/month) or null when none was stated. */
-  budget: number | null;
-  /** Retry guidance from the previous attempt (second call only). */
-  feedback?: string;
-}
-
-export type LlmRunResult =
-  | { kind: "design"; design: unknown }
-  | { kind: "rejection"; message: string }
-  | { kind: "llm_error"; message: string };
-
-export interface LlmAdapter {
-  run(request: LlmRunRequest): Promise<LlmRunResult>;
-}
 
 export type AiOutcome =
   | { kind: "design"; design: AiDesign }

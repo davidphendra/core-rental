@@ -1,14 +1,15 @@
 import type { LanguageModel } from "ai";
 
 import { getCatalog } from "@/shared/data/catalog.server";
-import { extractBudgetIdr } from "@/shared/domain/aiDesign";
+import { extractBudgetIdr } from "@/ai/guardrails/input";
 import { logger } from "@/shared/observability/logger";
 import type { Product } from "@/shared/types/product";
 
-import { rateLimitAllowed } from "./guardrails";
-import { createLlmAdapter } from "./llm";
-import { AiDisabledError, createAiModel } from "./provider";
-import { runAiDesign, type LlmAdapter } from "./runAiDesign";
+import { rateLimitAllowed } from "@/ai/guardrails/safety";
+import { createLlmAdapter } from "@/ai/agents/chat-agent";
+import { AiDisabledError, createAiModel } from "@/ai/models/model-config";
+import { runAiDesign } from "@/ai/workflows/designer";
+import type { LlmAdapter } from "@/ai/agents/chat-agent";
 
 /**
  * e10: POST /api/ai-design — the public AI design endpoint.

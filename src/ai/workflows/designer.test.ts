@@ -3,9 +3,10 @@ import { describe, expect, it } from "vitest";
 import { cheapestRentableTotal } from "@/shared/domain/aiDesignSchema";
 import { formatIdr } from "@/shared/domain/pricing";
 
-import catalogJson from "../../../shared/data/products.json";
+import catalogJson from "../../shared/data/products.json";
 
-import { runAiDesign, type LlmAdapter, type LlmRunRequest, type LlmRunResult } from "./runAiDesign";
+import { runAiDesign } from "@/ai/workflows/designer";
+import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/agents/chat-agent";
 
 const catalog = catalogJson as unknown as readonly import("@/shared/types/product").Product[];
 
@@ -69,7 +70,10 @@ describe("runAiDesign", () => {
 
   it("retries once on invalid output, then fails cleanly", async () => {
     const bogus = { ...FULL, chairSku: "CHAABCDEFGHI" };
-    const llm = mockLlm([{ kind: "design", design: bogus }, { kind: "design", design: bogus }]);
+    const llm = mockLlm([
+      { kind: "design", design: bogus },
+      { kind: "design", design: bogus },
+    ]);
     const outcome = await runAiDesign({ prompt: "anything", catalog, llm });
     expect(outcome.kind).toBe("error");
     if (outcome.kind === "error") expect(outcome.reason).toBe("invalid_output");
@@ -78,7 +82,10 @@ describe("runAiDesign", () => {
 
   it("succeeds when the retry fixes the invalid output", async () => {
     const bogus = { ...FULL, chairSku: "CHAABCDEFGHI" };
-    const llm = mockLlm([{ kind: "design", design: bogus }, { kind: "design", design: FULL }]);
+    const llm = mockLlm([
+      { kind: "design", design: bogus },
+      { kind: "design", design: FULL },
+    ]);
     const outcome = await runAiDesign({ prompt: "anything", catalog, llm });
     expect(outcome.kind).toBe("design");
     expect(llm.calls[1]?.feedback).toBeDefined();
@@ -86,7 +93,10 @@ describe("runAiDesign", () => {
 
   it("refuses honestly when the budget cannot fit, even after a retry", async () => {
     const budget = 500_000; // below the cheapest rentable setup
-    const llm = mockLlm([{ kind: "design", design: FULL }, { kind: "design", design: FULL }]);
+    const llm = mockLlm([
+      { kind: "design", design: FULL },
+      { kind: "design", design: FULL },
+    ]);
     const outcome = await runAiDesign({ prompt: "gaming setup", catalog, budget, llm });
     expect(outcome.kind).toBe("refusal");
     if (outcome.kind === "refusal") {

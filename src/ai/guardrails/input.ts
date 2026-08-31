@@ -1,27 +1,8 @@
 /**
- * e10: AI design domain — budget extraction and design validation for the
- * /api/ai-design route. Pure functions over the committed catalog; the LLM is
- * never trusted with totals or budget arithmetic (S7 in THREAT_MODEL e10).
+ * e10: input guardrail — deterministic server-side budget extraction from the
+ * prompt. The budget is ground truth from the prompt, never the LLM's reading
+ * of it (S7 in THREAT_MODEL e10).
  */
-
-/**
- * Extract a stated monthly budget from a free-text prompt, or null when none
- * is stated. Deterministic server-side parse — the budget is ground truth from
- * the prompt, never the LLM's reading of it.
- *
- * Accepted forms (case-insensitive):
- * - unit-suffixed: "30 juta", "5 jt", "30 million" → digits × 1_000_000
- * - currency-prefixed absolute: "Rp 30.000.000", "IDR 30000000"
- * - dotted thousands absolute: "30.000.000" (must be ≥ 1.000.000 to avoid
- *   matching catalog prices like "750.000")
- * - bare absolute: "30000000" (7+ digits)
- */
-/**
- * Standardized off-topic rejection message (Q2 ruling): the model may call
- * rejectQuery, but the returned message is always exactly this — server-side
- * constant, never model-varied.
- */
-export const WORKSPACE_REJECTION_MESSAGE = "query not about workspace building";
 
 export function extractBudgetIdr(prompt: string): number | null {
   const text = prompt.trim().toLowerCase();

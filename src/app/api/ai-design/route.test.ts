@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import catalog from "../../../shared/data/products.json";
 
-import type { LlmAdapter, LlmRunResult } from "./runAiDesign";
-import { AiDisabledError } from "./provider";
+import type { LlmAdapter, LlmRunResult } from "@/ai/agents/chat-agent";
+import { AiDisabledError } from "@/ai/models/model-config";
 import { createAiDesignHandler } from "./route";
 
 const chair = catalog.find((p) => p.skuNo.startsWith("CHA"))!;
@@ -42,7 +42,13 @@ describe("POST /api/ai-design", () => {
   });
 
   it("returns a refusal payload for impossible budgets (200)", async () => {
-    const res = await post("max 1 juta", mockLlm([{ kind: "design", design: FULL }, { kind: "design", design: FULL }]));
+    const res = await post(
+      "max 1 juta",
+      mockLlm([
+        { kind: "design", design: FULL },
+        { kind: "design", design: FULL },
+      ]),
+    );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.refusal.message).toContain("cheapest");
@@ -84,11 +90,13 @@ describe("POST /api/ai-design", () => {
         throw new AiDisabledError("not configured");
       },
       allowRequest: () => true,
-    })(new Request("http://localhost/api/ai-design", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ prompt: "hello" }),
-    }));
+    })(
+      new Request("http://localhost/api/ai-design", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: "hello" }),
+      }),
+    );
     expect(res.status).toBe(503);
   });
 
@@ -100,7 +108,13 @@ describe("POST /api/ai-design", () => {
 
   it("returns 422 when the model cannot produce a valid design", async () => {
     const bogus = { ...FULL, chairSku: "CHAABCDEFGHI" };
-    const res = await post("anything", mockLlm([{ kind: "design", design: bogus }, { kind: "design", design: bogus }]));
+    const res = await post(
+      "anything",
+      mockLlm([
+        { kind: "design", design: bogus },
+        { kind: "design", design: bogus },
+      ]),
+    );
     expect(res.status).toBe(422);
     expect((await res.json()).error).toBe("invalid_output");
   });
@@ -108,7 +122,10 @@ describe("POST /api/ai-design", () => {
   it("emits ai.request with facts only — never the prompt (e10s03-4)", async () => {
     const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
     try {
-      const res = await post("secret prompt text here", mockLlm([{ kind: "design", design: FULL }]));
+      const res = await post(
+        "secret prompt text here",
+        mockLlm([{ kind: "design", design: FULL }]),
+      );
       expect(res.status).toBe(200);
       const lines = infoSpy.mock.calls.map((c) => String(c[0]));
       const requestLine = lines.find((l) => l.includes('"event":"ai.request"'));

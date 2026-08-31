@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { rateLimitAllowed, resetRateLimits } from "./guardrails";
+import { rateLimitAllowed, resetRateLimits } from "./safety";
 
 describe("rateLimitAllowed", () => {
   beforeEach(() => resetRateLimits());

@@ -1,9 +1,5 @@
 import type { LlmAdapter, LlmRunRequest, LlmRunResult } from "@/ai/agents/chat-agent";
-import {
-  cheapestRentableTotal,
-  validateDesign,
-  type AiDesign,
-} from "@/shared/domain/aiDesignSchema";
+import { cheapestRentableTotal, validateDesign, type AiDesign } from "@/ai/guardrails/output";
 import { formatIdr } from "@/shared/domain/pricing";
 import type { Product } from "@/shared/types/product";
 

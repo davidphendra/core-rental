@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Product } from "@/shared/types/product";
 
-import catalogJson from "../../shared/data/products.json";
+import catalogJson from "../../../../shared/data/products.json";
 import { searchCatalog } from "./search";
 
 const catalog = catalogJson as unknown as readonly Product[];

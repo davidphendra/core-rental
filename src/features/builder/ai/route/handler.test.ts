@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-import catalog from "../../shared/data/products.json";
+import catalog from "../../../../shared/data/products.json";
 
-import type { LlmAdapter, LlmRunResult } from "@/ai/agents/chat-agent";
-import { AiDisabledError } from "@/ai/models/model-config";
+import type { LlmAdapter, LlmRunResult } from "@/features/builder/ai/agents/chat-agent";
+import { AiDisabledError } from "@/features/builder/ai/models/model-config";
 import { createAiDesignHandler } from "./handler";
 
 const chair = catalog.find((p) => p.skuNo.startsWith("CHA"))!;

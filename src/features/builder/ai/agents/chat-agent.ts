@@ -23,8 +23,8 @@ export interface LlmAdapter {
 import { generateText, hasToolCall } from "ai";
 import type { LanguageModel } from "ai";
 
-import { WORKSPACE_REJECTION_MESSAGE, systemPrompt } from "@/ai/prompts/system";
-import { createDesignTools, resolveToolOutcome } from "@/ai/tools";
+import { WORKSPACE_REJECTION_MESSAGE, systemPrompt } from "@/features/builder/ai/prompts/system";
+import { createDesignTools, resolveToolOutcome } from "@/features/builder/ai/tools";
 import type { Product } from "@/shared/types/product";
 
 /**

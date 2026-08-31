@@ -5,8 +5,8 @@
 # lives in specs/execution-status.yaml, never here.
 
 release:
-  version: "1.14.0" # mirror of expected tag — semantic-release decides at merge
-  codename: "Backend Catalog Filtering"
+  version: "1.15.0" # mirror of expected tag — semantic-release decides at merge
+  codename: "AI Discovery via Catalog API"
   status: released # planning | in_progress | released
   semantic_release: true
   bump_hint: minor # CI decides at merge

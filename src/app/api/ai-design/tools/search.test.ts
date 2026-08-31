@@ -65,7 +65,8 @@ describe("searchCatalog (v1.15.0: HTTP via /api/products contract)", () => {
     const hits = await searchCatalog({}, ORIGIN);
     expect(hits.length).toBeLessThanOrEqual(8);
     for (const h of hits) {
-      expect(h.description.length).toBeLessThanOrEqual(60);
+      // 100-char descriptions (working-tree ruling: richer context for the model).
+      expect(h.description.length).toBeLessThanOrEqual(100);
       expect(h).toHaveProperty("skuNo");
       expect(h).toHaveProperty("name");
       expect(h).toHaveProperty("pricePerMonth");

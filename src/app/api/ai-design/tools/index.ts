@@ -22,7 +22,13 @@ const designSchema = jsonSchema<Record<string, unknown>>({
   },
 });
 
-const rejectParamsSchema = jsonSchema<Record<string, never>>({ type: "object" });
+// v1.15.1 (Q3=a): explicit properties — Anthropic's tool input_schema rejects
+// bare empty objects; OpenAI-compatible endpoints accept this form too.
+const rejectParamsSchema = jsonSchema<Record<string, never>>({
+  type: "object",
+  properties: {},
+  additionalProperties: false,
+});
 
 /**
  * The agent's tool registry: searchCatalog (discovery, decision 3),

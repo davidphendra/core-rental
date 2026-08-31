@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { AiDisabledError, createAiModel, toClassicToolFormat } from "./model-config";
+import {
+  AiDisabledError,
+  createAiModel,
+  resolveProvider,
+  toClassicToolFormat,
+} from "./model-config";
 
 describe("createAiModel", () => {
   it("throws AiDisabledError when no model is configured", () => {
@@ -24,6 +29,57 @@ describe("createAiModel", () => {
   it("builds a model from an OpenAI API key", () => {
     const model = createAiModel({ AI_MODEL: "gpt-4.1-mini", OPENAI_API_KEY: "sk-test" });
     expect(model).toBeTruthy();
+  });
+
+  it("builds a model from an Anthropic API key (AI_PROVIDER=anthropic)", () => {
+    const model = createAiModel({
+      AI_MODEL: "claude-sonnet-4-0",
+      ANTHROPIC_API_KEY: "sk-ant-test",
+      AI_PROVIDER: "anthropic",
+    });
+    expect(model).toBeTruthy();
+  });
+
+  it("infers anthropic from ANTHROPIC_API_KEY when AI_PROVIDER is unset", () => {
+    expect(resolveProvider({ ANTHROPIC_API_KEY: "sk-ant-test", AI_MODEL: "claude" })).toBe(
+      "anthropic",
+    );
+    const model = createAiModel({ AI_MODEL: "claude-sonnet-4-0", ANTHROPIC_API_KEY: "sk-ant" });
+    expect(model).toBeTruthy();
+  });
+
+  it("throws AiDisabledError for an unknown AI_PROVIDER value", () => {
+    expect(() => createAiModel({ AI_MODEL: "x", AI_PROVIDER: "gemini" })).toThrow(AiDisabledError);
+    expect(() => resolveProvider({ AI_PROVIDER: "gemini" })).toThrow(AiDisabledError);
+  });
+
+  it("throws AiDisabledError for AI_PROVIDER=anthropic without a key", () => {
+    expect(() => createAiModel({ AI_MODEL: "claude", AI_PROVIDER: "anthropic" })).toThrow(
+      AiDisabledError,
+    );
+  });
+
+  it("throws AiDisabledError for AI_PROVIDER=openai-compatible without AI_BASE_URL", () => {
+    expect(() =>
+      createAiModel({ AI_MODEL: "gpt-oss-20b", AI_PROVIDER: "openai-compatible" }),
+    ).toThrow(AiDisabledError);
+  });
+
+  it("accepts OPENAI_API_KEY as the key for an OpenRouter-style base URL", () => {
+    // OpenRouter keys are OpenAI-format; the compatible branch falls back to
+    // OPENAI_API_KEY when AI_API_KEY is absent (not the "lm-studio" placeholder).
+    const model = createAiModel({
+      AI_MODEL: "openai/gpt-4o-mini",
+      AI_BASE_URL: "https://openrouter.ai/api/v1",
+      OPENAI_API_KEY: "sk-or-test",
+    });
+    expect(model).toBeTruthy();
+  });
+
+  it("prefers AI_BASE_URL over a key for inference (backward compatible)", () => {
+    expect(
+      resolveProvider({ AI_BASE_URL: "http://localhost:8080/v1", ANTHROPIC_API_KEY: "sk-ant" }),
+    ).toBe("openai-compatible");
   });
 });
 

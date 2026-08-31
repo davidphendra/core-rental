@@ -93,24 +93,55 @@ Optional CLI previews: `vercel dev` / `pnpm dlx vercel deploy --preview`
 belt-and-braces`) runs on every push/PR and gates merges. Security headers
 (CSP etc.) are served by `next.config.ts` on every route — asserted by E2E N9.
 
-## AI Workspace Designer (dev)
+## AI Workspace Designer
 
-The builder's **Design with AI** panel turns a natural-language request
-("fancy gaming workspace, max Rp 30 juta") into a validated builder design.
-It is **env-gated**: the route returns `503 ai_disabled` until a provider is
-configured, so the deployed demo is unaffected until you choose to enable it.
+The builder's **Design with AI** panel turns a natural-language request —
+"fancy gaming workspace, max Rp 30 juta" — into a **validated** workspace
+design. It is **env-gated**: the route returns `503 ai_disabled` until a
+provider is configured, so the deployed demo is unaffected until you enable it.
 
-- **Local dev (free, offline):** run LM Studio on `localhost:1234/v1` with a
-  tool-calling model (default `gpt-oss-20b`; `devstral-small-2-2512` also
-  works), then copy `.env.example` → `.env.local`:
-  ```bash
-  AI_BASE_URL=http://localhost:1234/v1
-  AI_MODEL=gpt-oss-20b
-  ```
-- **Production (OpenAI):** set `OPENAI_API_KEY` + `AI_MODEL` in the Vercel
-  project env vars. Costs real money per request — guarded by a best-effort
-  in-memory rate limit (~10 req / 10 min / IP) and output caps.
-- **Design contract:** the AI discovers products via tools (never the prompt),
-  and the route re-validates every SKU + the monthly total server-side — a
-  hallucinated or over-budget design can never be applied. The user's prompt
-  text is never logged or tracked (PII-safe). See `specs/adr/0007-ai-design-route.md`.
+### How it works
+
+1. **Prompt → input guardrails** — the request is trimmed (≤500 chars), a
+   monthly budget is extracted deterministically ("30 juta"/"5 jt"/"Rp 30.000.000"
+   → IDR), the request is rate-limited (~10 / 10 min / IP → 429) and gated on
+   provider config (503).
+2. **The agent discovers the catalog — via the API** — `searchCatalog` calls
+   `/api/products` (`category` + `subCategory`), so the endpoint owns all
+   filtering. In its first message the model issues **exactly 7 parallel
+   calls** (desk, chair, monitor, lamp, plant, coffee, beanbag), then never
+   searches again. Your prompt text is never sent to the catalog and never
+   logged.
+3. **The model proposes** — it ranks candidates, builds the top 3 combinations
+   (1 desk, 1 chair, ≤3 monitors, ≤1 each accessory), and submits one via
+   `finalizeDesign`. Off-topic requests ("what's the weather?") hit
+   `rejectQuery` → a standardized refusal.
+4. **Output guardrails — the trust boundary** — the route **re-validates
+   everything server-side** against the committed catalog: every SKU must
+   exist and sit in its correct slot, monitor count ≤3, no sku reused across
+   slots, the monthly total recomputed from real prices, and the stated budget
+   respected. A hallucinated or over-budget design can never reach the builder.
+5. **Apply** — a valid design is applied through the same reducer the manual
+   builder uses (reset + re-select; replace-with-confirm when the cart is
+   non-empty), and the panel re-validates client-side too.
+
+The request may fail honestly: `refusal` (budget too low — includes the
+cheapest possible total), `rejection` (off-topic), `422`/`500` (bad output /
+provider error). Observability is PII-safe: only `ai.request` (model, duration,
+tool-call count, ok) and `ai.design_applied` (skus, monitor count, total) are
+tracked — never the prompt.
+
+### Providers (AI_PROVIDER)
+
+| Provider            | Env                                                             | Notes                                                                                                                                                                                                                                      |
+| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `openai-compatible` | `AI_BASE_URL` + `AI_MODEL` (+ `AI_API_KEY` or `OPENAI_API_KEY`) | **LM Studio locally** (free/offline; recommended `Qwen3-Coder-30B-A3B-Instruct` on `:8080`) or **OpenRouter** (config-only access to Anthropic/OpenAI/open models — set `AI_BASE_URL=https://openrouter.ai/api/v1` and an `AI_MODEL` slug) |
+| `anthropic`         | `ANTHROPIC_API_KEY` + `AI_MODEL`                                | Native Anthropic API (e.g. `claude-sonnet-4-0`) — verified on enable (one live call)                                                                                                                                                       |
+| `openai`            | `OPENAI_API_KEY` + `AI_MODEL`                                   | Native OpenAI API (e.g. `gpt-4.1-mini`). Costs real money — rate-limited and output-capped                                                                                                                                                 |
+
+`AI_PROVIDER` is inferred when unset (`AI_BASE_URL` → compatible ·
+`ANTHROPIC_API_KEY` → anthropic · else → openai), so existing `.env` files keep
+working. See `.env.example` for all three blocks.
+
+See `specs/adr/0007-ai-design-route.md`, `specs/REFACTOR_LATEST.md`, and
+`specs/DECISION_RECORD.md` (AI rulings) for the full design.

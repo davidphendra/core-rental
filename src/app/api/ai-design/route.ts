@@ -1,7 +1,7 @@
 import type { LanguageModel } from "ai";
 
 import { getCatalog } from "@/shared/data/catalog.server";
-import { extractBudgetIdr } from "@/shared/domain/aiDesign";
+import { extractBudgetIdr } from "@/ai/guardrails/input";
 import { logger } from "@/shared/observability/logger";
 import type { Product } from "@/shared/types/product";
 

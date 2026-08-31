@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { extractBudgetIdr } from "./aiDesign";
+import { extractBudgetIdr } from "./input";
 
 describe("extractBudgetIdr", () => {
   it("parses Indonesian 'juta' and 'jt' units to millions", () => {
